@@ -523,7 +523,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Desbloquear")
                     .setSubtitle("Use biometria ou PIN")
                     .setAllowedAuthenticators(
-    BiometricManager.Authenticators.BIOMETRIC_STRONG or
+    BiometricManager.Authenticators.BIOMETRIC_WEAK or
     BiometricManager.Authenticators.DEVICE_CREDENTIAL
 )
                     .build()
