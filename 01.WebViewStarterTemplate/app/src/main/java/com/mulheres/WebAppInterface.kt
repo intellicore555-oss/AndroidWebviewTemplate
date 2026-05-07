@@ -14,17 +14,15 @@ class WebAppInterface(
 
         (activity as MainActivity).enviarSOS()
     }
-
-    @JavascriptInterface
+@JavascriptInterface
 fun abrirContatos() {
 
-    runOnUiThread {
+    activity.runOnUiThread {
 
-        (context as MainActivity)
+        (activity as MainActivity)
             .abrirContatos()
     }
 }
-
 
     @JavascriptInterface
     fun iniciarBiometria() {
