@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agenda</title>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+}
+
+/* container central */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* botões */
+.btn {
+  width: 70%;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 18px;
+  border-radius: 300px;
+  border: none;
+  font-size: 18px;
+  background: mediumslateblue;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* efeito suave */
+.btn:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+/* títulos discretos */
+h1 {
+  font-size: 22px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Meus Acessos</h1>
+
+  <button class="btn" onclick="ir('calendario.html')">
+    📅 Agenda
+  </button>
+
+  <button class="btn" onclick="ir('caderno.html')">
+    📒 Anotações
+  </button>
+
+  <button class="btn" onclick="ir('treino.html')">
+    🏃 Rotina
+  </button>
+
+</div>
+
+<script>
+function ir(pagina) {
+  window.location.href = pagina;
+}
+</script>
+
+</body>
+</html>
