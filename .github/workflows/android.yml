@@ -23,22 +23,26 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Dar permissão ao gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x 01.WebViewStarterTemplate/gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: |
+          cd 01.WebViewStarterTemplate
+          ./gradlew assembleDebug
 
       - name: Upload APK Debug
         uses: actions/upload-artifact@v4
         with:
           name: Mulher-Amparada-debug
-          path: app/build/outputs/apk/debug/*.apk
+          path: 01.WebViewStarterTemplate/app/build/outputs/apk/debug/*.apk
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        run: |
+          cd 01.WebViewStarterTemplate
+          ./gradlew assembleRelease
 
       - name: Upload APK Release
         uses: actions/upload-artifact@v4
         with:
           name: Mulher-Amparada-release
-          path: app/build/outputs/apk/release/*.apk
+          path: 01.WebViewStarterTemplate/app/build/outputs/apk/release/*.apk
