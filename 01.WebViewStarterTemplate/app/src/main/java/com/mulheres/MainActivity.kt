@@ -521,7 +521,10 @@ class MainActivity : AppCompatActivity() {
                 BiometricPrompt.PromptInfo.Builder()
                     .setTitle("Desbloquear")
                     .setSubtitle("Use biometria ou PIN")
-                    .setDeviceCredentialAllowed(true)
+                    .setAllowedAuthenticators(
+    BiometricManager.Authenticators.BIOMETRIC_STRONG or
+    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+)
                     .build()
 
             biometricPrompt.authenticate(promptInfo)
