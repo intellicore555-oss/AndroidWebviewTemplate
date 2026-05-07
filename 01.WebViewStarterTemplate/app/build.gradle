@@ -1,44 +1,154 @@
 plugins {
-        id 'com.android.application'
-        id 'kotlin-android'
-    }
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
 
+android {
 
-    android {
-        namespace 'com.webviewtemplate.webviewtemplate'
-        compileSdk 34
+    namespace 'com.mulheres'
 
-        defaultConfig {
-            applicationId "com.webviewtemplate.webviewtemplate"
-            minSdk 19
-            targetSdk 34
-            versionCode 1
-            versionName "1.0.0"
-        }
+    compileSdk 34
 
-        buildTypes {
-            release {
-                minifyEnabled true
-                shrinkResources true
-                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            }
-        }
+    defaultConfig {
 
-        buildFeatures {
-            viewBinding true
-        }
+        applicationId "com.mulheres"
 
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
-        }
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11
+        minSdk 27
+        targetSdk 34
+
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+
+        vectorDrawables {
+            useSupportLibrary true
         }
     }
 
-    dependencies {
-        implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-        implementation 'androidx.webkit:webkit:1.9.0'
+    buildTypes {
+
+        debug {
+
+            minifyEnabled false
+            debuggable true
+        }
+
+        release {
+
+            minifyEnabled false
+            shrinkResources false
+
+            proguardFiles(
+                getDefaultProguardFile(
+                    'proguard-android-optimize.txt'
+                ),
+                'proguard-rules.pro'
+            )
+        }
     }
+
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+
+        buildConfig true
+        viewBinding true
+    }
+
+    packaging {
+
+        resources {
+
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    lint {
+
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+
+    // Kotlin Android
+    implementation 'androidx.core:core-ktx:1.13.1'
+
+    // AppCompat
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+
+    // Material Design
+    implementation 'com.google.android.material:material:1.12.0'
+
+    // ConstraintLayout
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // WebView moderna
+    implementation 'androidx.webkit:webkit:1.11.0'
+
+    // Biometria / PIN / impressão digital
+    implementation 'androidx.biometric:biometric:1.1.0'
+
+    // Activity KTX
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+
+    // Fragment KTX
+    implementation 'androidx.fragment:fragment-ktx:1.8.0'
+
+    // Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.3'
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+
+    // GPS / localização
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // Swipe Refresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    // Splash Screen Android 12+
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    // Browser
+    implementation 'androidx.browser:browser:1.8.0'
+
+    // Segurança
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // JSON
+    implementation 'org.json:json:20240303'
+
+    // Multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Firebase BOM
+    implementation platform(
+        'com.google.firebase:firebase-bom:33.1.2'
+    )
+
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Firebase Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics'
+
+    // Firebase Performance
+    implementation 'com.google.firebase:firebase-perf'
+
+    // Firebase Messaging
+    implementation 'com.google.firebase:firebase-messaging'
+}
