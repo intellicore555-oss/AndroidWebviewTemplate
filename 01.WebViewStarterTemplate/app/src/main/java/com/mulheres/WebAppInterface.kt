@@ -16,6 +16,17 @@ class WebAppInterface(
     }
 
     @JavascriptInterface
+fun abrirContatos() {
+
+    runOnUiThread {
+
+        (context as MainActivity)
+            .abrirContatos()
+    }
+}
+
+
+    @JavascriptInterface
     fun iniciarBiometria() {
 
         (activity as MainActivity).iniciarBiometria()
