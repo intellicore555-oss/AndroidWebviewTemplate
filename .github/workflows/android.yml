@@ -2,6 +2,7 @@ name: Build APK
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,15 +17,28 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Dar permissão ao gradlew
-        run: chmod +x 01.WebViewStarterTemplate/gradlew
+        run: chmod +x ./gradlew
 
-      - name: Build APK
-        run: cd 01.WebViewStarterTemplate && ./gradlew assembleDebug
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK Debug
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: 01.WebViewStarterTemplate/app/build/outputs/apk/debug/*.apk
+          name: Mulher-Amparada-debug
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mulher-Amparada-release
+          path: app/build/outputs/apk/release/*.apk
