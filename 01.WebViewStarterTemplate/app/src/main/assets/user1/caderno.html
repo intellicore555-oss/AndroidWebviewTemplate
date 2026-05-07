@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+.fade-up {
+    opacity: 0;
+    transform: translateY(-30px);
+    animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+* {
+font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: black;
+    color: #fff;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease forwards;
+}
+
+/* TOPO */
+.topo {
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-bottom: 1px solid #222;
+}
+
+/* TOOLBAR */
+.toolbar {
+    height: 55px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 15px;
+    border-bottom: 1px solid #222;
+}
+
+.tool {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* BOOK */
+.book {
+    position: relative;
+    height: calc(100vh - 110px);
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+/* PAGE */
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform-origin: left;
+    transition: transform 0.6s;
+}
+
+/* SIDES */
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.front {
+    background: pink;
+}
+
+.back {
+    background: hotpink;
+    transform: rotateY(180deg);
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: #fff;
+    font-size: 18px;
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* VIRADA */
+.page.virada {
+    transform: rotateY(-180deg);
+}
+
+/* BOTÃO */
+.limpar {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: #111;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.voltar {
+color: pink;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+    <div>⬅</div>
+    <div class="voltar">Clique em mim para voltar!</div>
+    <div>⋮</div>
+</div>
+
+<div class="toolbar">
+    <div class="tool">⌨️</div>
+    <div class="tool">✏️</div>
+    <div class="tool">🖍️</div>
+    <div class="tool">🧽</div>
+</div>
+
+<div class="book" id="book"></div>
+
+<button class="limpar" onclick="limparTudo()">🗑</button>
+
+<script>
+let dados = JSON.parse(localStorage.getItem("diario")) || [];
+let paginas = [];
+let atual = 0;
+
+const book = document.getElementById("book");
+
+/* SALVAR */
+function salvar() {
+    localStorage.setItem("diario", JSON.stringify(dados));
+}
+
+/* CRIAR PAGINA */
+function criarPagina(index) {
+    let page = document.createElement("div");
+    page.className = "page";
+    page.style.zIndex = 100 - index;
+
+    let front = document.createElement("div");
+    front.className = "face front";
+
+    let back = document.createElement("div");
+    back.className = "face back";
+
+    let textarea = document.createElement("textarea");
+    textarea.value = dados[index] || "";
+
+    textarea.oninput = () => {
+        dados[index] = textarea.value;
+        salvar();
+
+        if (textarea.value.length > 220 && index === atual) {
+            virarProxima();
+        }
+    };
+
+    front.appendChild(textarea);
+    page.appendChild(front);
+    page.appendChild(back);
+    book.appendChild(page);
+
+    paginas[index] = page;
+
+    setTimeout(() => textarea.focus(), 50);
+}
+
+/* INICIAR */
+criarPagina(0);
+
+/* VIRAR PRA FRENTE */
+function virarProxima() {
+    let pagina = paginas[atual];
+    if (!pagina) return;
+
+    pagina.classList.add("virada");
+
+    atual++;
+
+    if (!paginas[atual]) {
+        criarPagina(atual);
+    }
+}
+
+/* VOLTAR */
+function voltarPagina() {
+    if (atual === 0) return;
+
+    atual--;
+
+    let pagina = paginas[atual];
+    pagina.classList.remove("virada");
+}
+
+/* LIMPAR */
+function limparTudo() {
+    if (!confirm("Apagar tudo?")) return;
+
+    localStorage.removeItem("diario");
+    location.reload();
+}
+
+/* ===== ARRASTAR ===== */
+
+let startX = 0;
+let movendo = false;
+
+book.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    movendo = true;
+});
+
+book.addEventListener("touchmove", (e) => {
+    if (!movendo) return;
+
+    let atualX = e.touches[0].clientX;
+    let diff = atualX - startX;
+
+    let pagina = paginas[atual];
+    if (pagina) {
+        let rot = Math.max(Math.min(diff / 2, 0), -180);
+        pagina.style.transform = `rotateY(${rot}deg)`;
+    }
+});
+
+book.addEventListener("touchend", (e) => {
+    movendo = false;
+
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    let pagina = paginas[atual];
+    if (pagina) pagina.style.transform = "";
+
+    if (diff < -60) {
+        virarProxima();
+    } else if (diff > 60) {
+        voltarPagina();
+    }
+});
+
+document.querySelector(".voltar").onclick = function() {
+    window.location.href = "botao.html";
+};
+</script>
+
+</body>
+</html>
