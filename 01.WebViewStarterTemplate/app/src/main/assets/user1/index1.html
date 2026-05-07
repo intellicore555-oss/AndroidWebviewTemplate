@@ -307,6 +307,22 @@ svg {
     📍 Enviar localização
   </button>
   
+  <button class="btn"
+style="background:#8a2be2;"
+onclick="selecionarContato()">
+
+👤 Adicionar contato
+
+</button>
+
+<button class="btn"
+style="background:#dc143c;"
+onclick="enviarSOSContatos()">
+
+🚨 SOS contatos
+
+</button>
+
   <br><br>  <br><br>  <br><br>
 
 
@@ -536,6 +552,38 @@ elementos.forEach((el, index) => {
 });
 
 // fade separado toggl
+</script>
+
+<script>
+function selecionarContato() {
+
+  if (
+    window.Android &&
+    Android.abrirContatos
+  ) {
+
+    Android.abrirContatos();
+  }
+}
+
+function enviarSOSContatos() {
+
+  if (
+    window.Android &&
+    Android.enviarSOS
+  ) {
+
+    Android.enviarSOS();
+  }
+}
+
+function contatoSalvo(nome, numero) {
+
+  alert(
+    "Contato salvo:\n\n" +
+    nome + "\n" + numero
+  );
+}
 </script>
 
 </body>
