@@ -274,6 +274,109 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, PICK_CONTACT)
     }
 
+    override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+) {
+
+    super.onActivityResult(
+        requestCode,
+        resultCode,
+        data
+    )
+
+    if (
+        requestCode == PICK_CONTACT &&
+        resultCode == RESULT_OK
+    ) {
+
+        val uri = data?.data ?: return
+
+        val cursor = contentResolver.query(
+            uri,
+            null,
+            null,
+            null,
+            null
+        )
+
+        if (
+            cursor != null &&
+            cursor.moveToFirst()
+        ) {
+
+            val numeroIndex =
+                cursor.getColumnIndex(
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                )
+
+            val nomeIndex =
+                cursor.getColumnIndex(
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                )
+
+            val numero =
+                cursor.getString(numeroIndex)
+                    ?.replace("\\s".toRegex(), "")
+                    ?.replace("-", "")
+                    ?: ""
+
+            val nome =
+                cursor.getString(nomeIndex)
+                    ?: "Contato"
+
+            val prefs =
+                getSharedPreferences(
+                    "contatos",
+                    MODE_PRIVATE
+                )
+
+            val listaAtual =
+                prefs.getString("lista", "")
+                    ?: ""
+
+            val nomesAtual =
+                prefs.getString("nomes", "")
+                    ?: ""
+
+            val novaLista =
+                if (listaAtual.isEmpty()) {
+                    numero
+                } else {
+                    "$listaAtual,$numero"
+                }
+
+            val novosNomes =
+                if (nomesAtual.isEmpty()) {
+                    "$nome - $numero"
+                } else {
+                    "$nomesAtual\n$nome - $numero"
+                }
+
+            prefs.edit()
+                .putString("lista", novaLista)
+                .putString("nomes", novosNomes)
+                .apply()
+
+            webView.post {
+
+                webView.evaluateJavascript(
+                    "contatoSalvo('$nome','$numero')",
+                    null
+                )
+            }
+
+            cursor.close()
+
+            Toast.makeText(
+                this,
+                "Contato salvo",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+    }
     fun pegarLocalizacao() {
 
         if (
