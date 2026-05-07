@@ -1,22 +1,88 @@
 package com.mulheres
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.webkit.JavascriptInterface
-import android.webkit.JsResult
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 
-@JavascriptInterface
-class MyWebChromeClient : WebChromeClient() {
+class WebAppInterface(
+    private val activity: Activity
+) {
 
-    override fun onJsConfirm(
-        view: WebView?,
-        url: String?,
-        message: String?,
-        result: JsResult?
-    ): Boolean {
+    @JavascriptInterface
+    fun enviarSOS() {
 
-        result?.confirm()
+        (activity as MainActivity).enviarSOS()
+    }
 
-        return true
+    @JavascriptInterface
+    fun iniciarBiometria() {
+
+        (activity as MainActivity).iniciarBiometria()
+    }
+
+    @JavascriptInterface
+    fun iniciarBiometriaAmor() {
+
+        (activity as MainActivity)
+            .iniciarBiometriaAmor()
+    }
+
+    @JavascriptInterface
+    fun iniciarBiometriaMusica() {
+
+        (activity as MainActivity)
+            .iniciarBiometriaMusica()
+    }
+
+    @JavascriptInterface
+    fun iniciarBiometriaPrincesa() {
+
+        (activity as MainActivity)
+            .iniciarBiometriaPrincesa()
+    }
+
+    @JavascriptInterface
+    fun iniciarBiometriaPrincipe() {
+
+        (activity as MainActivity)
+            .iniciarBiometriaPrincipe()
+    }
+
+    @JavascriptInterface
+    fun ligarDireto(numero: String) {
+
+        val intent = Intent(Intent.ACTION_CALL)
+
+        intent.data = Uri.parse("tel:$numero")
+
+        activity.startActivity(intent)
+    }
+
+    @JavascriptInterface
+    fun pegarLocalizacao() {
+
+        (activity as MainActivity)
+            .pegarLocalizacao()
+    }
+
+    @JavascriptInterface
+    fun salvarContatos(lista: String) {
+
+        val prefs = activity.getSharedPreferences(
+            "contatos",
+            Activity.MODE_PRIVATE
+        )
+
+        prefs.edit()
+            .putString("lista", lista)
+            .apply()
+    }
+
+    @JavascriptInterface
+    fun selecionarContato() {
+
+        (activity as MainActivity)
+            .abrirContatos()
     }
 }
