@@ -484,11 +484,20 @@ function iniciarBiometria() {
     Android.iniciarBiometriaPrincesa
   ) {
 
-    Android.iniciarBiometriaPrincesa();
+    try {
+
+      Android.iniciarBiometriaPrincesa();
+
+    } catch(e) {
+
+      window.location.href =
+      "file:///android_asset/user1/botao.html";
+    }
 
   } else {
 
-    window.location.href = "botao.html";
+    window.location.href =
+    "file:///android_asset/user1/botao.html";
   }
 }
 
