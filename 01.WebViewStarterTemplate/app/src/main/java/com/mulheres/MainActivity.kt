@@ -1,17 +1,16 @@
 package com.mulheres
 
-import androidx.biometric.BiometricManager
 import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.telephony.SmsManager
 import android.view.View
 import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -48,6 +47,8 @@ class MainActivity : AppCompatActivity() {
 
         locationClient =
             LocationServices.getFusedLocationProviderClient(this)
+
+        configurarWebView()
 
         if (!temPermissoes()) {
             pedirPermissoes()
@@ -105,19 +106,15 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == PERMISSION_CODE) {
 
-            if (temPermissoes()) {
+            carregarWebView2()
 
-                carregarWebView2()
-
-            } else {
+            if (!temPermissoes()) {
 
                 Toast.makeText(
                     this,
-                    "Aviso: algumas funcionalidades do app nao funcionarao sem permissao, mas sem pressa e nao se preocupe, pode ativar ou nao ativar se quiser!",
+                    "Algumas funções podem não funcionar sem permissões.",
                     Toast.LENGTH_LONG
                 ).show()
-
-                carregarWebView2()
             }
         }
     }
@@ -134,8 +131,10 @@ class MainActivity : AppCompatActivity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.setGeolocationEnabled(true)
+
         settings.allowFileAccess = true
         settings.allowContentAccess = true
+
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
@@ -222,8 +221,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun carregarWebView() {
 
-        configurarWebView()
-
         webView.loadUrl(
             "file:///android_asset/user/index.html"
         )
@@ -232,8 +229,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun carregarWebView1() {
-
-        configurarWebView()
 
         webView.loadUrl(
             "file:///android_asset/user1/botao.html"
@@ -244,8 +239,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun carregarWebView2() {
 
-        configurarWebView()
-
         webView.loadUrl(
             "file:///android_asset/user1/index1.html"
         )
@@ -255,8 +248,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun carregarWebView3() {
 
-        configurarWebView()
-
         webView.loadUrl(
             "file:///android_asset/user2/index.html"
         )
@@ -265,8 +256,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun carregarWebView4() {
-
-        configurarWebView()
 
         webView.loadUrl(
             "file:///android_asset/user3/index.html"
@@ -476,6 +465,29 @@ class MainActivity : AppCompatActivity() {
 
         runOnUiThread {
 
+            val biometricManager =
+                BiometricManager.from(this)
+
+            val canAuth =
+                biometricManager.canAuthenticate(
+                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                )
+
+            if (
+                canAuth ==
+                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ||
+                canAuth ==
+                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ||
+                canAuth ==
+                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE
+            ) {
+
+                carregarWebView()
+
+                return@runOnUiThread
+            }
+
             val executor: Executor =
                 ContextCompat.getMainExecutor(this)
 
@@ -490,13 +502,26 @@ class MainActivity : AppCompatActivity() {
                             errString: CharSequence
                         ) {
 
-                            if (errorCode == 11) {
+                            when (errorCode) {
 
-                                carregarWebView()
+                                BiometricPrompt.ERROR_USER_CANCELED,
+                                BiometricPrompt.ERROR_CANCELED -> {
 
-                            } else {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "Autenticação cancelada",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
 
-                                finish()
+                                else -> {
+
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        errString,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
 
@@ -521,11 +546,11 @@ class MainActivity : AppCompatActivity() {
             val promptInfo =
                 BiometricPrompt.PromptInfo.Builder()
                     .setTitle("Desbloquear")
-                    .setSubtitle("Use biometria ou PIN")
+                    .setDescription("Use biometria, PIN ou senha")
                     .setAllowedAuthenticators(
-    BiometricManager.Authenticators.BIOMETRIC_WEAK or
-    BiometricManager.Authenticators.DEVICE_CREDENTIAL
-)
+                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                    )
                     .build()
 
             biometricPrompt.authenticate(promptInfo)
