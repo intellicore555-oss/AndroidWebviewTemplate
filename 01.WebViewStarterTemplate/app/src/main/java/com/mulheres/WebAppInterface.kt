@@ -89,6 +89,16 @@ fun abrirContatos() {
     }
 
     @JavascriptInterface
+fun ativarProtecao() {
+    activity.ativarProtecao()
+}
+
+@JavascriptInterface
+fun desativarProtecao() {
+    activity.desativarProtecao()
+}
+
+    @JavascriptInterface
     fun selecionarContato() {
 
         (activity as MainActivity)
