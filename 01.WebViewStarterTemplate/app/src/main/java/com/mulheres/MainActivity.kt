@@ -1,17 +1,22 @@
 package com.mulheres
 
+import android.Manifest
+import android.content.Intent
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.Manifest
-import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.View
-import android.webkit.*
+import android.webkit.GeolocationPermissions
+import android.webkit.JavascriptInterface
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
@@ -21,6 +26,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.concurrent.Executor
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,133 +40,140 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var locationClient: FusedLocationProviderClient
 
-   private lateinit var sensorManager: SensorManager
-private var acelerometro: Sensor? = null
+    // SENSOR
+    private lateinit var sensorManager: SensorManager
+    private var acelerometro: Sensor? = null
+    private var shakeListener: SensorEventListener? = null
+    private var protecaoAtiva = false
+    private var ultimoShake = 0L
 
-private var shakeListener: SensorEventListener? = null
+    // ==========================
+    // PROTEÇÃO
+    // ==========================
 
-private var protecaoAtiva = false
+    @JavascriptInterface
+    fun ativarProtecao() {
 
-private var ultimoShake = 0L
+        protecaoAtiva = true
 
-// ================= ATIVAR =================
+        iniciarSensor()
+    }
 
+    @JavascriptInterface
+    fun desativarProtecao() {
 
+        protecaoAtiva = false
 
-@JavascriptInterface
-fun ativarProtecao() {
+        pararSensor()
+    }
 
-    protecaoAtiva = true
+    // ==========================
+    // SENSOR
+    // ==========================
 
-    iniciarSensor()
-}
+    private fun iniciarSensor() {
 
-@JavascriptInterface
-fun desativarProtecao() {
+        sensorManager =
+            getSystemService(SENSOR_SERVICE)
+                    as SensorManager
 
-    protecaoAtiva = false
+        acelerometro =
+            sensorManager.getDefaultSensor(
+                Sensor.TYPE_ACCELEROMETER
+            )
 
-    pararSensor()
-}
+        shakeListener =
+            object : SensorEventListener {
 
-// ================= SENSOR =================
+                override fun onSensorChanged(
+                    event: SensorEvent
+                ) {
 
-private fun iniciarSensor() {
+                    if (!protecaoAtiva) return
 
-    sensorManager =
-        getSystemService(SENSOR_SERVICE)
-                as SensorManager
+                    val x = event.values[0]
+                    val y = event.values[1]
+                    val z = event.values[2]
 
-    acelerometro =
-        sensorManager.getDefaultSensor(
-            Sensor.TYPE_ACCELEROMETER
-        )
+                    val aceleracao =
+                        sqrt(
+                            (x * x + y * y + z * z).toDouble()
+                        )
 
-    shakeListener =
-        object : SensorEventListener {
+                    if (aceleracao > 18) {
 
-            override fun onSensorChanged(
-                event: SensorEvent
-            ) {
+                        val agora =
+                            System.currentTimeMillis()
 
-                if (!protecaoAtiva) return
+                        if (agora - ultimoShake > 4000) {
 
-                val x = event.values[0]
-                val y = event.values[1]
-                val z = event.values[2]
+                            ultimoShake = agora
 
-                val aceleracao =
-                    Math.sqrt(
-                        (x * x + y * y + z * z).toDouble()
-                    )
-
-                if (aceleracao > 18) {
-
-                    val agora =
-                        System.currentTimeMillis()
-
-                    if (agora - ultimoShake > 4000) {
-
-                        ultimoShake = agora
-
-                        ligarDireto("180")
+                            ligarDireto("180")
+                        }
                     }
+                }
+
+                override fun onAccuracyChanged(
+                    sensor: Sensor?,
+                    accuracy: Int
+                ) {
                 }
             }
 
-            private fun pararSensor() {
+        acelerometro?.let {
 
-    shakeListener?.let {
-
-        sensorManager.unregisterListener(it)
-    }
-            }
-            
-            override fun onAccuracyChanged(
-                sensor: Sensor?,
-                accuracy: Int
-            ) {
-            }
+            sensorManager.registerListener(
+                shakeListener,
+                it,
+                SensorManager.SENSOR_DELAY_NORMAL
+            )
         }
-
-    acelerometro?.let {
-
-        sensorManager.registerListener(
-            shakeListener,
-            it,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
-    
-}
-}
-// ================= LIGAÇÃO =================
-
-@JavascriptInterface
-fun ligarDireto(numero: String) {
-
-    try {
-
-        val intent =
-            Intent(Intent.ACTION_CALL)
-
-        intent.data =
-            Uri.parse("tel:$numero")
-
-        startActivity(intent)
-
-    } catch (e: Exception) {
-
-        e.printStackTrace()
     }
-}
 
-// ================= LIGAÇÃO =================
+    private fun pararSensor() {
 
+        shakeListener?.let {
+
+            sensorManager.unregisterListener(it)
+        }
+    }
+
+    // ==========================
+    // LIGAÇÃO
+    // ==========================
+
+    @JavascriptInterface
+    fun ligarDireto(numero: String) {
+
+        try {
+
+            val intent =
+                Intent(Intent.ACTION_CALL)
+
+            intent.data =
+                Uri.parse("tel:$numero")
+
+            startActivity(intent)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+        }
+    }
+
+    // ==========================
+    // ON CREATE
+    // ==========================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
-        window.setBackgroundDrawableResource(android.R.color.black)
+        window.setBackgroundDrawableResource(
+            android.R.color.black
+        )
+
         window.setFlags(1024, 1024)
 
         window.decorView.systemUiVisibility = 0x1006
@@ -169,17 +182,24 @@ fun ligarDireto(numero: String) {
 
         webView = findViewById(R.id.webview)
 
-        webView.setBackgroundColor(0xFF000000.toInt())
+        webView.setBackgroundColor(
+            0xFF000000.toInt()
+        )
+
         webView.visibility = View.INVISIBLE
 
         locationClient =
-            LocationServices.getFusedLocationProviderClient(this)
+            LocationServices
+                .getFusedLocationProviderClient(this)
 
         configurarWebView()
 
         if (!temPermissoes()) {
+
             pedirPermissoes()
+
         } else {
+
             carregarWebView2()
         }
     }
@@ -187,11 +207,18 @@ fun ligarDireto(numero: String) {
     override fun onBackPressed() {
 
         if (webView.canGoBack()) {
+
             webView.goBack()
+
         } else {
+
             finish()
         }
     }
+
+    // ==========================
+    // PERMISSÕES
+    // ==========================
 
     private fun temPermissoes(): Boolean {
 
@@ -239,12 +266,16 @@ fun ligarDireto(numero: String) {
 
                 Toast.makeText(
                     this,
-                    "Algumas funções podem não funcionar sem permissões.",
+                    "Algumas permissões não foram concedidas.",
                     Toast.LENGTH_LONG
                 ).show()
             }
         }
     }
+
+    // ==========================
+    // WEBVIEW
+    // ==========================
 
     private fun configurarWebView() {
 
@@ -265,86 +296,81 @@ fun ligarDireto(numero: String) {
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
-        webView.webChromeClient = object : WebChromeClient() {
+        webView.webChromeClient =
+            object : WebChromeClient() {
 
-            override fun onGeolocationPermissionsShowPrompt(
-                origin: String?,
-                callback: GeolocationPermissions.Callback?
-            ) {
+                override fun onGeolocationPermissionsShowPrompt(
+                    origin: String?,
+                    callback: GeolocationPermissions.Callback?
+                ) {
 
-                callback?.invoke(origin, true, false)
-            }
-        }
-
-        webView.webViewClient = object : WebViewClient() {
-
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
-
-                val url = request?.url.toString()
-
-                if (url.startsWith("tel:")) {
-
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_DIAL,
-                            Uri.parse(url)
-                        )
+                    callback?.invoke(
+                        origin,
+                        true,
+                        false
                     )
-
-                    return true
                 }
-
-                if (url.startsWith("https://wa.me")) {
-
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(url)
-                        )
-                    )
-
-                    return true
-                }
-
-                return false
             }
 
-            override fun onPageFinished(
-                view: WebView?,
-                url: String?
-            ) {
+        webView.webViewClient =
+            object : WebViewClient() {
 
-                super.onPageFinished(view, url)
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
 
-                val css = """
-                    @font-face {
-                        font-family: 'MinhaFonte';
-                        src: url('file:///android_asset/fonte.ttf');
+                    val url =
+                        request?.url.toString()
+
+                    if (url.startsWith("tel:")) {
+
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_DIAL,
+                                Uri.parse(url)
+                            )
+                        )
+
+                        return true
                     }
 
-                    * {
-                        font-family: 'MinhaFonte' !important;
+                    if (url.startsWith("https://wa.me")) {
+
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(url)
+                            )
+                        )
+
+                        return true
                     }
-                """.trimIndent()
 
-                val js = """
-                    var style = document.createElement('style');
-                    style.innerHTML = `$css`;
-                    document.head.appendChild(style);
-                """.trimIndent()
+                    return false
+                }
 
-                view?.evaluateJavascript(js, null)
+                override fun onPageFinished(
+                    view: WebView?,
+                    url: String?
+                ) {
 
-                view?.evaluateJavascript(
-                    "mostrarConteudo()",
-                    null
-                )
+                    super.onPageFinished(
+                        view,
+                        url
+                    )
+
+                    view?.evaluateJavascript(
+                        "mostrarConteudo()",
+                        null
+                    )
+                }
             }
-        }
     }
+
+    // ==========================
+    // CARREGAR WEBVIEW
+    // ==========================
 
     private fun carregarWebView() {
 
@@ -391,6 +417,10 @@ fun ligarDireto(numero: String) {
         webView.visibility = View.VISIBLE
     }
 
+    // ==========================
+    // CONTATOS
+    // ==========================
+
     fun abrirContatos() {
 
         val intent = Intent(
@@ -398,112 +428,123 @@ fun ligarDireto(numero: String) {
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         )
 
-        startActivityForResult(intent, PICK_CONTACT)
+        startActivityForResult(
+            intent,
+            PICK_CONTACT
+        )
     }
 
     override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-) {
-
-    super.onActivityResult(
-        requestCode,
-        resultCode,
-        data
-    )
-
-    if (
-        requestCode == PICK_CONTACT &&
-        resultCode == RESULT_OK
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
     ) {
 
-        val uri = data?.data ?: return
-
-        val cursor = contentResolver.query(
-            uri,
-            null,
-            null,
-            null,
-            null
+        super.onActivityResult(
+            requestCode,
+            resultCode,
+            data
         )
 
         if (
-            cursor != null &&
-            cursor.moveToFirst()
+            requestCode == PICK_CONTACT &&
+            resultCode == RESULT_OK
         ) {
 
-            val numeroIndex =
-                cursor.getColumnIndex(
-                    ContactsContract.CommonDataKinds.Phone.NUMBER
-                )
+            val uri = data?.data ?: return
 
-            val nomeIndex =
-                cursor.getColumnIndex(
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-                )
-
-            val numero =
-                cursor.getString(numeroIndex)
-                    ?.replace("\\s".toRegex(), "")
-                    ?.replace("-", "")
-                    ?: ""
-
-            val nome =
-                cursor.getString(nomeIndex)
-                    ?: "Contato"
-
-            val prefs =
-                getSharedPreferences(
-                    "contatos",
-                    MODE_PRIVATE
-                )
-
-            val listaAtual =
-                prefs.getString("lista", "")
-                    ?: ""
-
-            val nomesAtual =
-                prefs.getString("nomes", "")
-                    ?: ""
-
-            val novaLista =
-                if (listaAtual.isEmpty()) {
-                    numero
-                } else {
-                    "$listaAtual,$numero"
-                }
-
-            val novosNomes =
-                if (nomesAtual.isEmpty()) {
-                    "$nome - $numero"
-                } else {
-                    "$nomesAtual\n$nome - $numero"
-                }
-
-            prefs.edit()
-                .putString("lista", novaLista)
-                .putString("nomes", novosNomes)
-                .apply()
-
-            webView.post {
-
-                webView.evaluateJavascript(
-                    "contatoSalvo('$nome','$numero')",
+            val cursor =
+                contentResolver.query(
+                    uri,
+                    null,
+                    null,
+                    null,
                     null
                 )
+
+            if (
+                cursor != null &&
+                cursor.moveToFirst()
+            ) {
+
+                val numeroIndex =
+                    cursor.getColumnIndex(
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                    )
+
+                val nomeIndex =
+                    cursor.getColumnIndex(
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                    )
+
+                val numero =
+                    cursor.getString(numeroIndex)
+                        ?.replace("\\s".toRegex(), "")
+                        ?.replace("-", "")
+                        ?: ""
+
+                val nome =
+                    cursor.getString(nomeIndex)
+                        ?: "Contato"
+
+                val prefs =
+                    getSharedPreferences(
+                        "contatos",
+                        MODE_PRIVATE
+                    )
+
+                val listaAtual =
+                    prefs.getString(
+                        "lista",
+                        ""
+                    ) ?: ""
+
+                val nomesAtual =
+                    prefs.getString(
+                        "nomes",
+                        ""
+                    ) ?: ""
+
+                val novaLista =
+                    if (listaAtual.isEmpty()) {
+                        numero
+                    } else {
+                        "$listaAtual,$numero"
+                    }
+
+                val novosNomes =
+                    if (nomesAtual.isEmpty()) {
+                        "$nome - $numero"
+                    } else {
+                        "$nomesAtual\n$nome - $numero"
+                    }
+
+                prefs.edit()
+                    .putString(
+                        "lista",
+                        novaLista
+                    )
+                    .putString(
+                        "nomes",
+                        novosNomes
+                    )
+                    .apply()
+
+                cursor.close()
+
+                Toast.makeText(
+                    this,
+                    "Contato salvo",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-
-            cursor.close()
-
-            Toast.makeText(
-                this,
-                "Contato salvo",
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
-    }
+
+    // ==========================
+    // LOCALIZAÇÃO
+    // ==========================
+
     fun pegarLocalizacao() {
 
         if (
@@ -526,20 +567,17 @@ fun ligarDireto(numero: String) {
                     val js =
                         "javascript:receberLocalizacao($lat,$lng)"
 
-                    webView.evaluateJavascript(js, null)
-
-                } else {
-
-                    webView.post {
-
-                        webView.evaluateJavascript(
-                            "alert('Não foi possível obter localização')",
-                            null
-                        )
-                    }
+                    webView.evaluateJavascript(
+                        js,
+                        null
+                    )
                 }
             }
     }
+
+    // ==========================
+    // SOS
+    // ==========================
 
     fun enviarSOS() {
 
@@ -567,27 +605,25 @@ fun ligarDireto(numero: String) {
                         "🚨 SOCORRO! Estou aqui: $link"
 
                     abrirIntentSMS(mensagem)
-
-                } else {
-
-                    webView.post {
-
-                        webView.evaluateJavascript(
-                            "alert('Não foi possível obter localização')",
-                            null
-                        )
-                    }
                 }
             }
     }
 
-    private fun abrirIntentSMS(mensagem: String) {
+    private fun abrirIntentSMS(
+        mensagem: String
+    ) {
 
-        val prefs: SharedPreferences =
-            getSharedPreferences("contatos", MODE_PRIVATE)
+        val prefs =
+            getSharedPreferences(
+                "contatos",
+                MODE_PRIVATE
+            )
 
         val lista =
-            prefs.getString("lista", "") ?: ""
+            prefs.getString(
+                "lista",
+                ""
+            ) ?: ""
 
         if (lista.trim().isEmpty()) {
 
@@ -600,63 +636,28 @@ fun ligarDireto(numero: String) {
             return
         }
 
-        val numeros = lista.split(",")
+        val intent =
+            Intent(Intent.ACTION_SENDTO)
 
-        val uriBuilder = StringBuilder("smsto:")
+        intent.data =
+            Uri.parse("smsto:")
 
-        var primeiro = true
+        intent.putExtra(
+            "address",
+            lista
+        )
 
-        for (numeroRaw in numeros) {
+        intent.putExtra(
+            "sms_body",
+            mensagem
+        )
 
-            val numero = numeroRaw.trim()
-
-            if (numero.isNotEmpty()) {
-
-                if (!primeiro) {
-                    uriBuilder.append(";")
-                }
-
-                uriBuilder.append(numero)
-
-                primeiro = false
-            }
-        }
-
-        try {
-
-            val intent =
-                Intent(Intent.ACTION_SENDTO)
-
-            intent.data =
-                Uri.parse(uriBuilder.toString())
-
-            intent.putExtra("sms_body", mensagem)
-
-            if (
-                intent.resolveActivity(packageManager)
-                != null
-            ) {
-
-                startActivity(intent)
-
-            } else {
-
-                Toast.makeText(
-                    this,
-                    "Nenhum app de SMS encontrado",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-        } catch (e: Exception) {
-
-            Toast.makeText(
-                this,
-                "Erro ao abrir SMS: ${e.message}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
+        startActivity(intent)
     }
+
+    // ==========================
+    // BIOMETRIA
+    // ==========================
 
     @JavascriptInterface
     fun iniciarBiometriaPrincesa() {
@@ -701,16 +702,12 @@ fun ligarDireto(numero: String) {
             val canAuth =
                 biometricManager.canAuthenticate(
                     BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                            BiometricManager.Authenticators.DEVICE_CREDENTIAL
                 )
 
             if (
                 canAuth ==
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ||
-                canAuth ==
-                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ||
-                canAuth ==
-                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE
+                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
             ) {
 
                 carregarWebView()
@@ -725,35 +722,8 @@ fun ligarDireto(numero: String) {
                 BiometricPrompt(
                     this,
                     executor,
-                    object : BiometricPrompt.AuthenticationCallback() {
-
-                        override fun onAuthenticationError(
-                            errorCode: Int,
-                            errString: CharSequence
-                        ) {
-
-                            when (errorCode) {
-
-                                BiometricPrompt.ERROR_USER_CANCELED,
-                                BiometricPrompt.ERROR_CANCELED -> {
-
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        "Autenticação cancelada",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                else -> {
-
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        errString,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
+                    object :
+                        BiometricPrompt.AuthenticationCallback() {
 
                         override fun onAuthenticationSucceeded(
                             result: BiometricPrompt.AuthenticationResult
@@ -776,29 +746,39 @@ fun ligarDireto(numero: String) {
             val promptInfo =
                 BiometricPrompt.PromptInfo.Builder()
                     .setTitle("Desbloquear")
-                    .setDescription("Use biometria, PIN ou senha")
+                    .setDescription(
+                        "Use biometria, PIN ou senha"
+                    )
                     .setAllowedAuthenticators(
                         BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
                     )
                     .build()
 
-            biometricPrompt.authenticate(promptInfo)
+            biometricPrompt.authenticate(
+                promptInfo
+            )
         }
     }
 
+    // ==========================
+    // CONFIG
+    // ==========================
+
     private fun abrirConfiguracoes() {
 
-        val intent = Intent(
-            android.provider.Settings
-                .ACTION_APPLICATION_DETAILS_SETTINGS
-        )
+        val intent =
+            Intent(
+                android.provider.Settings
+                    .ACTION_APPLICATION_DETAILS_SETTINGS
+            )
 
-        intent.data = Uri.fromParts(
-            "package",
-            packageName,
-            null
-        )
+        intent.data =
+            Uri.fromParts(
+                "package",
+                packageName,
+                null
+            )
 
         startActivity(intent)
     }
