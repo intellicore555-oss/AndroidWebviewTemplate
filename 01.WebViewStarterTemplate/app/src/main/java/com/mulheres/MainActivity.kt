@@ -93,6 +93,23 @@ fun ativarPalmas() {
     ).show()
 }
 
+@JavascriptInterface
+fun desativarPalmas() {
+
+    stopService(
+        Intent(
+            this,
+            PalmaService::class.java
+        )
+    )
+
+    Toast.makeText(
+        this,
+        "Proteção por palmas desativada",
+        Toast.LENGTH_SHORT
+    ).show()
+}
+
     // ==========================
     // SENSOR
     // ==========================
