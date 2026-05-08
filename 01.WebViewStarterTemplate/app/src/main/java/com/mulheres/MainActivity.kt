@@ -124,6 +124,8 @@ acelerometro?.let {
     )
 }
 
+}
+
 // ================= PARAR =================
 
 private fun pararSensor() {
