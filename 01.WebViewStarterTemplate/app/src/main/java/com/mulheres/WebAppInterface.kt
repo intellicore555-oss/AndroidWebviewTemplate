@@ -88,6 +88,20 @@ fun abrirContatos() {
             .apply()
     }
 
+    @JavascriptInterface
+fun ativarPalmas() {
+
+    (activity as MainActivity)
+        .ativarPalmas()
+}
+
+@JavascriptInterface
+fun desativarPalmas() {
+
+    (activity as MainActivity)
+        .desativarPalmas()
+}
+
  @JavascriptInterface
 fun ativarProtecao() {
 
