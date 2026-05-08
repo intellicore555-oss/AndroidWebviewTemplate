@@ -284,6 +284,7 @@ fun desativarPalmas() {
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.SEND_SMS,
                 Manifest.permission.CALL_PHONE
+                Manifest.permission.RECORD_AUDIO
             ),
             PERMISSION_CODE
         )
