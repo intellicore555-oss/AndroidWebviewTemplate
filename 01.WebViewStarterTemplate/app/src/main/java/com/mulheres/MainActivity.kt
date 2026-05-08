@@ -1,5 +1,9 @@
 package com.mulheres
 
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
@@ -30,105 +34,122 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var locationClient: FusedLocationProviderClient
 
-    private SensorManager sensorManager;
-private Sensor acelerometro;
+   private lateinit var sensorManager: SensorManager
+private lateinit var acelerometro: Sensor
 
-private SensorEventListener shakeListener;
+private var shakeListener: SensorEventListener? = null
 
-private boolean protecaoAtiva = false;
+private var protecaoAtiva = false
 
-private long ultimoShake = 0;
+private var ultimoShake = 0L
 
 // ================= ATIVAR =================
 
 @JavascriptInterface
-public void ativarProtecao() {
+fun ativarProtecao() {
 
-    protecaoAtiva = true;
+    protecaoAtiva = true
 
-    iniciarSensor();
+    iniciarSensor()
 }
 
 // ================= DESATIVAR =================
 
 @JavascriptInterface
-public void desativarProtecao() {
+fun desativarProtecao() {
 
-    protecaoAtiva = false;
+    protecaoAtiva = false
 
-    pararSensor();
+    pararSensor()
 }
 
 // ================= SENSOR =================
 
-private void iniciarSensor() {
+private fun iniciarSensor() {
 
     sensorManager =
-        (SensorManager) getSystemService(SENSOR_SERVICE);
+        getSystemService(SENSOR_SERVICE)
+                as SensorManager
 
     acelerometro =
         sensorManager.getDefaultSensor(
             Sensor.TYPE_ACCELEROMETER
-        );
+        )
 
-    shakeListener = new SensorEventListener() {
+    shakeListener =
+        object : SensorEventListener {
 
-        @Override
-        public void onSensorChanged(SensorEvent event) {
+            override fun onSensorChanged(
+                event: SensorEvent
+            ) {
 
-            if (!protecaoAtiva) return;
+                if (!protecaoAtiva) return
 
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
 
-            double aceleracao =
-                Math.sqrt(x * x + y * y + z * z);
+                val aceleracao =
+                    Math.sqrt(
+                        (x * x + y * y + z * z).toDouble()
+                    )
 
-            // força do balanço
-            if (aceleracao > 18) {
+                if (aceleracao > 18) {
 
-                long agora =
-                    System.currentTimeMillis();
+                    val agora =
+                        System.currentTimeMillis()
 
-                // evita spam
-                if (agora - ultimoShake > 4000) {
+                    if (agora - ultimoShake > 4000) {
 
-                    ultimoShake = agora;
+                        ultimoShake = agora
 
-                    ligarDireto("180");
+                        ligarDireto("180")
+                    }
                 }
             }
-        }
 
-        @Override
-        public void onAccuracyChanged(
-            Sensor sensor,
-            int accuracy
-        ) {
-
+            override fun onAccuracyChanged(
+                sensor: Sensor?,
+                accuracy: Int
+            ) {
+            }
         }
-    };
 
     sensorManager.registerListener(
         shakeListener,
         acelerometro,
         SensorManager.SENSOR_DELAY_NORMAL
-    );
+    )
 }
 
 // ================= PARAR =================
 
-private void pararSensor() {
+private fun pararSensor() {
 
-    if (
-        sensorManager != null &&
-        shakeListener != null
-    ) {
+    shakeListener?.let {
 
-        sensorManager.unregisterListener(
-            shakeListener
-        );
+        sensorManager.unregisterListener(it)
+    }
+}
+
+// ================= LIGAÇÃO =================
+
+@JavascriptInterface
+fun ligarDireto(numero: String) {
+
+    try {
+
+        val intent =
+            Intent(Intent.ACTION_CALL)
+
+        intent.data =
+            Uri.parse("tel:$numero")
+
+        startActivity(intent)
+
+    } catch (e: Exception) {
+
+        e.printStackTrace()
     }
 }
 
