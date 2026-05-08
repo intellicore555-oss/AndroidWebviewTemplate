@@ -155,26 +155,7 @@ fun ligarDireto(numero: String) {
 
 // ================= LIGAÇÃO =================
 
-@JavascriptInterface
-public void ligarDireto(String numero) {
 
-    try {
-
-        Intent intent = new Intent(
-            Intent.ACTION_CALL
-        );
-
-        intent.setData(
-            Uri.parse("tel:" + numero)
-        );
-
-        startActivity(intent);
-
-    } catch (Exception e) {
-
-        e.printStackTrace();
-    }
-}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
