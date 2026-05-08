@@ -383,6 +383,7 @@ onclick="enviarSOSContatos()">
 </div>
 
 <script>
+
 const toggle = document.getElementById("puxador");
 const alavanca = document.getElementById("puxar");
 
@@ -399,16 +400,19 @@ toggle.addEventListener("click", function () {
 
   ligado = !ligado;
 
-  // move alavanca
   alavanca.style.transform = ligado
     ? "translateX(100%)"
     : "translateX(0%)";
 
-  // troca ícones
-  icon1.style.display = ligado ? "none" : "block";
-  icon2.style.display = ligado ? "block" : "none";
+  // 🔥 troca ícones
+  icon1.style.display = ligado
+    ? "none"
+    : "block";
 
-  // fade saída
+  icon2.style.display = ligado
+    ? "block"
+    : "none";
+
   document.body.style.opacity = "0.85";
 
   setTimeout(() => {
@@ -425,81 +429,55 @@ toggle.addEventListener("click", function () {
   }, 220);
 });
 
+// 🔥 estado inicial
+icon1.style.display = "block";
+icon2.style.display = "none";
+
 // ================= SOS =================
 
 panic.addEventListener("click", ativarSOS);
 
 function ativarSOS() {
 
-  // vibração
   if (navigator.vibrate) {
     navigator.vibrate(300);
   }
 
-  // efeito visual
   panic.style.transform = "scale(0.95)";
 
   setTimeout(() => {
     panic.style.transform = "scale(1)";
   }, 120);
 
-  // 🔥 Android nativo primeiro
   if (window.Android && Android.ligarDireto) {
 
     try {
 
       Android.ligarDireto("180");
-
-      // fallback automático
-      setTimeout(() => {
-
-        window.location.href =
-          "https://wa.me/556196100180?text=PRECISO%20DE%20AJUDA";
-
-      }, 2500);
-
       return;
 
-    } catch (e) {}
+    } catch (e) {
+
+      console.log(e);
+    }
   }
 
-  // 🔥 tenta ligação normal
-  try {
-
-    window.location.href = "tel:180";
-
-    // fallback caso falhe
-    setTimeout(() => {
-
-      window.location.href =
-        "https://wa.me/556196100180?text=PRECISO%20DE%20AJUDA";
-
-    }, 2500);
-
-  } catch (e) {
-
-    // fallback imediato
-    window.location.href =
-      "https://wa.me/556196100180?text=PRECISO%20DE%20AJUDA";
-  }
+  window.location.href = "tel:180";
 }
 
 // ================= FUNÇÕES =================
 
-// 📞 ligação
 function ligar(numero) {
 
   window.location.href = "tel:" + numero;
 }
 
-// 💬 whatsapp
 function whatsapp180() {
 
   window.location.href =
     "https://wa.me/556196100180";
 }
 
-// 📍 localização
 function enviarLocalizacao() {
 
   if (!navigator.geolocation) {
@@ -558,18 +536,14 @@ function iniciarBiometria() {
 
 // ================= FADE IN =================
 
-// ================= FADE IN =================
-
 const elementos = document.querySelectorAll(
   ".panic, .btn1, .btn, .local"
 );
 
 elementos.forEach((el, index) => {
 
-  // estado inicial
   el.style.opacity = "0";
 
-  // NÃO mexe no transform da panic
   if (!el.classList.contains("panic")) {
     el.style.transform = "translateY(12px)";
   }
@@ -581,7 +555,6 @@ elementos.forEach((el, index) => {
 
     el.style.opacity = "1";
 
-    // NÃO altera transform da panic
     if (!el.classList.contains("panic")) {
       el.style.transform = "translateY(0)";
     }
@@ -590,10 +563,8 @@ elementos.forEach((el, index) => {
 
 });
 
-// fade separado toggl
-</script>
+// ================= CONTATOS =================
 
-<script>
 function selecionarContato() {
 
   if (
@@ -623,9 +594,9 @@ function contatoSalvo(nome, numero) {
     nome + "\n" + numero
   );
 }
-</script>
 
-<script>
+// ================= PROTEÇÃO =================
+
 const protecao = document.getElementById("protecao");
 
 let ativa = false;
@@ -644,7 +615,10 @@ protecao.onclick = function(){
 <br><br>
 ATIVADO`;
 
-        if(window.Android){
+        if(
+          window.Android &&
+          Android.ativarProtecao
+        ){
             Android.ativarProtecao();
         }
 
@@ -653,15 +627,20 @@ ATIVADO`;
         protecao.classList.remove("ativo");
         protecao.classList.add("desativado");
 
-        protecao.innerHTML =`⚫ Balançar o celular para pedir ajuda
+        protecao.innerHTML =
+`⚫ Balançar o celular para pedir ajuda
 <br><br>
 DESATIVADO`;
 
-        if(window.Android){
+        if(
+          window.Android &&
+          Android.desativarProtecao
+        ){
             Android.desativarProtecao();
         }
     }
 }
+
 </script>
 
 </body>
