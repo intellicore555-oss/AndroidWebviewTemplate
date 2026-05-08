@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/palmas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:text="👏"
+    android:textSize="34sp"
+    android:textStyle="bold"
+    android:textColor="#ffffff"
+    android:background="@drawable/bg_widget_palmas"/>
