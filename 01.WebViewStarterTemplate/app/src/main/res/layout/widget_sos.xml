@@ -2,11 +2,12 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sos"
-    android:layout_width="110dp"
-    android:layout_height="110dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center"
     android:text="SOS"
     android:textSize="22sp"
     android:textStyle="bold"
     android:background="@drawable/bg_sos"
-    android:textColor="#ffffff"/>
+    android:textColor="#ffffff"
+    android:padding="16dp"/>
