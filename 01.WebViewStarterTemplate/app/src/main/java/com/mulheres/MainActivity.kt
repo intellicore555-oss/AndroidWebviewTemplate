@@ -123,7 +123,7 @@ private fun iniciarSensor() {
             SensorManager.SENSOR_DELAY_NORMAL
         )
     }
-}
+
 }
 // ================= LIGAÇÃO =================
 
