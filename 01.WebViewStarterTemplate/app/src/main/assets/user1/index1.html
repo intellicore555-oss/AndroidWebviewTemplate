@@ -309,7 +309,7 @@ svg {
     border:2px solid #444;
 }
 
-.palma-card{
+.palma{
 
     width:65%;
 
@@ -338,7 +338,7 @@ margin:auto;
     1px solid rgba(255,255,255,.12);
 }
 
-.palma-card::before{
+.palma::before{
 
     content:"";
 
@@ -356,7 +356,7 @@ margin:auto;
     right:-90px;
 }
 
-.palma-card::after{
+.palma::after{
 
     content:"";
 
@@ -398,7 +398,7 @@ margin:auto;
     }
 }
 
-.palma-card h2{
+.palma h2{
 
     font-size:30px;
 
@@ -407,7 +407,7 @@ margin:auto;
     margin-bottom:12px;
 }
 
-.palma-card p{
+.palma p{
 
     line-height:1.7;
 
@@ -418,7 +418,7 @@ margin:auto;
     color:rgba(255,255,255,.92);
 }
 
-.palma-card button{
+.palma button{
 
     width:100%;
 
@@ -475,7 +475,7 @@ margin:auto;
   <span>SOS</span>
 </div>
 
-<div class="palma-card">
+<div class="palma">
 
     <div class="palma-icon">
         👏
@@ -725,7 +725,7 @@ function iniciarBiometria() {
 // ================= FADE IN =================
 
 const elementos = document.querySelectorAll(
-  ".panic, .btn1, .btn, .local, #protecao"
+  ".panic, .btn1, .btn, .local, #protecao, .palma"
 );
 
 elementos.forEach((el, index) => {
