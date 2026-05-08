@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/localizacao"
+    android:layout_width="110dp"
+    android:layout_height="110dp"
     android:gravity="center"
-    android:text="LOCALIZAÇÃO"
-    android:textSize="16sp"
+    android:text="LOCAL"
+    android:textSize="18sp"
     android:textStyle="bold"
-    android:background="#7b2cbf"
+    android:background="@drawable/bg_local"
     android:textColor="#ffffff"/>
