@@ -132,6 +132,7 @@ private fun iniciarSensor() {
         )
     
 }
+}
 // ================= LIGAÇÃO =================
 
 @JavascriptInterface
