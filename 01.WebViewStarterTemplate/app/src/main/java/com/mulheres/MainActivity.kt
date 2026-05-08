@@ -108,6 +108,14 @@ private fun iniciarSensor() {
                 }
             }
 
+            private fun pararSensor() {
+
+    shakeListener?.let {
+
+        sensorManager.unregisterListener(it)
+    }
+            }
+            
             override fun onAccuracyChanged(
                 sensor: Sensor?,
                 accuracy: Int
@@ -122,8 +130,7 @@ private fun iniciarSensor() {
             it,
             SensorManager.SENSOR_DELAY_NORMAL
         )
-    }
-
+    
 }
 // ================= LIGAÇÃO =================
 
