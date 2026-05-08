@@ -68,6 +68,31 @@ fun desativarProtecao() {
     pararSensor()
 }
 
+@JavascriptInterface
+fun ativarPalmas() {
+
+    val intent =
+        Intent(
+            this,
+            PalmaService::class.java
+        )
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        startForegroundService(intent)
+
+    } else {
+
+        startService(intent)
+    }
+
+    Toast.makeText(
+        this,
+        "Proteção por palmas ativada",
+        Toast.LENGTH_SHORT
+    ).show()
+}
+
     // ==========================
     // SENSOR
     // ==========================
