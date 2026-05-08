@@ -278,6 +278,38 @@ svg {
 }
 
 </style>
+
+<style>
+#protecao{
+    width:65%;
+    padding:22px;
+    border-radius:22px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none;
+    transition:0.3s;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+    
+    position: relative;
+    margin:auto;
+    margin-bottom: 20px;
+}
+
+.ativo{
+    background:#2b103d;
+    color:#d88cff;
+    border:2px solid #b84dff;
+}
+
+.desativado{
+    background:#1b1b1b;
+    color:#9b9b9b;
+    border:2px solid #444;
+}
+</style>
+
 </head>
 
 <body>
@@ -288,6 +320,13 @@ svg {
 
 <div class="panic">
   <span>SOS</span>
+</div>
+
+
+<div id="protecao" class="desativado">
+⚫ balançar o celular para pedir ajuda
+<br><br>
+ DESATIVADO
 </div>
 
 
@@ -583,6 +622,45 @@ function contatoSalvo(nome, numero) {
     "Contato salvo:\n\n" +
     nome + "\n" + numero
   );
+}
+</script>
+
+<script>
+const protecao = document.getElementById("protecao");
+
+let ativa = false;
+
+protecao.onclick = function(){
+
+    ativa = !ativa;
+
+    if(ativa){
+
+        protecao.classList.remove("desativado");
+        protecao.classList.add("ativo");
+
+        protecao.innerHTML =
+`🟣 Balançar o celular para pedir ajuda
+<br><br>
+ATIVADO`;
+
+        if(window.Android){
+            Android.ativarProtecao();
+        }
+
+    } else {
+
+        protecao.classList.remove("ativo");
+        protecao.classList.add("desativado");
+
+        protecao.innerHTML =`⚫ Balançar o celular para pedir ajuda
+<br><br>
+DESATIVADO`;
+
+        if(window.Android){
+            Android.desativarProtecao();
+        }
+    }
 }
 </script>
 
