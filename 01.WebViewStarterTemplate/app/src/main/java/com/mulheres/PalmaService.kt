@@ -1,18 +1,21 @@
-
 package com.mulheres
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import kotlin.concurrent.thread
 import kotlin.math.abs
 
@@ -24,7 +27,10 @@ class PalmaService : Service() {
 
     private var contadorPalmas = 0
 
+    private var recorder: AudioRecord? = null
+
     override fun onCreate() {
+
         super.onCreate()
 
         criarCanal()
@@ -47,10 +53,28 @@ class PalmaService : Service() {
 
         rodando = false
 
+        try {
+
+            recorder?.stop()
+
+        } catch (_: Exception) {
+        }
+
+        try {
+
+            recorder?.release()
+
+        } catch (_: Exception) {
+        }
+
+        recorder = null
+
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(
+        intent: Intent?
+    ): IBinder? {
 
         return null
     }
@@ -62,7 +86,10 @@ class PalmaService : Service() {
     private fun iniciarForeground() {
 
         val intent =
-            Intent(this, MainActivity::class.java)
+            Intent(
+                this,
+                MainActivity::class.java
+            )
 
         val pendingIntent =
             PendingIntent.getActivity(
@@ -81,7 +108,7 @@ class PalmaService : Service() {
                     "Proteção por Palmas"
                 )
                 .setContentText(
-                    "Escuta ativa"
+                    "Escuta ativa habilitada"
                 )
                 .setSmallIcon(
                     android.R.drawable.ic_lock_idle_alarm
@@ -89,6 +116,7 @@ class PalmaService : Service() {
                 .setContentIntent(
                     pendingIntent
                 )
+                .setOngoing(true)
                 .build()
 
         startForeground(
@@ -103,7 +131,10 @@ class PalmaService : Service() {
 
     private fun criarCanal() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.O
+        ) {
 
             val canal =
                 NotificationChannel(
@@ -117,7 +148,9 @@ class PalmaService : Service() {
                     NotificationManager::class.java
                 )
 
-            manager.createNotificationChannel(canal)
+            manager.createNotificationChannel(
+                canal
+            )
         }
     }
 
@@ -129,83 +162,141 @@ class PalmaService : Service() {
 
         thread {
 
-            val taxa = 44100
+            try {
 
-            val bufferSize =
-                AudioRecord.getMinBufferSize(
-                    taxa,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT
-                )
+                if (
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.RECORD_AUDIO
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
 
-            val recorder =
-                AudioRecord(
-                    MediaRecorder.AudioSource.MIC,
-                    taxa,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSize
-                )
+                    stopSelf()
 
-            val buffer =
-                ShortArray(bufferSize)
+                    return@thread
+                }
 
-            recorder.startRecording()
+                val taxa = 44100
 
-            while (rodando) {
-
-                val leitura =
-                    recorder.read(
-                        buffer,
-                        0,
-                        buffer.size
+                val bufferSize =
+                    AudioRecord.getMinBufferSize(
+                        taxa,
+                        AudioFormat.CHANNEL_IN_MONO,
+                        AudioFormat.ENCODING_PCM_16BIT
                     )
 
-                var pico = 0
+                if (bufferSize <= 0) {
 
-                for (i in 0 until leitura) {
+                    stopSelf()
 
-                    pico =
-                        maxOf(
-                            pico,
-                            abs(buffer[i].toInt())
-                        )
+                    return@thread
                 }
 
-                // SENSIBILIDADE
+                recorder =
+                    AudioRecord(
+                        MediaRecorder.AudioSource.MIC,
+                        taxa,
+                        AudioFormat.CHANNEL_IN_MONO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        bufferSize
+                    )
 
-                if (pico > 15000) {
+                if (
+                    recorder?.state !=
+                    AudioRecord.STATE_INITIALIZED
+                ) {
 
-                    val agora =
-                        System.currentTimeMillis()
+                    stopSelf()
 
-                    // intervalo entre palmas
+                    return@thread
+                }
 
-                    if (agora - ultimaPalma < 1500) {
+                val buffer =
+                    ShortArray(bufferSize)
 
-                        contadorPalmas++
+                recorder?.startRecording()
 
-                    } else {
+                while (rodando) {
 
-                        contadorPalmas = 1
+                    val leitura =
+                        recorder?.read(
+                            buffer,
+                            0,
+                            buffer.size
+                        ) ?: 0
+
+                    if (leitura <= 0) {
+                        continue
                     }
 
-                    ultimaPalma = agora
+                    var pico = 0
 
-                    // 3 PALMAS
+                    for (i in 0 until leitura) {
 
-                    if (contadorPalmas >= 3) {
+                        pico =
+                            maxOf(
+                                pico,
+                                abs(
+                                    buffer[i].toInt()
+                                )
+                            )
+                    }
 
-                        contadorPalmas = 0
+                    // SENSIBILIDADE
 
-                        acionarEmergencia()
+                    if (pico > 14000) {
+
+                        val agora =
+                            System.currentTimeMillis()
+
+                        // intervalo entre palmas
+
+                        if (
+                            agora - ultimaPalma < 1500
+                        ) {
+
+                            contadorPalmas++
+
+                        } else {
+
+                            contadorPalmas = 1
+                        }
+
+                        ultimaPalma = agora
+
+                        // 3 PALMAS
+
+                        if (contadorPalmas >= 3) {
+
+                            contadorPalmas = 0
+
+                            acionarEmergencia()
+                        }
                     }
                 }
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+
+            } finally {
+
+                try {
+
+                    recorder?.stop()
+
+                } catch (_: Exception) {
+                }
+
+                try {
+
+                    recorder?.release()
+
+                } catch (_: Exception) {
+                }
+
+                recorder = null
             }
-
-            recorder.stop()
-
-            recorder.release()
         }
     }
 
@@ -223,7 +314,7 @@ class PalmaService : Service() {
                 )
 
             intent.data =
-                android.net.Uri.parse(
+                Uri.parse(
                     "tel:180"
                 )
 
