@@ -47,15 +47,15 @@ private var ultimoShake = 0L
 
 
 fun ativarProtecao() {
+@JavascriptInterface
+fun ativarProtecao() {
 
     protecaoAtiva = true
 
     iniciarSensor()
 }
 
-// ================= DESATIVAR =================
-
-
+@JavascriptInterface
 fun desativarProtecao() {
 
     protecaoAtiva = false
