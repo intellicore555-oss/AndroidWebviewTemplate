@@ -23,12 +23,10 @@ class SosWidget : AppWidgetProvider() {
                 R.layout.widget_sos
             )
 
-            // NUMERO
             val numero = "180"
 
-            // LIGAÇÃO
             val intent = Intent(
-                Intent.ACTION_CALL,
+                Intent.ACTION_DIAL,
                 Uri.parse("tel:$numero")
             )
 
@@ -36,13 +34,12 @@ class SosWidget : AppWidgetProvider() {
 
             val pendingIntent = PendingIntent.getActivity(
                 context,
-                0,
+                appWidgetId,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or
                 PendingIntent.FLAG_IMMUTABLE
             )
 
-            // CLICK
             views.setOnClickPendingIntent(
                 R.id.sos,
                 pendingIntent
