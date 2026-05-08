@@ -88,14 +88,18 @@ fun abrirContatos() {
             .apply()
     }
 
-    @JavascriptInterface
+ @JavascriptInterface
 fun ativarProtecao() {
-    activity.ativarProtecao()
+
+    (activity as MainActivity)
+        .ativarProtecao()
 }
 
 @JavascriptInterface
 fun desativarProtecao() {
-    activity.desativarProtecao()
+
+    (activity as MainActivity)
+        .desativarProtecao()
 }
 
     @JavascriptInterface
