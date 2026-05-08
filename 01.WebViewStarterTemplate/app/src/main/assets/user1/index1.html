@@ -439,21 +439,25 @@ panic.addEventListener("click", ativarSOS);
 
 function ativarSOS() {
 
+  // vibração
   if (navigator.vibrate) {
     navigator.vibrate(300);
   }
 
+  // efeito visual
   panic.style.transform = "scale(0.95)";
 
   setTimeout(() => {
     panic.style.transform = "scale(1)";
   }, 120);
 
+  // ANDROID NATIVO
   if (window.Android && Android.ligarDireto) {
 
     try {
 
       Android.ligarDireto("180");
+
       return;
 
     } catch (e) {
@@ -462,7 +466,15 @@ function ativarSOS() {
     }
   }
 
-  window.location.href = "tel:180";
+  // fallback apenas ligação normal
+  try {
+
+    window.location.href = "tel:180";
+
+  } catch (e) {
+
+    alert("Não foi possível iniciar ligação");
+  }
 }
 
 // ================= FUNÇÕES =================
