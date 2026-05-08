@@ -30,6 +30,130 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var locationClient: FusedLocationProviderClient
 
+    private SensorManager sensorManager;
+private Sensor acelerometro;
+
+private SensorEventListener shakeListener;
+
+private boolean protecaoAtiva = false;
+
+private long ultimoShake = 0;
+
+// ================= ATIVAR =================
+
+@JavascriptInterface
+public void ativarProtecao() {
+
+    protecaoAtiva = true;
+
+    iniciarSensor();
+}
+
+// ================= DESATIVAR =================
+
+@JavascriptInterface
+public void desativarProtecao() {
+
+    protecaoAtiva = false;
+
+    pararSensor();
+}
+
+// ================= SENSOR =================
+
+private void iniciarSensor() {
+
+    sensorManager =
+        (SensorManager) getSystemService(SENSOR_SERVICE);
+
+    acelerometro =
+        sensorManager.getDefaultSensor(
+            Sensor.TYPE_ACCELEROMETER
+        );
+
+    shakeListener = new SensorEventListener() {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            if (!protecaoAtiva) return;
+
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            double aceleracao =
+                Math.sqrt(x * x + y * y + z * z);
+
+            // força do balanço
+            if (aceleracao > 18) {
+
+                long agora =
+                    System.currentTimeMillis();
+
+                // evita spam
+                if (agora - ultimoShake > 4000) {
+
+                    ultimoShake = agora;
+
+                    ligarDireto("180");
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(
+            Sensor sensor,
+            int accuracy
+        ) {
+
+        }
+    };
+
+    sensorManager.registerListener(
+        shakeListener,
+        acelerometro,
+        SensorManager.SENSOR_DELAY_NORMAL
+    );
+}
+
+// ================= PARAR =================
+
+private void pararSensor() {
+
+    if (
+        sensorManager != null &&
+        shakeListener != null
+    ) {
+
+        sensorManager.unregisterListener(
+            shakeListener
+        );
+    }
+}
+
+// ================= LIGAÇÃO =================
+
+@JavascriptInterface
+public void ligarDireto(String numero) {
+
+    try {
+
+        Intent intent = new Intent(
+            Intent.ACTION_CALL
+        );
+
+        intent.setData(
+            Uri.parse("tel:" + numero)
+        );
+
+        startActivity(intent);
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+    }
+}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
