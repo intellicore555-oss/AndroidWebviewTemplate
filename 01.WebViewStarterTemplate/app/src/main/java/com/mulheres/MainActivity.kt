@@ -65,7 +65,7 @@ fun desativarProtecao() {
 
 // ================= SENSOR =================
 
-private fun iniciarSensor() {
+public fun iniciarSensor() {
 
     sensorManager =
         getSystemService(SENSOR_SERVICE)
@@ -128,7 +128,7 @@ acelerometro?.let {
 
 // ================= PARAR =================
 
-private fun pararSensor() {
+public fun pararSensor() {
 
     shakeListener?.let {
 
