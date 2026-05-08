@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationClient: FusedLocationProviderClient
 
    private lateinit var sensorManager: SensorManager
-private lateinit var acelerometro: Sensor
+private var acelerometro: Sensor? = null
 
 private var shakeListener: SensorEventListener? = null
 
@@ -115,9 +115,11 @@ private fun iniciarSensor() {
             }
         }
 
+acelerometro?.let {
+
     sensorManager.registerListener(
         shakeListener,
-        acelerometro,
+        it,
         SensorManager.SENSOR_DELAY_NORMAL
     )
 }
