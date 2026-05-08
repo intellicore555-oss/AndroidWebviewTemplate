@@ -50,22 +50,19 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     // PROTEÇÃO
     // ==========================
+@JavascriptInterface
+fun ativarProtecao() {
 
-    @JavascriptInterface
-    fun ativarProtecao() {
+    (activity as MainActivity)
+        .ativarProtecao()
+}
 
-        protecaoAtiva = true
+@JavascriptInterface
+fun desativarProtecao() {
 
-        iniciarSensor()
-    }
-
-    @JavascriptInterface
-    fun desativarProtecao() {
-
-        protecaoAtiva = false
-
-        pararSensor()
-    }
+    (activity as MainActivity)
+        .desativarProtecao()
+}
 
     // ==========================
     // SENSOR
