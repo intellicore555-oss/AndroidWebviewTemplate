@@ -45,7 +45,7 @@ private var ultimoShake = 0L
 
 // ================= ATIVAR =================
 
-@JavascriptInterface
+
 fun ativarProtecao() {
 
     protecaoAtiva = true
@@ -55,7 +55,7 @@ fun ativarProtecao() {
 
 // ================= DESATIVAR =================
 
-@JavascriptInterface
+
 fun desativarProtecao() {
 
     protecaoAtiva = false
