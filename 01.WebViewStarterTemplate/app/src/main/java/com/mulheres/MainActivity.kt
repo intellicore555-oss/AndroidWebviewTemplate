@@ -65,7 +65,7 @@ fun desativarProtecao() {
 
 // ================= SENSOR =================
 
-public fun iniciarSensor() {
+private fun iniciarSensor() {
 
     sensorManager =
         getSystemService(SENSOR_SERVICE)
@@ -115,27 +115,15 @@ public fun iniciarSensor() {
             }
         }
 
-acelerometro?.let {
+    acelerometro?.let {
 
-    sensorManager.registerListener(
-        shakeListener,
-        it,
-        SensorManager.SENSOR_DELAY_NORMAL
-    )
-}
-
-}
-
-// ================= PARAR =================
-
-public fun pararSensor() {
-
-    shakeListener?.let {
-
-        sensorManager.unregisterListener(it)
+        sensorManager.registerListener(
+            shakeListener,
+            it,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 }
-
 // ================= LIGAÇÃO =================
 
 @JavascriptInterface
