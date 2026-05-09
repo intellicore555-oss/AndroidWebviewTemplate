@@ -839,19 +839,42 @@ fun iniciarBiometria() {
             )
 
         val promptInfo =
-            BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Desbloquear")
-                .setDescription(
-                    "Use biometria, PIN ou senha"
-                )
-                .setAllowedAuthenticators(
-                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                            BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                )
-                .build()
+                BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Desbloquear")
+                    .setDescription(
+                        "Use biometria, PIN ou senha"
+                    )
+                    .setAllowedAuthenticators(
+                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                    )
+                    .build()
 
-        biometricPrompt.authenticate(
-            promptInfo
-        )
+            biometricPrompt.authenticate(
+                promptInfo
+            )
+        }
+    }
+
+    // ==========================
+    // CONFIG
+    // ==========================
+
+    private fun abrirConfiguracoes() {
+
+        val intent =
+            Intent(
+                android.provider.Settings
+                    .ACTION_APPLICATION_DETAILS_SETTINGS
+            )
+
+        intent.data =
+            Uri.fromParts(
+                "package",
+                packageName,
+                null
+            )
+
+        startActivity(intent)
     }
 }
