@@ -63,6 +63,65 @@ h1 {
 
 <div class="container">
 
+<h1 onclick="window.location.href='index1.html'" style="color: pink;">
+  Clique em mim
+  <br>
+   para voltar!
+</h1>
+
+  <h1>Meus Acessos</h1>
+
+  <button class="btn" onclick="ir('calendario.html')">
+    📅 Agenda
+  </button>
+
+  <button class="btn" onclick="ir('caderno.html')">
+    📒 Anotações
+  </button>
+
+  <button class="btn" onclick="ir('treino.html')">
+    🏃 Rotina
+  </button>
+
+</div>
+
+<script>
+function ir(pagina) {
+  window.location.href = pagina;
+}
+</script>
+
+</body>
+</html>
+  padding: 18px;
+  border-radius: 300px;
+  border: none;
+  font-size: 18px;
+  background: mediumslateblue;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* efeito suave */
+.btn:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+/* títulos discretos */
+h1 {
+  font-size: 22px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
   <h1>Meus Acessos</h1>
 
   <button class="btn" onclick="ir('calendario.html')">
