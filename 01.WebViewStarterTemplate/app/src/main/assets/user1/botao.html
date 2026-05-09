@@ -1,61 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <title>Agenda</title>
 
 <style>
-  * {
-  font-family: 'Quicksand', sans-serif;
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Quicksand',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  background:black;
+  color:white;
+  overflow:auto;
+}
+
+/* centralização */
+.container{
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:22px;
+}
+
+/* card principal */
+.card{
+  width:100%;
+  max-width:430px;
+
+  
+
+  
+
+  border-radius:38px;
+
+  padding:30px 22px;
+
+  text-align:center;
+
+  box-shadow:
+  0 0 40px rgba(255,255,255,0.03);
+}
+
+/* clique em mim */
+.voltar{
+  color:pink;
+
+  font-size:17px;
+  font-weight:500;
+
+  margin-bottom:28px;
+
+  cursor:pointer;
+
+  transition:0.2s;
+}
+
+.voltar:active{
+  transform:scale(0.97);
+  opacity:0.75;
+}
+
+/* ícone */
+.icon{
+  width:92px;
+  height:92px;
+
+  border-radius:30px;
+
+  background:mediumslateblue;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  margin:0 auto 22px auto;
+
+  font-size:42px;
+
+  box-shadow:
+  0 0 35px rgba(123,104,238,0.35);
+}
+
+/* título */
+h2{
+  font-size:30px;
+  font-weight:700;
+
+  margin-bottom:10px;
+}
+
+/* subtitulo */
+.subtitle{
+  color:#8d8d8d;
+
+  font-size:15px;
+
+  line-height:1.5;
+
+  margin-bottom:34px;
+}
+
+/* lista de botões */
+.buttons{
+  display:flex;
+  flex-direction:column;
+
+  gap:16px;
+}
+
+/* botão */
+.btn{
+  width:100%;
+
+  border:none;
+
+  border-radius:999px;
+
+  padding:19px 22px;
+
+  background:#171717;
+
+  color:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  font-size:17px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:0.2s;
+
+  border:1px solid #242424;
+}
+
+.btn:hover{
+  border-color:mediumslateblue;
+}
+
+.btn:active{
+  transform:scale(0.98);
+  opacity:0.85;
+}
+
+/* lado esquerdo */
+.left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* emoji */
+.emoji{
+  width:45px;
+  height:45px;
+
+  border-radius:16px;
+
+  background:rgba(123,104,238,0.16);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:22px;
+}
+
+/* seta */
+.arrow{
+  font-size:20px;
+  opacity:0.5;
+}
+
+/* footer */
+.footer{
+  margin-top:30px;
+
+  color:#666;
+
+  font-size:13px;
+}
+
+/* animação entrada */
+.card{
+  animation:fade 0.5s ease;
+}
+
+@keyframes fade{
+
+  from{
+    opacity:0;
+    transform:translateY(20px);
   }
-  
-body {
-  margin: 0;
-  background: black;
-  
-  color: white;
-  text-align: center;
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
 }
 
-/* container central */
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-}
-
-/* botões */
-.btn {
-  width: 70%;
-  max-width: 300px;
-  margin: 0 auto;
-  padding: 18px;
-  border-radius: 300px;
-  border: none;
-  font-size: 18px;
-  background: mediumslateblue;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-/* efeito suave */
-.btn:active {
-  transform: scale(0.97);
-  opacity: 0.8;
-}
-
-/* títulos discretos */
-h1 {
-  font-size: 22px;
-  font-weight: 400;
-  opacity: 0.7;
-}
 </style>
 </head>
 
@@ -63,51 +222,138 @@ h1 {
 
 <div class="container">
 
-<h1 onclick="window.location.href='index1.html'" style="color: pink;">
-  Clique em mim
-  <br>
-   para voltar!
-</h1>
+  <div class="card">
 
-  <h1>Meus Acessos</h1>
+    <h1 onclick="voltar()" class="voltar">
+      Clique em mim
+      <br>
+      para voltar!
+    </h1>
 
-  <button class="btn" onclick="ir('calendario.html')">
-    📅 Agenda
-  </button>
+    <div class="icon">
+      📁
+    </div>
 
-  <button class="btn" onclick="ir('caderno.html')">
-    📒 Anotações
-  </button>
+    <h2>Meus Acessos</h2>
 
-  <button class="btn" onclick="ir('treino.html')">
-    🏃 Rotina
-  </button>
+    <div class="subtitle">
+      Tudo organizado em um único lugar.
+    </div>
+
+    <div class="buttons">
+
+      <button class="btn" onclick="ir('calendario.html')">
+
+        <div class="left">
+          <div class="emoji">📅</div>
+          <span>Agenda</span>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </button>
+
+      <button class="btn" onclick="ir('caderno.html')">
+
+        <div class="left">
+          <div class="emoji">📒</div>
+          <span>Anotações</span>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </button>
+
+      <button class="btn" onclick="ir('treino.html')">
+
+        <div class="left">
+          <div class="emoji">🏃</div>
+          <span>Rotina</span>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </button>
+
+    </div>
+
+    <div class="footer">
+      Secured By • Mulher Amparada.
+    </div>
+
+  </div>
 
 </div>
 
 <script>
-function ir(pagina) {
-  window.location.href = pagina;
-}
-</script>
-
- <script>
 
 const lock = new Audio("lock.mp3");
 
+lock.preload = "auto";
 lock.volume = 1;
 
-window.addEventListener("beforeunload", function () {
+let bloqueado = false;
 
-  try {
+/* toca áudio e só depois redireciona */
+function tocarSom(callback){
+
+  if(bloqueado) return;
+
+  bloqueado = true;
+
+  lock.currentTime = 0;
+
+  const promessa = lock.play();
+
+  if(promessa !== undefined){
+
+    promessa.then(() => {
+
+      setTimeout(() => {
+        callback();
+      }, 400);
+
+    }).catch(() => {
+      callback();
+    });
+
+  }else{
+    callback();
+  }
+
+}
+
+/* ir para página */
+function ir(pagina){
+
+  tocarSom(() => {
+    window.location.href = pagina;
+  });
+
+}
+
+/* voltar */
+function voltar(){
+
+  tocarSom(() => {
+    window.location.href = "index1.html";
+  });
+
+}
+
+/* tocar ao sair */
+window.addEventListener("beforeunload", () => {
+
+  try{
 
     lock.currentTime = 0;
     lock.play();
 
-  } catch(e) {}
+  }catch(e){}
 
 });
 
- </script>
+</script>
+
 </body>
 </html>
