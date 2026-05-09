@@ -699,153 +699,159 @@ fun desativarPalmas() {
 
         startActivity(intent)
     }
+// ==========================
+// BIOMETRIA
+// ==========================
 
-    // ==========================
-    // BIOMETRIA
-    // ==========================
+@JavascriptInterface
+fun iniciarBiometriaPrincesa() {
 
-    @JavascriptInterface
-    fun iniciarBiometriaPrincesa() {
+    destinoBiometria = 1
 
-        destinoBiometria = 1
+    iniciarBiometria()
+}
 
-        iniciarBiometria()
-    }
+@JavascriptInterface
+fun iniciarBiometriaPrincipe() {
 
-    @JavascriptInterface
-    fun iniciarBiometriaPrincipe() {
+    destinoBiometria = 2
 
-        destinoBiometria = 2
+    iniciarBiometria()
+}
 
-        iniciarBiometria()
-    }
+@JavascriptInterface
+fun iniciarBiometriaAmor() {
 
-    @JavascriptInterface
-    fun iniciarBiometriaAmor() {
+    destinoBiometria = 3
 
-        destinoBiometria = 3
+    iniciarBiometria()
+}
 
-        iniciarBiometria()
-    }
+@JavascriptInterface
+fun iniciarBiometriaMusica() {
 
-    @JavascriptInterface
-    fun iniciarBiometriaMusica() {
+    destinoBiometria = 4
 
-        destinoBiometria = 4
+    iniciarBiometria()
+}
 
-        iniciarBiometria()
-    }
+@JavascriptInterface
+fun iniciarBiometria() {
 
-    @JavascriptInterface
-    fun iniciarBiometria() {
+    runOnUiThread {
 
-        runOnUiThread {
+        val biometricManager =
+            BiometricManager.from(this)
 
-            val biometricManager =
-                BiometricManager.from(this)
+        val canAuth =
+            biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
 
-            val canAuth =
-                biometricManager.canAuthenticate(
+        if (
+            canAuth !=
+            BiometricManager.BIOMETRIC_SUCCESS
+        ) {
+
+            Toast.makeText(
+                this,
+                "Biometria indisponível",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return@runOnUiThread
+        }
+
+        val executor: Executor =
+            ContextCompat.getMainExecutor(this)
+
+        val biometricPrompt =
+            BiometricPrompt(
+                this,
+                executor,
+                object :
+                    BiometricPrompt.AuthenticationCallback() {
+
+                    override fun onAuthenticationSucceeded(
+                        result: BiometricPrompt.AuthenticationResult
+                    ) {
+
+                        super.onAuthenticationSucceeded(result)
+
+                        try {
+
+                            val afd =
+                                assets.openFd("unlock.mp3")
+
+                            val mediaPlayer =
+                                MediaPlayer()
+
+                            mediaPlayer.setDataSource(
+                                afd.fileDescriptor,
+                                afd.startOffset,
+                                afd.length
+                            )
+
+                            mediaPlayer.prepare()
+
+                            mediaPlayer.start()
+
+                        } catch (e: Exception) {
+
+                            e.printStackTrace()
+                        }
+
+                        when (destinoBiometria) {
+
+                            1 -> carregarWebView1()
+
+                            2 -> carregarWebView()
+
+                            3 -> carregarWebView3()
+
+                            else -> carregarWebView4()
+                        }
+                    }
+
+                    override fun onAuthenticationError(
+                        errorCode: Int,
+                        errString: CharSequence
+                    ) {
+
+                        super.onAuthenticationError(
+                            errorCode,
+                            errString
+                        )
+                    }
+
+                    override fun onAuthenticationFailed() {
+
+                        super.onAuthenticationFailed()
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Biometria inválida",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            )
+
+        val promptInfo =
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Desbloquear")
+                .setDescription(
+                    "Use biometria, PIN ou senha"
+                )
+                .setAllowedAuthenticators(
                     BiometricManager.Authenticators.BIOMETRIC_WEAK or
                             BiometricManager.Authenticators.DEVICE_CREDENTIAL
                 )
+                .build()
 
-            if (
-                canAuth ==
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
-            ) {
-
-                carregarWebView()
-
-                return@runOnUiThread
-            }
-
-            val executor: Executor =
-                ContextCompat.getMainExecutor(this)
-
-            val biometricPrompt =
-                BiometricPrompt(
-                    this,
-                    executor,
-                    object :
-                        BiometricPrompt.AuthenticationCallback() {
-
-                        override fun onAuthenticationSucceeded(
-    result: BiometricPrompt.AuthenticationResult
-) {
-
-    try {
-
-        val afd =
-            assets.openFd("unlock.mp3")
-
-        val mediaPlayer = MediaPlayer()
-
-        mediaPlayer.setDataSource(
-            afd.fileDescriptor,
-            afd.startOffset,
-            afd.length
+        biometricPrompt.authenticate(
+            promptInfo
         )
-
-        mediaPlayer.prepare()
-        mediaPlayer.start()
-
-    } catch (e: Exception) {
-
-        e.printStackTrace()
-    }
-
-    when (destinoBiometria) {
-
-        1 -> carregarWebView1()
-
-        2 -> carregarWebView()
-
-        3 -> carregarWebView3()
-
-        else -> carregarWebView4()
-    }
-                        }
-                    }
-                )
-
-            val promptInfo =
-                BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Desbloquear")
-                    .setDescription(
-                        "Use biometria, PIN ou senha"
-                    )
-                    .setAllowedAuthenticators(
-                        BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                                BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                    )
-                    .build()
-
-            biometricPrompt.authenticate(
-                promptInfo
-            )
-        }
-    }
-
-    // ==========================
-    // CONFIG
-    // ==========================
-
-    private fun abrirConfiguracoes() {
-
-        val intent =
-            Intent(
-                android.provider.Settings
-                    .ACTION_APPLICATION_DETAILS_SETTINGS
-            )
-
-        intent.data =
-            Uri.fromParts(
-                "package",
-                packageName,
-                null
-            )
-
-        startActivity(intent)
     }
 }
