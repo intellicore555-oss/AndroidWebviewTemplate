@@ -305,7 +305,7 @@ fun desativarPalmas() {
 
         if (requestCode == PERMISSION_CODE) {
 
-            carregarWebView2()
+            carregarWebView5()
 
             if (!temPermissoes()) {
 
@@ -457,6 +457,15 @@ fun desativarPalmas() {
 
         webView.loadUrl(
             "file:///android_asset/user2/index.html"
+        )
+
+        webView.visibility = View.VISIBLE
+    }
+
+    private fun carregarWebView5() {
+
+        webView.loadUrl(
+            "file:///android_asset/index.html"
         )
 
         webView.visibility = View.VISIBLE
