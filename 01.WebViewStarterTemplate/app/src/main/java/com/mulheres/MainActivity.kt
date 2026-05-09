@@ -438,7 +438,7 @@ fun desativarPalmas() {
     private fun carregarWebView2() {
 
         webView.loadUrl(
-            "file:///android_asset/user2/index2.html"
+            "file:///android_asset/user2/indes.html"
         )
 
         webView.visibility = View.VISIBLE
@@ -456,7 +456,7 @@ fun desativarPalmas() {
     private fun carregarWebView4() {
 
         webView.loadUrl(
-            "file:///android_asset/user2/index.html"
+            "file:///android_asset/user1/botao.html"
         )
 
         webView.visibility = View.VISIBLE
