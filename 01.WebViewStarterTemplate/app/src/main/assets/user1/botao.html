@@ -91,5 +91,23 @@ function ir(pagina) {
 }
 </script>
 
+ <script>
+
+const lock = new Audio("lock.mp3");
+
+lock.volume = 1;
+
+window.addEventListener("beforeunload", function () {
+
+  try {
+
+    lock.currentTime = 0;
+    lock.play();
+
+  } catch(e) {}
+
+});
+
+ </script>
 </body>
 </html>
