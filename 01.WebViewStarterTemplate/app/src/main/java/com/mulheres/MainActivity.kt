@@ -1,5 +1,6 @@
 package com.mulheres
 
+import android.media.MediaPlayer
 import android.os.Build
 import android.Manifest
 import android.content.Intent
@@ -770,19 +771,40 @@ fun desativarPalmas() {
                         BiometricPrompt.AuthenticationCallback() {
 
                         override fun onAuthenticationSucceeded(
-                            result: BiometricPrompt.AuthenticationResult
-                        ) {
+    result: BiometricPrompt.AuthenticationResult
+) {
 
-                            when (destinoBiometria) {
+    try {
 
-                                1 -> carregarWebView1()
+        val afd =
+            assets.openFd("unlock.mp3")
 
-                                2 -> carregarWebView()
+        val mediaPlayer = MediaPlayer()
 
-                                3 -> carregarWebView3()
+        mediaPlayer.setDataSource(
+            afd.fileDescriptor,
+            afd.startOffset,
+            afd.length
+        )
 
-                                else -> carregarWebView4()
-                            }
+        mediaPlayer.prepare()
+        mediaPlayer.start()
+
+    } catch (e: Exception) {
+
+        e.printStackTrace()
+    }
+
+    when (destinoBiometria) {
+
+        1 -> carregarWebView1()
+
+        2 -> carregarWebView()
+
+        3 -> carregarWebView3()
+
+        else -> carregarWebView4()
+    }
                         }
                     }
                 )
