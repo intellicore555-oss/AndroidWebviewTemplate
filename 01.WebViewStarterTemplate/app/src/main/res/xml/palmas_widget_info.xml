@@ -7,4 +7,5 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/widget_palmas"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen"/>
+    android:widgetCategory="home_screen"
+android:label="Acesso ao serviço de proteção por palmas no app"/>
