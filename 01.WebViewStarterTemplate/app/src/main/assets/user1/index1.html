@@ -4,861 +4,936 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>Mulher Amparada • Fitness</title>
 
-<title>Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
-* {
-  font-family: 'Quicksand', sans-serif;
+:root{
+  --rosa:#ff4d88;
+  --rosa2:#ff99cc;
+  --preto:#000;
+  --card:#111;
+  --card2:#1a1a1a;
+  --texto:#fff;
+  --texto2:#b5b5b5;
+  --verde:#00d084;
 }
 
-body {
-  background: black;
-  margin: 0;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Quicksand',sans-serif;
 }
 
-/* 🔥 UI */
-.mainUI {
-  min-height: 100vh;
-  overflow-y: auto;
-  text-align: center;
+body{
+  background:#000;
+  color:white;
+  min-height:100vh;
+  overflow-x:hidden;
 }
 
-/* 🔻 Toggle (NUNCA some) */
-.toggle {
-  width: 60%;
-  height: 55px;
-  border: 2px solid #E6A8D7;
-  border-radius: 80px;
-  padding: 5px;
+/* ========================= */
+/* HEADER */
+/* ========================= */
 
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-
-  display: flex;
-  align-items: center;
-  z-index: 999;
-
-  /* 🔥 importante */
-  overflow: hidden;
-  background: violet;
+.topo{
+  padding:25px 20px;
 }
 
-/* 🌊 camada da onda */
-.toggle::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -60%;
-  left: -50%;
-
-  background: radial-gradient(circle at 50% 50%, skyblue , transparent 60%);
-
-  animation: waveMove 1s linear infinite;
-  z-index: -1;
+.logo{
+  font-size:30px;
+  font-weight:700;
+  background:linear-gradient(45deg,#ff4d88,#ff99cc);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
-/* 🌊 animação */
-@keyframes waveMove {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
+.sub{
+  color:var(--texto2);
+  margin-top:5px;
 }
 
-.alavanca {
-  background: #E6A8D7;
-  width: 50%;
-  height: 100%;
-  border-radius: 80px;
+/* ========================= */
+/* CONTAINER */
+/* ========================= */
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: transform 0.3s ease;
+.container{
+  padding:20px;
+  padding-bottom:120px;
 }
 
-svg {
-  width: 32px;
-  height: 32px;
-}
+/* ========================= */
+/* CARD */
+/* ========================= */
 
-.icon2 {
-  display: none;
-}
-
-/* 🔥 animações */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-@keyframes pulse {
-  0% { transform: scale(0.85); }
-  50% { transform: scale(1); }
-  100% { transform: scale(0.85); }
-}
-
-/* 🔴 SOS FIXO (NUNCA desalinha) */
-.panic {
-  width: min(80%, 380px);
-  min-height: 90px;
-
-  margin: 20px auto;
-  padding: 20px;
-
-  border-radius: 28px;
-
-  background: linear-gradient(
-    135deg,
-    red,
-    tomato
-  );
-
-  color: white;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  gap: 6px;
-
-  box-sizing: border-box;
-
+.card{
+  background:rgba(25,25,25,.9);
+  border-radius:28px;
+  padding:22px;
+  margin-bottom:18px;
+  backdrop-filter:blur(14px);
   box-shadow:
-    0 12px 30px rgba(255, 77, 109, 0.3);
+  0 10px 30px rgba(0,0,0,.35),
+  0 0 20px rgba(255,77,136,.08);
 
-  transition:
-    transform 0.08s ease,
-    filter 0.15s ease;
-
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  animation:fade .5s ease;
 }
 
-.panic:active {
-  transform: scale(0.96);
-  filter: brightness(1.1);
+@keyframes fade{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
-/* botões */
-.btn, .local {
-  display: block;
-  width: min(320px, 78%);
-  min-height: 56px;
-  margin: 10px auto;
-  padding: 15px;
-  font-size: 18px;
-  border: none;
-  border-radius: 100px;
-  color: white;
+/* ========================= */
+/* TITULOS */
+/* ========================= */
+
+h2{
+  font-size:22px;
+  margin-bottom:18px;
 }
 
-.policia { background: #1e90ff; }
-.samu { background: orange; }
-.mulher { background: #ff69b4; }
-.zap { background: #25d366; }
-.local { background: #0ABAB5; }
-
-.info {
-  background: pink;
-  width: 60%;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 20px;
-  position: relative;
-  
+h3{
+  margin-bottom:12px;
+  font-size:18px;
 }
 
-.leftUI, .rightUI {
-  transition: 0.3s;
+p{
+  color:var(--texto2);
 }
 
-/* começa mostrando esquerda */
-.rightUI {
-  display: none;
-  position: absolute;
-  top: 8%;
-  left: 0;
-  width: 100%;
+/* ========================= */
+/* PROGRESSO */
+/* ========================= */
+
+.progress{
+  width:100%;
+  height:16px;
+  background:#222;
+  border-radius:50px;
+  overflow:hidden;
+  margin-top:15px;
 }
 
-.button {
-  background: pink;
-  color: black;
-  padding: 12px;
-  border-radius: 30px;
-  border: 2px solid pink;
-  margin: 10px 0;
-  margin-top: 0;
-    font-size: 15px;
-  width: 75%;
-  position: relative;  
+.bar{
+  height:100%;
+  width:0%;
+  border-radius:50px;
+  background:linear-gradient(90deg,#ff4d88,#ff99cc);
+  transition:.4s;
+  box-shadow:0 0 20px #ff4d88;
 }
 
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+}
+
+.stat{
+  background:#161616;
+  border-radius:20px;
+  padding:15px;
+  text-align:center;
+}
+
+.stat h1{
+  font-size:22px;
+  color:#fff;
+}
+
+.stat span{
+  color:var(--texto2);
+  font-size:13px;
+}
+
+/* ========================= */
 /* BOTÕES */
-/* BOTÕES TOGGLES */
-.toggles {
-  width: 65%;
-  height: 30px;
+/* ========================= */
 
-  margin: 10px auto; /* 🔥 centraliza */
-
-  border-radius: 300px;
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-
-  color: black;
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-  background: mediumslateblue;
+button{
+  width:100%;
+  border:none;
+  border-radius:18px;
+  padding:16px;
+  margin-top:10px;
+  font-size:15px;
+  font-weight:700;
+  color:white;
+  cursor:pointer;
+  transition:.25s;
+  background:linear-gradient(45deg,#ff4d88,#ff99cc);
+  box-shadow:0 5px 18px rgba(255,77,136,.25);
+  border-radius: 200px;
 }
 
-/* cores */
-/* texto */
-.toggles h3 {
-  margin: 0;
-  font-size: 16px;
-
-  white-space: nowrap;
-  overflow-x: auto;
-  max-width: 100%;
+button:hover{
+  transform:scale(1.02);
 }
 
-/* efeito ao clicar */
-.toggles:active {
-  transform: scale(0.97);
-  opacity: 0.85;
+button:active{
+  transform:scale(.97);
 }
 
-.btn1 {
-  width: min(320px, 78%);
-  min-height: 56px;
+.btn2{
+  background:#1f1f1f;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:none;
+}
 
-  margin: 10px auto;
+.btn-danger{
+  background:linear-gradient(45deg,#ff0000,#ff4d4d);
+}
 
-  color: white;
-  border-radius: 300px;
-  border: 2px solid mediumslateblue;
+/* ========================= */
+/* INPUT */
+/* ========================= */
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+input{
+  width:100%;
+  border:none;
+  outline:none;
+  margin-top:12px;
+  border-radius:18px;
+  padding:16px;
+  background:#151515;
+  color:white;
+  font-size:15px;
+}
 
-  padding: 12px 16px;
+/* ========================= */
+/* EXERCICIO */
+/* ========================= */
 
-  font-weight: 500;
+.exercicio{
+  background:#141414;
+  border-radius:20px;
+  padding:18px;
+  margin-top:15px;
+}
 
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+.timer{
+  font-size:55px;
+  font-weight:700;
+  text-align:center;
+  margin-top:12px;
+  background:linear-gradient(45deg,#ff4d88,#ff99cc);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-  background: mediumslateblue;
+/* ========================= */
+/* CONQUISTAS */
+/* ========================= */
 
-  box-sizing: border-box;
+.conquista{
+  background:#141414;
+  border-radius:18px;
+  padding:15px;
+  margin-top:10px;
+  border-left:4px solid #ff4d88;
+}
+
+.conquista b{
+  color:white;
+}
+
+/* ========================= */
+/* POPUP */
+/* ========================= */
+
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:999;
+}
+
+.popup-box{
+  width:100%;
+  max-width:350px;
+  background:#111;
+  border-radius:28px;
+  padding:30px 20px;
+  text-align:center;
+  animation:pop .25s ease;
+}
+
+@keyframes pop{
+  from{
+    transform:scale(.8);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.popup-box h2{
+  margin-bottom:10px;
+}
+
+/* ========================= */
+/* FOOTER */
+/* ========================= */
+
+.footer{
+  text-align:center;
+  color:#666;
+  margin-top:30px;
+  font-size:13px;
 }
 
 </style>
-
-<style>
-#protecao{
-    width:65%;
-    padding:22px;
-    border-radius:22px;
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-    cursor:pointer;
-    user-select:none;
-    transition:0.3s;
-    box-shadow:0 0 25px rgba(0,0,0,0.4);
-    
-    position: relative;
-    margin:auto;
-    margin-bottom: 20px;
-}
-
-.ativo{
-    background:#2b103d;
-    color:#d88cff;
-    border:2px solid #b84dff;
-}
-
-.desativado{
-    background:#1b1b1b;
-    color:#9b9b9b;
-    border:2px solid #444;
-}
-
-.palma{
-
-    width: min(60%, 380px);
-  min-height: 90px;
-
-    position:relative;
-margin:auto;
-    
-
-    margin-bottom:25px;
-
-    padding:35px 28px;
-
-    border-radius:38px;
-
-    background:#ff4fa3;
-
-    box-shadow:
-    0 18px 45px rgba(255,79,163,.35);
-
-    text-align:center;
-
-    color:white;
-
-    overflow:hidden;
-
-    border:
-    1px solid rgba(255,255,255,.12);
-}
-
-.palma::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:240px;
-    height:240px;
-
-    background:
-    rgba(255,255,255,.06);
-
-    border-radius:50%;
-
-    top:-120px;
-    right:-90px;
-}
-
-.palma::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:140px;
-    height:140px;
-
-    background:
-    rgba(255,255,255,.05);
-
-    border-radius:50%;
-
-    bottom:-60px;
-    left:-40px;
-}
-
-.palma-icon{
-
-    font-size:68px;
-
-    margin-bottom:18px;
-
-    animation:palma .9s infinite;
-}
-
-@keyframes palma{
-
-    0%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.14);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-}
-
-.palma h2{
-
-    font-size:30px;
-
-    font-weight:800;
-
-    margin-bottom:12px;
-}
-
-.palma p{
-
-    line-height:1.7;
-
-    font-size:15px;
-
-    margin-bottom:28px;
-
-    color:rgba(255,255,255,.92);
-}
-
-.palma button{
-
-    width:100%;
-
-    border:none;
-
-    padding:19px;
-
-    border-radius:999px;
-
-    font-size:16px;
-
-    font-weight:800;
-
-    cursor:pointer;
-
-    margin-top:14px;
-
-    transition:
-    transform .15s;
-}
-
-#ativarPalmas{
-
-    background:white;
-
-    color:#ff2f92;
-
-    box-shadow:
-    0 8px 20px rgba(255,255,255,.18);
-}
-
-#desativarPalmas{
-
-    background:#ff86bf;
-
-    color:white;
-}
-
-.palma-card button:active{
-
-    transform:scale(.96);
-}
-</style>
-
 </head>
 
 <body>
 
-<div class="mainUI">
-
-<br><br><br><br><br><br><br><br>
-
-<div class="panic">
-  <span>SOS</span>
+<div class="bg">
+  <div class="bola b1"></div>
+  <div class="bola b2"></div>
 </div>
 
+<!-- TOPO -->
 
-<br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
+<div class="topo">
+  <div class="logo">
+    Mulher Amparada
+  </div>
 
-<div class="palma">
+  <div class="sub">
+    Sua evolução começa hoje ✨
+  </div>
+</div>
 
-    <div class="palma-icon">
-        👏
+<!-- CONTAINER -->
+
+<div class="container">
+
+  <!-- PROGRESSO -->
+
+  <div class="card">
+
+    <h2>🔥 Seu progresso</h2>
+
+    <div class="progress">
+      <div class="bar" id="barraXP"></div>
     </div>
 
-    <h2>
-        Proteção por Palmas
-    </h2>
+    <div class="stats">
 
-    <p>
-        Ative o modo emergência por palmas.
-    </p>
+      <div class="stat">
+        <h1 id="xpTexto">0</h1>
+        <span>XP</span>
+      </div>
 
-    <button id="ativarPalmas">
-        Ativar Proteção
-    </button>
+      <div class="stat">
+        <h1 id="nivelTexto">1</h1>
+        <span>Nível</span>
+      </div>
 
-    <button id="desativarPalmas">
-        Desativar
-    </button>
+      <div class="stat">
+        <h1 id="streakTexto">0</h1>
+        <span>Streak</span>
+      </div>
 
-</div>
-
-<div id="protecao" class="desativado">
-⚫ balançar o celular para pedir ajuda
-<br><br>
- DESATIVADO
-</div>
-
-
-<button class="btn1" onclick="iniciarBiometria()">
-  🔐Conteúdo protegido🔐
-</button>
-
-<!-- ESQUERDA -->
-<div class="leftUI">
-
-  <button class="btn policia" onclick="ligar('190')">🚔 Polícia (190)</button>
-  <button class="btn samu" onclick="ligar('192')">🚑 SAMU (192)</button>
-  <button class="btn mulher" onclick="ligar('180')">☎️ Mulher (180)</button>
-  <button class="btn zap" onclick="whatsapp180()">💬 WhatsApp 180</button>
-
-  <button onclick="enviarLocalizacao()" class="local">
-    📍 Enviar localização
-  </button>
-  
-  <button class="btn"
-style="background:#8a2be2;"
-onclick="selecionarContato()">
-
-👤 Adicionar contato
-
-</button>
-
-<button class="btn"
-style="background:#dc143c;"
-onclick="enviarSOSContatos()">
-
-🚨 SOS contatos
-
-</button>
-
-  <br><br>  <br><br>  <br><br>
-
-
-</div>
-</div>
-
-<!-- DIREITA -->
-
-
-<!-- 🔻 TOGGLE -->
-<div class="toggle" id="puxador">
-  <div class="alavanca" id="puxar">
-
-    <svg class="icon1" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path clip-rule="evenodd" d="m12 3.75c-4.55635 0-8.25 3.69365-8.25 8.25 0 4.5563 3.69365 8.25 8.25 8.25 4.5563 0 8.25-3.6937 8.25-8.25 0-4.55635-3.6937-8.25-8.25-8.25zm-9.75 8.25c0-5.38478 4.36522-9.75 9.75-9.75 5.3848 0 9.75 4.36522 9.75 9.75 0 5.3848-4.3652 9.75-9.75 9.75-5.38478 0-9.75-4.3652-9.75-9.75zm9.75-4.25c.4142 0 .75.33579.75.75v3.5c0 .4142-.3358.75-.75.75s-.75-.3358-.75-.75v-3.5c0-.41421.3358-.75.75-.75zm0 6.25c-.5523 0-1 .4477-1 1s.4477 1 1 1h.01c.5523 0 1-.4477 1-1s-.4477-1-1-1z" fill="#ff0000" fill-rule="evenodd"></path></g></svg>
-
-<svg class="icon2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M13 3H8.2C7.0799 3 6.51984 3 6.09202 3.21799C5.71569 3.40973 5.40973 3.71569 5.21799 4.09202C5 4.51984 5 5.0799 5 6.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.0799 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V9M13 3L19 9M13 3V7.4C13 7.96005 13 8.24008 13.109 8.45399C13.2049 8.64215 13.3578 8.79513 13.546 8.89101C13.7599 9 14.0399 9 14.6 9H19M8.12695 21C8.571 19.2748 10.1371 18 12.0009 18C13.8648 18 15.4309 19.2748 15.8749 21M13 14C13 14.5523 12.5523 15 12 15C11.4477 15 11 14.5523 11 14C11 13.4477 11.4477 13 12 13C12.5523 13 13 13.4477 13 14Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+    </div>
 
   </div>
+
+  <!-- TREINO -->
+
+  <div class="card">
+
+    <h2>🏃‍♀️ Treino</h2>
+
+    <button onclick="iniciarTreinoNivel('Iniciante')">
+      🟢 Iniciante
+    </button>
+
+    <button onclick="iniciarTreinoNivel('Intermediário')">
+      🟡 Intermediário
+    </button>
+
+    <button onclick="iniciarTreinoNivel('Avançado')">
+      🔴 Avançado
+    </button>
+
+    <div class="exercicio">
+
+      <h3 id="nomeEx">
+        Nenhum exercício iniciado
+      </h3>
+
+      <p id="descricaoEx">
+        Escolha um nível para começar
+      </p>
+
+      <div class="timer" id="tempo">
+        30
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HIDRATAÇÃO -->
+
+  <div class="card">
+
+    <h2>💧 Hidratação</h2>
+
+    <button onclick="beber('agua')">
+      Beber água
+    </button>
+
+    <button class="btn2" onclick="beber('refri')">
+      Refrigerante
+    </button>
+
+  </div>
+
+  <!-- ALIMENTAÇÃO -->
+
+  <div class="card">
+
+    <h2>🍔 Alimentação</h2>
+
+    <button onclick="comer('saudavel')">
+      Comida saudável
+    </button>
+
+    <button class="btn2" onclick="comer('fast')">
+      Fast food
+    </button>
+
+  </div>
+
+  <!-- PESO -->
+
+  <div class="card">
+
+    <h2>⚖️ Peso</h2>
+
+    <input
+      id="peso"
+      type="number"
+      placeholder="Digite seu peso"
+    >
+
+    <button onclick="salvarPeso()">
+      Salvar peso
+    </button>
+
+    <p id="pesoTexto" style="margin-top:15px;"></p>
+
+  </div>
+
+  <!-- CONQUISTAS -->
+
+  <div class="card">
+
+    <h2>🏆 Conquistas</h2>
+
+    <div id="conquistas"></div>
+
+  </div>
+
+  <!-- RESET -->
+
+  <button
+    class="btn-danger"
+    onclick="resetarDados()"
+  >
+    ⚠️ Resetar tudo
+  </button>
+
+</div>
+
+<!-- POPUP -->
+
+<div class="popup" id="popup">
+
+  <div class="popup-box">
+
+    <h2 id="pt"></h2>
+
+    <p id="px"></p>
+
+    <button onclick="fechar()">
+      OK
+    </button>
+
+  </div>
+
 </div>
 
 <script>
 
-const toggle = document.getElementById("puxador");
-const alavanca = document.getElementById("puxar");
+/* ========================= */
+/* DADOS */
+/* ========================= */
 
-const icon1 = document.querySelector(".icon1");
-const icon2 = document.querySelector(".icon2");
+let xp =
+parseInt(localStorage.getItem("xp")) || 0;
 
-const panic = document.querySelector(".panic");
+let nivel =
+parseInt(localStorage.getItem("nivel")) || 1;
 
-// ================= TOGGLE =================
+let streak =
+parseInt(localStorage.getItem("streak")) || 0;
 
-let ligado = false;
+let conquistas =
+JSON.parse(localStorage.getItem("conquistas")) || [];
 
-toggle.addEventListener("click", function () {
+/* ========================= */
+/* CONQUISTAS */
+/* ========================= */
 
-  ligado = !ligado;
+let listaConquistas = [
 
-  alavanca.style.transform = ligado
-    ? "translateX(100%)"
-    : "translateX(0%)";
+{
+id:"nivel2",
+nome:"Subindo 🚀",
+desc:"Chegou ao nível 2"
+},
 
-  // 🔥 troca ícones
-  icon1.style.display = ligado
-    ? "none"
-    : "block";
+{
+id:"nivel5",
+nome:"Focada 🔥",
+desc:"Chegou ao nível 5"
+},
 
-  icon2.style.display = ligado
-    ? "block"
-    : "none";
-
-  document.body.style.opacity = "0.85";
-
-  setTimeout(() => {
-
-    if (ligado) {
-
-      window.location.href = "info.html";
-
-    } else {
-
-      window.location.href = "index1.html";
-    }
-
-  }, 220);
-});
-
-// 🔥 estado inicial
-icon1.style.display = "block";
-icon2.style.display = "none";
-
-// ================= SOS =================
-
-panic.addEventListener("click", ativarSOS);
-
-function ativarSOS() {
-
-  // vibração
-  if (navigator.vibrate) {
-    navigator.vibrate(300);
-  }
-
-  // efeito visual
-  panic.style.transform = "scale(0.95)";
-
-  setTimeout(() => {
-    panic.style.transform = "scale(1)";
-  }, 120);
-
-  // ANDROID NATIVO
-  if (window.Android && Android.ligarDireto) {
-
-    try {
-
-      Android.ligarDireto("180");
-
-      return;
-
-    } catch (e) {
-
-      console.log(e);
-    }
-  }
-
-  // fallback apenas ligação normal
-  try {
-
-    window.location.href = "tel:180";
-
-  } catch (e) {
-
-    alert("Não foi possível iniciar ligação");
-  }
+{
+id:"desafio1",
+nome:"Primeiro desafio 🎯",
+desc:"Concluiu um desafio"
 }
 
-// ================= FUNÇÕES =================
+];
 
-function ligar(numero) {
+function ganharConquista(id){
 
-  window.location.href = "tel:" + numero;
+  if(conquistas.includes(id)) return;
+
+  conquistas.push(id);
+
+  localStorage.setItem(
+    "conquistas",
+    JSON.stringify(conquistas)
+  );
+
+  let c =
+  listaConquistas.find(c=>c.id===id);
+
+  popup(
+    "🏆 Nova conquista!",
+    c.nome + " • " + c.desc
+  );
+
+  renderConquistas();
 }
 
-function whatsapp180() {
+function renderConquistas(){
 
-  window.location.href =
-    "https://wa.me/556196100180";
-}
+  let div =
+  document.getElementById("conquistas");
 
-function enviarLocalizacao() {
+  div.innerHTML = "";
 
-  if (!navigator.geolocation) {
+  if(conquistas.length === 0){
 
-    alert("Geolocalização não suportada");
+    div.innerHTML = `
+      <p>
+        Nenhuma conquista ainda 😢
+      </p>
+    `;
 
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
+  conquistas.forEach(id=>{
 
-    function (pos) {
+    let c =
+    listaConquistas.find(x=>x.id===id);
 
-      const link =
-        `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+    div.innerHTML += `
+      <div class="conquista">
+        <b>${c.nome}</b>
+        <br>
+        <small>${c.desc}</small>
+      </div>
+    `;
+  });
+}
 
-      window.location.href =
-        "https://wa.me/556196100180?text=" +
-        encodeURIComponent(
-          "🚨 SOCORRO! Estou aqui: " + link
-        );
-    },
+/* ========================= */
+/* TREINO */
+/* ========================= */
 
-    function () {
+let exercicios = {
 
-      alert("Não foi possível obter localização");
+"Iniciante":[
+"Caminhada leve",
+"Agachamento",
+"Polichinelo"
+],
+
+"Intermediário":[
+"Corrida",
+"Flexão",
+"Abdominal"
+],
+
+"Avançado":[
+"Sprint",
+"Burpee",
+"HIIT pesado"
+]
+
+};
+
+let lista = [];
+let atual = 0;
+let tempo = 30;
+let intervalo;
+
+function iniciarTreinoNivel(nivelEscolhido){
+
+  lista =
+  exercicios[nivelEscolhido];
+
+  atual = 0;
+
+  proximo();
+}
+
+function proximo(){
+
+  if(atual >= lista.length){
+
+    ganharXP(20);
+
+    streak++;
+
+    salvar();
+
+    popup(
+      "Treino concluído 💪",
+      "Você foi incrível!"
+    );
+
+    atualizarUI();
+
+    return;
+  }
+
+  document.getElementById(
+    "nomeEx"
+  ).innerText = lista[atual];
+
+  document.getElementById(
+    "descricaoEx"
+  ).innerText =
+  "Continue firme ✨";
+
+  iniciarContagem();
+}
+
+function iniciarContagem(){
+
+  clearInterval(intervalo);
+
+  tempo = 30;
+
+  document.getElementById(
+    "tempo"
+  ).innerText = tempo;
+
+  intervalo = setInterval(()=>{
+
+    tempo--;
+
+    document.getElementById(
+      "tempo"
+    ).innerText = tempo;
+
+    if(tempo <= 0){
+
+      clearInterval(intervalo);
+
+      atual++;
+
+      popup(
+        "Boa 🔥",
+        "Próximo exercício!"
+      );
+
+      setTimeout(proximo,1200);
     }
+
+  },1000);
+}
+
+/* ========================= */
+/* XP */
+/* ========================= */
+
+function ganharXP(q){
+
+  xp += q;
+
+  if(xp >= nivel * 100){
+
+    xp = 0;
+
+    nivel++;
+
+    popup(
+      "🚀 Novo nível!",
+      "Agora você está no nível " + nivel
+    );
+
+    if(nivel === 2)
+    ganharConquista("nivel2");
+
+    if(nivel === 5)
+    ganharConquista("nivel5");
+  }
+
+  salvar();
+
+  atualizarUI();
+}
+
+/* ========================= */
+/* HIDRATAÇÃO */
+/* ========================= */
+
+function beber(tipo){
+
+  if(tipo === "agua"){
+
+    ganharXP(5);
+
+    popup(
+      "Boa 💧",
+      "Hidratação perfeita!"
+    );
+
+  }else{
+
+    popup(
+      "Hmm 😅",
+      "Evite exageros!"
+    );
+  }
+}
+
+/* ========================= */
+/* ALIMENTAÇÃO */
+/* ========================= */
+
+function comer(tipo){
+
+  if(tipo === "saudavel"){
+
+    ganharXP(5);
+
+    popup(
+      "Perfeito 💚",
+      "Ótima escolha!"
+    );
+
+  }else{
+
+    popup(
+      "Tudo bem 👍",
+      "Mas tente equilibrar."
+    );
+  }
+}
+
+/* ========================= */
+/* PESO */
+/* ========================= */
+
+function salvarPeso(){
+
+  let p =
+  document.getElementById("peso").value;
+
+  if(!p){
+
+    popup(
+      "Ops 😅",
+      "Digite um peso válido!"
+    );
+
+    return;
+  }
+
+  localStorage.setItem("peso",p);
+
+  document.getElementById(
+    "pesoTexto"
+  ).innerText =
+  "Peso atual: " + p + " kg";
+
+  popup(
+    "Peso salvo 💾",
+    "Atualizado com sucesso!"
   );
 }
 
-// ================= BIOMETRIA =================
+/* ========================= */
+/* RESET */
+/* ========================= */
 
-function iniciarBiometria() {
+let confirmarReset = false;
 
-  if (
-    window.Android &&
-    Android.iniciarBiometriaMusica
-  ) {
+function resetarDados(){
 
-    try {
+  if(!confirmarReset){
 
-      Android.iniciarBiometriaMusica();
+    confirmarReset = true;
 
-    } catch(e) {
+    popup(
+      "⚠️ Atenção",
+      "Clique novamente para confirmar."
+    );
 
-      window.location.href =
-      "file:///android_asset/user1/botao.html";
-    }
+    setTimeout(()=>{
+      confirmarReset = false;
+    },3000);
 
-  } else {
-
-    window.location.href =
-    "file:///android_asset/user1/botao.html";
-  }
-}
-
-// ================= FADE IN =================
-
-const elementos = document.querySelectorAll(
-  ".panic, .btn1, .btn, .local, #protecao, .palma"
-);
-
-elementos.forEach((el, index) => {
-
-  el.style.opacity = "0";
-
-  if (!el.classList.contains("panic")) {
-    el.style.transform = "translateY(12px)";
+    return;
   }
 
-  setTimeout(() => {
+  localStorage.clear();
 
-    el.style.transition =
-      "opacity 0.35s ease, transform 0.35s ease";
+  xp = 0;
+  nivel = 1;
+  streak = 0;
+  conquistas = [];
 
-    el.style.opacity = "1";
+  atualizarUI();
 
-    if (!el.classList.contains("panic")) {
-      el.style.transform = "translateY(0)";
-    }
+  renderConquistas();
 
-  }, index * 90);
+  document.getElementById(
+    "pesoTexto"
+  ).innerText = "";
 
-});
-
-// ================= CONTATOS =================
-
-function selecionarContato() {
-
-  if (
-    window.Android &&
-    Android.abrirContatos
-  ) {
-
-    Android.abrirContatos();
-  }
-}
-
-function enviarSOSContatos() {
-
-  if (
-    window.Android &&
-    Android.enviarSOS
-  ) {
-
-    Android.enviarSOS();
-  }
-}
-
-function contatoSalvo(nome, numero) {
-
-  alert(
-    "Contato salvo:\n\n" +
-    nome + "\n" + numero
+  popup(
+    "Dados apagados 🗑️",
+    "Tudo foi resetado."
   );
 }
 
-// ================= PROTEÇÃO =================
+/* ========================= */
+/* UI */
+/* ========================= */
 
-const protecao = document.getElementById("protecao");
+function atualizarUI(){
 
-let ativa = false;
+  document.getElementById(
+    "xpTexto"
+  ).innerText = xp;
 
-protecao.onclick = function(){
+  document.getElementById(
+    "nivelTexto"
+  ).innerText = nivel;
 
-    ativa = !ativa;
+  document.getElementById(
+    "streakTexto"
+  ).innerText = streak;
 
-    if(ativa){
+  let porcent =
+  (xp / (nivel * 100)) * 100;
 
-        protecao.classList.remove("desativado");
-        protecao.classList.add("ativo");
-
-        protecao.innerHTML =
-`🟣 Balançar o celular para pedir ajuda
-<br><br>
-ATIVADO`;
-
-        if(
-          window.Android &&
-          Android.ativarProtecao
-        ){
-            Android.ativarProtecao();
-        }
-
-    } else {
-
-        protecao.classList.remove("ativo");
-        protecao.classList.add("desativado");
-
-        protecao.innerHTML =
-`⚫ Balançar o celular para pedir ajuda
-<br><br>
-DESATIVADO`;
-
-        if(
-          window.Android &&
-          Android.desativarProtecao
-        ){
-            Android.desativarProtecao();
-        }
-    }
+  document.getElementById(
+    "barraXP"
+  ).style.width =
+  porcent + "%";
 }
 
-const ativar =
-document.getElementById(
-"ativarPalmas"
-);
+/* ========================= */
+/* POPUP */
+/* ========================= */
 
-const desativar =
-document.getElementById(
-"desativarPalmas"
-);
+function popup(t,x){
 
-ativar.onclick = () => {
+  document.getElementById(
+    "pt"
+  ).innerText = t;
 
-    Android.ativarPalmas();
+  document.getElementById(
+    "px"
+  ).innerText = x;
 
-    ativar.innerText =
-    "Proteção Ativada";
+  document.getElementById(
+    "popup"
+  ).style.display = "flex";
+}
+
+function fechar(){
+
+  document.getElementById(
+    "popup"
+  ).style.display = "none";
+}
+
+/* ========================= */
+/* SALVAR */
+/* ========================= */
+
+function salvar(){
+
+  localStorage.setItem("xp",xp);
+
+  localStorage.setItem("nivel",nivel);
+
+  localStorage.setItem("streak",streak);
+}
+
+/* ========================= */
+/* LOAD */
+/* ========================= */
+
+window.onload = ()=>{
+
+  atualizarUI();
+
+  renderConquistas();
+
+  let p =
+  localStorage.getItem("peso");
+
+  if(p){
+
+    document.getElementById(
+      "pesoTexto"
+    ).innerText =
+    "Peso atual: " + p + " kg";
+  }
 };
 
-desativar.onclick = () => {
-
-    Android.desativarPalmas();
-
-    ativar.innerText =
-    "Ativar Proteção";
-};
 </script>
 
 </body>
