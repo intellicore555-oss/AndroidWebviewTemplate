@@ -6,201 +6,127 @@
 <title>Ciclo</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-.fade-up {
-    opacity: 0;
-    transform: translateY(-30px);
-    animation: fadeUp 0.6s ease forwards;
-}
-
-@keyframes fadeUp {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 * {
     box-sizing: border-box;
-    /* seu estilo */
     font-family: 'Quicksand', sans-serif;
-    animation: fadeUp 0.6s ease forwards;
 }
 
 body {
     margin: 0;
-    background: black;
+    background: #000;
     color: #fff;
 }
 
-/* TOPO */
+/* topo */
 .topo {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     padding: 15px;
-    backdrop-filter: blur(10px);
     background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .titulo {
-    font-size: 20px;
+    color: pink;
     font-weight: bold;
-    letter-spacing: 1px;
-white-space: nowrap;
-color: pink;
-width: 80%;
-overflow-x: auto;
+    cursor: pointer;
 }
 
-.icone {
-    font-size: 22px;
-    opacity: 0.8;
-}
-
-/* DATA */
-.data {
-    margin: 20px;
-    font-size: 18px;
-    opacity: 0.8;
-}
-
-.hoje {
-    background: linear-gradient(135deg, #ff4d6d, #ff758f);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-/* LISTA */
-#lista {
-    padding-bottom: 100px;
-}
-
-/* CARD */
+/* card */
 .card {
     background: #ff8fab;
-    margin: 15px;
-    padding: 18px;
-    border-radius: 108px;
+    margin: 12px;
+    padding: 16px;
+    border-radius: 20px;
     display: flex;
-    gap: 12px;
-    backdrop-filter: blur(8px);
-    border: 2px solid #ff4d6d;
-    transition: 0.2s;
+    gap: 10px;
+    cursor: pointer;
 }
 
-.card:hover {
-    transform: scale(1.02);
-    background: rgba(255,255,255,0.08);
-}
-
-.card .info {
-    text-align: left;
-}
-
-.card .titulo-card {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.card .sub {
-    font-size: 14px;
-    opacity: 0.7;
-}
-
-/* BOTÃO */
+/* botões */
 .botao {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #ff4d6d, #ff758f);
     width: 65px;
     height: 65px;
     border-radius: 50%;
+    background: linear-gradient(135deg,#ff4d6d,#ff758f);
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 32px;
-    box-shadow: 0 0 20px rgba(255, 77, 109, 0.6);
-    transition: 0.2s;
+    align-items: center;
+    font-size: 30px;
 }
 
-.botao:hover {
-    transform: scale(1.1);
-}
-
-/* TELA DE GRÁFICOS */
-#telaGraficos {
-    padding: 15px;
-}
-
-#telaGraficos button {
-    background: #222;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-/* CANVAS */
-canvas {
-    background: rgba(255,255,255,0.03);
-    border-radius: 15px;
-    padding: 10px;
-    margin-bottom: 15px;
-}
-</style>
-
-<style>
 .apagar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
     background: red;
     color: #fff;
     border: none;
-    padding: 12px 18px;
-    border-radius: 120px;
-    margin: 15px;
-    font-size: 14px;
-    box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
-    transition: 0.2s;
-position: absolute;
-bottom: 20px;
-left: 20px;
+    padding: 12px;
+    border-radius: 50px;
 }
 
-.apagar:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+/* gráficos */
+#telaGraficos {
+    display: none;
+    padding: 10px;
+}
+
+canvas {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+#g6 {
+margin-bottom: 100px;
+}
+
+#volta {
+    position: fixed;
+    top: 35px;
+    left: 15px;
+
+    width: 100px;
+    height: 45px;
+
+    border-radius: 200px;
+
+    background: linear-gradient(135deg, #333, #555);
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 20px;
+
+    border: none;
+    cursor: pointer;
+
+    box-shadow: 0 0 15px #666;
 }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
 <div class="topo">
-    <div class="icone">☰</div>
-    <div class="titulo">Clique em mim para voltar!</div>
-    <div class="icone">🔍</div>
-</div>
-
-<div class="data">
-    <span class="hoje">Hoje</span>
+    <div>☰</div>
+    <div class="titulo" onclick="voltarHome()">Clique em mim para voltar!</div>
+    <div>🔍</div>
 </div>
 
 <div id="lista"></div>
 
-<div id="telaGraficos" style="display:none;">
-    <button onclick="voltar()">⬅ Voltar</button>
+<div id="telaGraficos">
+    <button id="volta" onclick="voltarLista()">⬅ Voltar</button>
 
     <canvas id="g1"></canvas>
     <canvas id="g2"></canvas>
@@ -210,82 +136,66 @@ left: 20px;
     <canvas id="g6"></canvas>
 </div>
 
-
 <div class="botao" onclick="abrirRegistro()">+</div>
-
-<button class="apagar" onclick="apagarTudo()">🗑 Apagar tudo</button>
+<button class="apagar" onclick="apagarTudo()">🗑</button>
 
 <script>
+
+let charts = [];
 
 function getDados() {
     return JSON.parse(localStorage.getItem("ciclo")) || [];
 }
 
-function salvarDados(dados) {
-    localStorage.setItem("ciclo", JSON.stringify(dados));
+function salvarDados(d) {
+    localStorage.setItem("ciclo", JSON.stringify(d));
 }
 
 /* =========================
-   PERGUNTAS
+   20 PERGUNTAS
 ========================= */
-function perguntar(question) {
-    return confirm(question);
-}
-
 function abrirRegistro() {
-    let data = prompt("Data (YYYY-MM-DD)");
+    const data = prompt("Data (YYYY-MM-DD)");
     if (!data) return;
 
-    let registro = {
+    const registro = {
         data,
-
-        // consumo
-        agua: perguntar("Bebeu água?"),
-        cafe: perguntar("Tomou café?"),
-        chocolate: perguntar("Comeu chocolate 70%?"),
-
-        // humor/dor
-        humorTexto: prompt("Humor (feliz, triste, desconfortavel)"),
         dor: Number(prompt("Dor (0-10)")),
+        humorTexto: prompt("Humor (feliz, triste, desconfortavel)"),
 
-        // 20 perguntas
-        cansaco: perguntar("Sentiu cansaço?"),
-        irritacao: perguntar("Teve irritação?"),
-        ansiedade: perguntar("Sentiu ansiedade?"),
-        colica: perguntar("Teve cólica?"),
-        dorCabeca: perguntar("Teve dor de cabeça?"),
-        inchaco: perguntar("Sentiu inchaço?"),
-        acne: perguntar("Teve acne?"),
-        sonoRuim: perguntar("Dormiu mal?"),
-        apetite: perguntar("Apetite alterado?"),
-        exercicio: perguntar("Fez exercício?"),
-        libido: perguntar("Libido alterada?"),
-        concentracao: perguntar("Dificuldade de concentração?"),
-        estresse: perguntar("Teve estresse?"),
-        tristeza: perguntar("Sentiu tristeza?"),
-        felicidade: perguntar("Sentiu felicidade?"),
-        sensibilidade: perguntar("Sensibilidade emocional?"),
-        dorSeios: perguntar("Dor nos seios?"),
-        nausea: perguntar("Teve náusea?"),
-        tontura: perguntar("Teve tontura?"),
-        energiaBaixa: perguntar("Energia baixa?")
+        agua: confirm("Bebeu água?"),
+        cafe: confirm("Tomou café?"),
+        chocolate: confirm("Comeu chocolate?"),
+
+        cansaco: confirm("Cansaço?"),
+        irritacao: confirm("Irritação?"),
+        ansiedade: confirm("Ansiedade?"),
+        colica: confirm("Cólica?"),
+        dorCabeca: confirm("Dor de cabeça?"),
+        inchaco: confirm("Inchaço?"),
+        acne: confirm("Acne?"),
+        sonoRuim: confirm("Sono ruim?"),
+        apetite: confirm("Apetite alterado?"),
+        exercicio: confirm("Fez exercício?"),
+        libido: confirm("Libido alterada?"),
+        concentracao: confirm("Concentração ruim?"),
+        estresse: confirm("Estresse?"),
+        tristeza: confirm("Tristeza?"),
+        felicidade: confirm("Felicidade?"),
+        sensibilidade: confirm("Sensibilidade emocional?"),
+        nausea: confirm("Náusea?"),
+        tontura: confirm("Tontura?"),
+        energiaBaixa: confirm("Energia baixa?")
     };
 
-    criarRegistro(registro);
-}
-
-/* =========================
-   CRIAR
-========================= */
-function criarRegistro(dia) {
-    let dados = getDados();
-    dados.push(dia);
+    const dados = getDados();
+    dados.push(registro);
     salvarDados(dados);
     renderizar();
 }
 
 /* =========================
-   APAGAR
+   DELETE
 ========================= */
 function apagarTudo() {
     if (!confirm("Apagar tudo?")) return;
@@ -294,52 +204,46 @@ function apagarTudo() {
 }
 
 /* =========================
-   RENDER
+   LISTA
 ========================= */
-function formatarData(data) {
-    let d = new Date(data);
-    return d.toLocaleDateString("pt-BR");
-}
-
 function renderizar() {
-    let dados = getDados();
-    let container = document.getElementById("lista");
-
-    if (!container) return;
+    const container = document.getElementById("lista");
+    const dados = getDados();
 
     container.innerHTML = "";
 
-    dados.forEach((d, i) => {
-        let card = document.createElement("div");
+    if (dados.length === 0) {
+        container.innerHTML = "<p style='opacity:0.6;text-align:center'>Nenhum registro</p>";
+        return;
+    }
+
+    dados.forEach((d) => {
+        const card = document.createElement("div");
         card.className = "card";
 
-        card.onclick = () => abrirGraficos(d);
-
         let emoji = "😐";
-if (d.humorTexto === "feliz") emoji = "😊";
-if (d.humorTexto === "triste") emoji = "😢";
-if (d.humorTexto === "desconfortavel") emoji = "😣";
+        if (d.humorTexto === "feliz") emoji = "😊";
+        if (d.humorTexto === "triste") emoji = "😢";
+        if (d.humorTexto === "desconfortavel") emoji = "😣";
 
-card.innerHTML = `
-    <div style="font-size:28px">${emoji}</div>
-    <div class="info">
-        <div class="titulo-card">${formatarData(d.data)}</div>
-        <div class="sub">
-            Dor: ${d.dor} • Humor: ${d.humorTexto}
-        </div>
-    </div>
-`;
+        card.innerHTML = `
+            <div style="font-size:28px">${emoji}</div>
+            <div>
+                <div>${d.data}</div>
+                <div>Dor: ${d.dor}</div>
+            </div>
+        `;
+
+        card.onclick = () => abrirGraficos(d);
 
         container.appendChild(card);
     });
 }
 
 /* =========================
-   GRÁFICOS (6)
+   GRÁFICOS
 ========================= */
-let charts = [];
-
-function destruirGraficos() {
+function destruir() {
     charts.forEach(c => c.destroy());
     charts = [];
 }
@@ -348,14 +252,11 @@ function abrirGraficos(d) {
     document.getElementById("lista").style.display = "none";
     document.getElementById("telaGraficos").style.display = "block";
 
-    destruirGraficos();
+    destruir();
 
     charts.push(new Chart(g1, {
         type: "bar",
-        data: {
-            labels: ["Dor"],
-            datasets: [{ data: [d.dor] }]
-        }
+        data: { labels: ["Dor"], datasets: [{ data: [d.dor] }] }
     }));
 
     charts.push(new Chart(g2, {
@@ -363,11 +264,7 @@ function abrirGraficos(d) {
         data: {
             labels: ["Água", "Café", "Chocolate"],
             datasets: [{
-                data: [
-                    d.agua ? 1 : 0,
-                    d.cafe ? 1 : 0,
-                    d.chocolate ? 1 : 0
-                ]
+                data: [d.agua, d.cafe, d.chocolate].map(v => v ? 1 : 0)
             }]
         }
     }));
@@ -375,14 +272,9 @@ function abrirGraficos(d) {
     charts.push(new Chart(g3, {
         type: "radar",
         data: {
-            labels: ["Cansaço", "Ansiedade", "Estresse", "Tristeza"],
+            labels: ["Cansaço","Ansiedade","Estresse","Tristeza"],
             datasets: [{
-                data: [
-                    d.cansaco,
-                    d.ansiedade,
-                    d.estresse,
-                    d.tristeza
-                ]
+                data: [d.cansaco, d.ansiedade, d.estresse, d.tristeza].map(v => v ? 1 : 0)
             }]
         }
     }));
@@ -390,13 +282,9 @@ function abrirGraficos(d) {
     charts.push(new Chart(g4, {
         type: "polarArea",
         data: {
-            labels: ["Cólica", "Dor cabeça", "Inchaço"],
+            labels: ["Cólica","Dor cabeça","Inchaço"],
             datasets: [{
-                data: [
-                    d.colica,
-                    d.dorCabeca,
-                    d.inchaco
-                ]
+                data: [d.colica, d.dorCabeca, d.inchaco].map(v => v ? 1 : 0)
             }]
         }
     }));
@@ -404,13 +292,9 @@ function abrirGraficos(d) {
     charts.push(new Chart(g5, {
         type: "doughnut",
         data: {
-            labels: ["Exercício", "Sono ruim", "Energia baixa"],
+            labels: ["Exercício","Sono ruim","Energia baixa"],
             datasets: [{
-                data: [
-                    d.exercicio,
-                    d.sonoRuim,
-                    d.energiaBaixa
-                ]
+                data: [d.exercicio, d.sonoRuim, d.energiaBaixa].map(v => v ? 1 : 0)
             }]
         }
     }));
@@ -418,114 +302,26 @@ function abrirGraficos(d) {
     charts.push(new Chart(g6, {
         type: "line",
         data: {
-            labels: ["Libido", "Concentração", "Sensibilidade"],
+            labels: ["Libido","Concentração","Sensibilidade"],
             datasets: [{
-                data: [
-                    d.libido,
-                    d.concentracao,
-                    d.sensibilidade
-                ]
+                data: [d.libido, d.concentracao, d.sensibilidade].map(v => v ? 1 : 0)
             }]
         }
     }));
 }
 
-function voltar() {
+/* ========================= */
+function voltarLista() {
     document.getElementById("lista").style.display = "block";
     document.getElementById("telaGraficos").style.display = "none";
 }
 
-/* iniciar */
+function voltarHome() {
+    window.location.href = "botao.html";
+}
+
 renderizar();
-</script>
 
-<script>
-function getDados() {
-    return JSON.parse(localStorage.getItem("ciclo")) || [];
-}
-
-function salvarDados(dados) {
-    localStorage.setItem("ciclo", JSON.stringify(dados));
-}
-
-/* =========================
-   APAGAR TUDO
-========================= */
-function apagarTudo() {
-    if (!confirm("Tem certeza que deseja apagar TODOS os registros?")) return;
-
-    localStorage.removeItem("ciclo");
-    renderizar();
-}
-
-/* =========================
-   APAGAR UM REGISTRO
-========================= */
-function apagarRegistro(index) {
-    let dados = getDados();
-
-    if (!confirm("Apagar esse registro?")) return;
-
-    dados.splice(index, 1);
-
-    salvarDados(dados);
-    renderizar();
-}
-
-/* =========================
-   RENDER COM BOTÃO APAGAR
-========================= */
-function renderizar() {
-    let dados = getDados();
-    let container = document.getElementById("lista");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    if (dados.length === 0) {
-        container.innerHTML = "<div style='opacity:0.6;text-align:center;'>Nenhum registro</div>";
-        return;
-    }
-
-    dados.forEach((d, i) => {
-    let card = document.createElement("div");
-    card.className = "card";
-
-    // 🔥 ISSO AQUI QUE FALTAVA
-    card.onclick = () => abrirGraficos(d);
-
-    let emoji = "😐";
-    if (d.humorTexto === "feliz") emoji = "😊";
-    if (d.humorTexto === "triste") emoji = "😢";
-    if (d.humorTexto === "desconfortavel") emoji = "😣";
-
-    card.innerHTML = `
-        <div style="font-size:26px">${emoji}</div>
-        <div class="info">
-            <div>${d.data}</div>
-            <div>Dor: ${d.dor} | ${d.humorTexto}</div>
-        </div>
-        <div style="margin-left:auto;cursor:pointer;" onclick="event.stopPropagation(); apagarRegistro(${i})">
-            🗑
-        </div>
-    `;
-
-    container.appendChild(card);
-});
-}
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    let titulo = document.querySelector(".titulo");
-
-    if (titulo) {
-        titulo.onclick = function() {
-            window.location.href = "botao.html";
-        };
-    }
-});
 </script>
 
 </body>
