@@ -819,14 +819,15 @@ fun iniciarBiometria() {
                     }
 
                     override fun onAuthenticationFailed() {
+    super.onAuthenticationFailed()
 
-                        super.onAuthenticationFailed()
+    Toast.makeText(
+        this@MainActivity,
+        "Biometria não disponível, recomendo ativar a biometria no seu aparelho, porém mesmo assim abriremos os seus acessos!,
+        Toast.LENGTH_SHORT
+    ).show()
 
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Biometria inválida",
-                            Toast.LENGTH_SHORT
-                        ).show()
+    carregarWebView4()
                     }
 
                     override fun onAuthenticationError(
