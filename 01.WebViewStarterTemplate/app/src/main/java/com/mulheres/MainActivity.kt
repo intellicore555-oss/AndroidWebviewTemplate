@@ -752,19 +752,19 @@ fun iniciarBiometria() {
             )
 
         if (
-            canAuth !=
-            BiometricManager.BIOMETRIC_SUCCESS
-        ) {
+    canAuth !=
+    BiometricManager.BIOMETRIC_SUCCESS
+) {
 
-            Toast.makeText(
-                this,
-                "Biometria indisponível",
-                Toast.LENGTH_SHORT
-            ).show()
+    Toast.makeText(
+        this,
+        "Biometria indisponível, mas abriremos o serviço pra você!",
+        Toast.LENGTH_SHORT
+    ).show()
 
-            abrirConfiguracoes()
+    carregarWebView4()
 
-            return@runOnUiThread
+    return@runOnUiThread
         }
 
         val executor: Executor =
