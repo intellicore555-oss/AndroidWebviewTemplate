@@ -823,7 +823,7 @@ fun iniciarBiometria() {
 
     Toast.makeText(
         this@MainActivity,
-        "Biometria não disponível, recomendo ativar a biometria no seu aparelho, porém mesmo assim abriremos os seus acessos!,
+        "Biometria não disponível, recomendo ativar a biometria no seu aparelho, porém mesmo assim abriremos os seus acessos!",
         Toast.LENGTH_SHORT
     ).show()
 
