@@ -930,3 +930,4 @@ private fun abrirConfiguracoes() {
 
     startActivity(intent)
 }
+}
