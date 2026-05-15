@@ -54,6 +54,24 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     // PROTEÇÃO
     // ==========================
+private fun semInternet(): Boolean {
+
+    val connectivityManager =
+        getSystemService(CONNECTIVITY_SERVICE)
+                as ConnectivityManager
+
+    val network =
+        connectivityManager.activeNetwork
+            ?: return true
+
+    val capabilities =
+        connectivityManager.getNetworkCapabilities(network)
+            ?: return true
+
+    return !capabilities.hasCapability(
+        NetworkCapabilities.NET_CAPABILITY_INTERNET
+    )
+}
 
 @JavascriptInterface
 fun ativarProtecao() {
