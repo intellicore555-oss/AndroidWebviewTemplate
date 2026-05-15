@@ -377,91 +377,94 @@ fun desativarPalmas() {
                 }
             }
 
-        webView.webViewClient =
-            object : WebViewClient() {
+        
+    
+    
+                webView.webViewClient =
+    object : WebViewClient() {
 
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): Boolean {
 
-                    val url =
-                        request?.url.toString()
+            val url =
+                request?.url.toString()
 
-                    if (url.startsWith("tel:")) {
+            if (url.startsWith("tel:")) {
 
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_DIAL,
-                                Uri.parse(url)
-                            )
-                        )
+                startActivity(
+                    Intent(
+                        Intent.ACTION_DIAL,
+                        Uri.parse(url)
+                    )
+                )
 
-                        return true
-                    }
+                return true
+            }
 
-                    if (url.startsWith("https://wa.me")) {
+            if (url.startsWith("https://wa.me")) {
 
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(url)
-                            )
-                        )
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(url)
+                    )
+                )
 
-                        return true
-                    }
+                return true
+            }
 
-                    return false
-                }
+            return false
+        }
 
-                override fun onPageFinished(
-    view: WebView?,
-    url: String?
-) {
+        override fun onPageFinished(
+            view: WebView?,
+            url: String?
+        ) {
 
-    super.onPageFinished(
-        view,
-        url
-    )
+            super.onPageFinished(
+                view,
+                url
+            )
 
-    if (semInternet()) {
+            if (semInternet()) {
 
-        val js = """
-            (function() {
+                val js = """
+                    (function() {
 
-                var style =
-                    document.createElement('style');
+                        var style =
+                            document.createElement('style');
 
-                style.innerHTML = `
-                    @font-face {
-                        font-family: 'MinhaFonte';
-                        src: url('file:///android_asset/fonte.ttf');
-                    }
+                        style.innerHTML = `
+                            @font-face {
+                                font-family: 'MinhaFonte';
+                                src: url('file:///android_asset/fonte.ttf');
+                            }
 
-                    * {
-                        font-family: 'MinhaFonte' !important;
-                    }
-                `;
+                            * {
+                                font-family: 'MinhaFonte' !important;
+                            }
+                        `;
 
-                document.head.appendChild(style);
+                        document.head.appendChild(style);
 
-            })();
-        """.trimIndent()
+                    })();
+                """.trimIndent()
 
-        view?.evaluateJavascript(
-            js,
-            null
-        )
+                view?.evaluateJavascript(
+                    js,
+                    null
+                )
+            }
+
+            view?.evaluateJavascript(
+                "mostrarConteudo()",
+                null
+            )
+        }
     }
-
-    view?.evaluateJavascript(
-        "mostrarConteudo()",
-        null
-    )
-}
-}
-}
+} 
     // ==========================
     // CARREGAR WEBVIEW
     // ==========================
