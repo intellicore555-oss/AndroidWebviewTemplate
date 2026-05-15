@@ -1,863 +1,1032 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>Mulher Amparada</title>
 
-<title>Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
 <style>
 
-* {
-  font-family: 'Quicksand', sans-serif;
+:root{
+
+  --bg:#050505;
+  --card:#121212;
+
+  --pink:#ff4fa3;
+  --pink2:#ff77b7;
+
+  --purple:#8b5cf6;
+
+  --white:#ffffff;
+  --soft:#ffffffbb;
+
+  --radius:38px;
 }
 
-body {
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Quicksand',sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
   background: black;
-  margin: 0;
+
+  color:white;
+
+  overflow-x:hidden;
 }
 
-/* 🔥 UI */
-.mainUI {
-  min-height: 100vh;
-  overflow-y: auto;
-  text-align: center;
+/* MAIN */
+
+.mainUI{
+
+  width:100%;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  gap:80px;
+
+  padding:
+  35px 18px 140px;
 }
 
-/* 🔻 Toggle (NUNCA some) */
-.toggle {
-  width: 60%;
-  height: 55px;
-  border: 2px solid #E6A8D7;
-  border-radius: 80px;
-  padding: 5px;
+/* HERO */
 
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+.hero{
 
-  display: flex;
-  align-items: center;
-  z-index: 999;
+  width:100%;
+  max-width:720px;
 
-  /* 🔥 importante */
-  overflow: hidden;
-  background: violet;
+  text-align:center;
+
+  margin-top:70px;
 }
 
-/* 🌊 camada da onda */
-.toggle::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -60%;
-  left: -50%;
+.heroTag{
 
-  background: radial-gradient(circle at 50% 50%, skyblue , transparent 60%);
+  display:inline-flex;
 
-  animation: waveMove 1s linear infinite;
-  z-index: -1;
+  padding:10px 18px;
+
+  border-radius:999px;
+
+  background:
+  rgba(255,255,255,.06);
+
+  border:
+  1px solid rgba(255,255,255,.08);
+
+  color:#ffb4da;
+
+  font-size:13px;
+  font-weight:700;
+
+  letter-spacing:1px;
+
+  text-transform:uppercase;
+
+  margin-bottom:22px;
 }
 
-/* 🌊 animação */
-@keyframes waveMove {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(2);
-  }
-  100% {
-    transform: scale(1);
-  }
+.hero h1{
+
+  font-size:
+  clamp(36px,8vw,64px);
+
+  line-height:1.05;
+
+  margin-bottom:18px;
+
+  font-weight:800;
 }
 
-.alavanca {
-  background: #E6A8D7;
-  width: 50%;
-  height: 100%;
-  border-radius: 80px;
+.hero p{
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color:var(--soft);
 
-  transition: transform 0.3s ease;
+  line-height:1.7;
+
+  font-size:16px;
+
+  max-width:580px;
+
+  margin:auto;
 }
 
-svg {
-  width: 32px;
-  height: 32px;
+/* SECTION */
+
+.section{
+
+  width:100%;
+  max-width:420px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  gap:20px;
 }
 
-.icon2 {
-  display: none;
+.label{
+
+  font-size:13px;
+
+  text-transform:uppercase;
+
+  letter-spacing:1.8px;
+
+  color:#ffffff88;
+
+  font-weight:700;
 }
 
-/* 🔥 animações */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
+/* SOS */
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
+.panic{
 
-@keyframes pulse {
-  0% { transform: scale(0.85); }
-  50% { transform: scale(1); }
-  100% { transform: scale(0.85); }
-}
+  width:100%;
+  min-height:260px;
 
-/* 🔴 SOS FIXO (NUNCA desalinha) */
-.panic {
-  width: min(80%, 380px);
-  min-height: 270px;
+  border-radius:40px;
 
-  margin: 20px auto;
-  padding: 20px;
-
-  border-radius: 28px;
-
-  background: linear-gradient(
-    135deg,
-    red,
-    tomato
+  background:
+  linear-gradient(
+    145deg,
+    #ff1744,
+    #ff4d6d
   );
 
-  color: white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position:relative;
 
-  gap: 6px;
-
-  box-sizing: border-box;
+  overflow:hidden;
 
   box-shadow:
-    0 12px 30px rgba(255, 77, 109, 0.3);
+  0 20px 60px rgba(255,40,90,.35);
 
   transition:
-    transform 0.08s ease,
-    filter 0.15s ease;
-
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  transform .15s,
+  filter .15s;
 }
 
-.panic:active {
-  transform: scale(0.96);
-  filter: brightness(1.1);
+.panic::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:260px;
+  height:260px;
+
+  border-radius:50%;
+
+  background:
+  rgba(255,255,255,.08);
+
+  top:-120px;
+  right:-90px;
 }
 
-/* botões */
-.btn, .local {
-  display: block;
-  width: min(320px, 78%);
-  min-height: 56px;
-  margin: 10px auto;
-  padding: 15px;
-  font-size: 18px;
-  border: none;
-  border-radius: 100px;
-  color: white;
+.panic span{
+
+  font-size:68px;
+
+  font-weight:800;
+
+  letter-spacing:3px;
 }
 
-.policia { background: #1e90ff; }
-.samu { background: orange; }
-.mulher { background: #ff69b4; }
-.zap { background: #25d366; }
-.local { background: #0ABAB5; }
+.panic small{
 
-.info {
-  background: pink;
-  width: 60%;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 20px;
-  position: relative;
-  
+  margin-top:10px;
+
+  font-size:15px;
+
+  color:#ffffffd5;
 }
 
-.leftUI, .rightUI {
-  transition: 0.3s;
+.panic:active{
+
+  transform:scale(.97);
+
+  filter:brightness(1.08);
 }
 
-/* começa mostrando esquerda */
-.rightUI {
-  display: none;
-  position: absolute;
-  top: 8%;
-  left: 0;
-  width: 100%;
-}
-
-.button {
-  background: pink;
-  color: black;
-  padding: 12px;
-  border-radius: 30px;
-  border: 2px solid pink;
-  margin: 10px 0;
-  margin-top: 0;
-    font-size: 15px;
-  width: 75%;
-  position: relative;  
-}
-
-/* BOTÕES */
-/* BOTÕES TOGGLES */
-.toggles {
-  width: 65%;
-  height: 30px;
-
-  margin: 10px auto; /* 🔥 centraliza */
-
-  border-radius: 300px;
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-
-  color: black;
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-  background: mediumslateblue;
-}
-
-/* cores */
-/* texto */
-.toggles h3 {
-  margin: 0;
-  font-size: 16px;
-
-  white-space: nowrap;
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-/* efeito ao clicar */
-.toggles:active {
-  transform: scale(0.97);
-  opacity: 0.85;
-}
-
-.btn1 {
-  width: min(320px, 78%);
-  min-height: 56px;
-
-  margin: 10px auto;
-
-  color: white;
-  border-radius: 300px;
-  border: 2px solid mediumslateblue;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 12px 16px;
-
-  font-weight: 500;
-
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-
-  background: mediumslateblue;
-
-  box-sizing: border-box;
-}
-
-</style>
-
-<style>
-#protecao{
-    width:65%;
-    padding:22px;
-    border-radius:22px;
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-    cursor:pointer;
-    user-select:none;
-    transition:0.3s;
-    box-shadow:0 0 25px rgba(0,0,0,0.4);
-    
-    position: relative;
-    margin:auto;
-    margin-bottom: 20px;
-}
-
-.ativo{
-    background:#2b103d;
-    color:#d88cff;
-    border:2px solid #b84dff;
-}
-
-.desativado{
-    background:#1b1b1b;
-    color:#9b9b9b;
-    border:2px solid #444;
-}
+/* PALMA */
 
 .palma{
 
-    width: min(60%, 380px);
-  min-height: 90px;
+  width:100%;
 
-    position:relative;
-margin:auto;
-    
+  border-radius:40px;
 
-    margin-bottom:25px;
+  background:
+  linear-gradient(
+    180deg,
+    #ff4fa3,
+    #ff2f92
+  );
 
-    padding:35px 28px;
+  padding:36px 24px;
 
-    border-radius:38px;
+  text-align:center;
 
-    background:#ff4fa3;
+  position:relative;
 
-    box-shadow:
-    0 18px 45px rgba(255,79,163,.35);
+  overflow:hidden;
 
-    text-align:center;
-
-    color:white;
-
-    overflow:hidden;
-
-    border:
-    1px solid rgba(255,255,255,.12);
+  box-shadow:
+  0 18px 45px rgba(255,79,163,.32);
 }
 
 .palma::before{
 
-    content:"";
+  content:"";
 
-    position:absolute;
+  position:absolute;
 
-    width:240px;
-    height:240px;
+  width:240px;
+  height:240px;
 
-    background:
-    rgba(255,255,255,.06);
+  border-radius:50%;
 
-    border-radius:50%;
+  background:
+  rgba(255,255,255,.06);
 
-    top:-120px;
-    right:-90px;
-}
-
-.palma::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:140px;
-    height:140px;
-
-    background:
-    rgba(255,255,255,.05);
-
-    border-radius:50%;
-
-    bottom:-60px;
-    left:-40px;
+  top:-120px;
+  right:-90px;
 }
 
 .palma-icon{
 
-    font-size:68px;
+  font-size:70px;
 
-    margin-bottom:18px;
+  margin-bottom:18px;
 
-    animation:palma .9s infinite;
+  animation:palma .9s infinite;
 }
 
 @keyframes palma{
 
-    0%{
-        transform:scale(1);
-    }
+  0%{
+    transform:scale(1);
+  }
 
-    50%{
-        transform:scale(1.14);
-    }
+  50%{
+    transform:scale(1.12);
+  }
 
-    100%{
-        transform:scale(1);
-    }
+  100%{
+    transform:scale(1);
+  }
 }
 
-.palma h2{
+.palma h3{
 
-    font-size:30px;
+  font-size:30px;
 
-    font-weight:800;
-
-    margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 .palma p{
 
-    line-height:1.7;
+  line-height:1.7;
 
-    font-size:15px;
+  color:#ffffffde;
 
-    margin-bottom:28px;
-
-    color:rgba(255,255,255,.92);
+  margin-bottom:28px;
 }
 
+/* BUTTONS */
+
+.btn,
+.local,
+.btn1,
 .palma button{
 
-    width:100%;
+  width:100%;
 
-    border:none;
+  min-height:58px;
 
-    padding:19px;
+  border:none;
 
-    border-radius:999px;
+  border-radius:999px;
 
-    font-size:16px;
+  font-size:16px;
+  font-weight:700;
 
-    font-weight:800;
+  color:white;
 
-    cursor:pointer;
+  cursor:pointer;
 
-    margin-top:14px;
+  transition:
+  transform .15s,
+  opacity .15s,
+  filter .15s;
+}
 
-    transition:
-    transform .15s;
+.btn:active,
+.local:active,
+.btn1:active,
+.palma button:active{
+
+  transform:scale(.97);
 }
 
 #ativarPalmas{
 
-    background:white;
+  background:white;
 
-    color:#ff2f92;
-
-    box-shadow:
-    0 8px 20px rgba(255,255,255,.18);
+  color:#ff2f92;
 }
 
 #desativarPalmas{
 
-    background:#ff86bf;
+  margin-top:14px;
 
-    color:white;
+  background:#ff8cc4;
 }
 
-.palma-card button:active{
+/* PROTEÇÃO */
 
-    transform:scale(.96);
+#protecao{
+
+  width:100%;
+
+  padding:30px 24px;
+
+  border-radius:32px;
+
+  text-align:center;
+
+  font-size:20px;
+  font-weight:700;
+
+  line-height:1.6;
+
+  cursor:pointer;
+
+  transition:.25s;
 }
 
-h1 {
-color: white;
-font-size: 30px;
+.ativo{
+
+  background:#2b103d;
+
+  color:#d88cff;
+
+  border:
+  2px solid #b84dff;
+
+  box-shadow:
+  0 10px 35px rgba(184,77,255,.25);
 }
+
+.desativado{
+
+  background:#161616;
+
+  color:#9b9b9b;
+
+  border:
+  2px solid #303030;
+}
+
+/* BOTÕES */
+
+.btn{
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  text-decoration:none;
+}
+
+.policia{
+  background:#1e90ff;
+}
+
+.samu{
+  background:#ff9800;
+}
+
+.mulher{
+  background:#ff4fa3;
+}
+
+.zap{
+  background:#25D366;
+}
+
+.local{
+  background:#00b8b0;
+}
+
+.btn1{
+
+  background:
+  linear-gradient(
+    135deg,
+    #8b5cf6,
+    #a855f7
+  );
+}
+
+/* TOGGLE */
+
+.toggle{
+
+  width:min(420px,88%);
+
+  height:68px;
+
+  position:fixed;
+
+  bottom:20px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  border-radius:999px;
+
+  padding:6px;
+
+  overflow:hidden;
+
+  z-index:999;
+
+  background:
+  rgba(255,255,255,.06);
+
+  border:
+  1px solid rgba(255,255,255,.08);
+
+  backdrop-filter:blur(14px);
+}
+
+.toggle::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+  radial-gradient(
+    circle at center,
+    rgba(168,85,247,.35),
+    transparent 70%
+  );
+
+  animation:
+  waveMove 3s linear infinite;
+}
+
+@keyframes waveMove{
+
+  0%{
+    transform:translateX(-20%);
+  }
+
+  100%{
+    transform:translateX(20%);
+  }
+}
+
+.alavanca{
+
+  width:50%;
+  height:100%;
+
+  border-radius:999px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #ff4fa3,
+    #a855f7
+  );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  position:relative;
+
+  z-index:2;
+
+  transition:
+  transform .35s cubic-bezier(.22,.61,.36,1);
+}
+
+svg{
+
+  width:28px;
+  height:28px;
+}
+
+.icon2{
+  display:none;
+}
+
+.fade{
+
+  opacity:0;
+
+  transform:
+  translateY(20px);
+
+  animation:
+  fade .6s forwards;
+}
+
+@keyframes fade{
+
+  to{
+
+    opacity:1;
+
+    transform:none;
+  }
+}
+
 </style>
-
 </head>
 
 <body>
 
 <div class="mainUI">
 
-<h1>Role a página 
-<br>
-para baixo
- <br>
-para acessar os 
-<br>
-seus recursos!</h1>
-<br><br><br><br><br>
+<div class="hero fade">
 
-<div class="panic">
-  <span style="font-size: 45px;">SOS</span>
+  <div class="heroTag">
+    Mulher Amparada
+  </div>
+
+  <h1>
+    Proteção rápida
+    quando você
+    mais precisar
+  </h1>
+
+  <p>
+    Recursos de emergência, contatos rápidos,
+    localização e proteção inteligente.
+  </p>
+
 </div>
 
-<br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
+<section class="section fade">
 
-<div class="palma">
+  <div class="label">
+    Emergência
+  </div>
+
+  <div class="panic">
+    <span>SOS</span>
+
+    <small>
+      toque para pedir ajuda
+    </small>
+  </div>
+
+</section>
+
+<section class="section fade">
+
+  <div class="label">
+    Barulho alto
+  </div>
+
+  <div class="palma">
 
     <div class="palma-icon">
-        👏
+      👏
     </div>
 
-    <h2>
-        Proteção por Barulho
-    </h2>
+    <h3>
+      Proteção por som
+    </h3>
 
     <p>
-        Ative o modo emergência por fazer um barulho alto.
+      Ative ajuda automática ao detectar
+      sons altos e situações suspeitas.
     </p>
 
     <button id="ativarPalmas">
-        Ativar Proteção
+      Ativar proteção
     </button>
 
     <button id="desativarPalmas">
-        Desativar
+      Desativar
     </button>
 
-</div>
+  </div>
 
-  <br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
+</section>
 
-<div id="protecao" class="desativado">
-⚫ balançar o celular para pedir ajuda
-<br><br>
- DESATIVADO
-</div>
+<section class="section fade">
 
-  <br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
+  <div class="label">
+    Movimento
+  </div>
 
+  <div id="protecao" class="desativado">
 
-<button class="btn1" onclick="iniciarBiometria()">
-  🔐Conteúdo protegido🔐
-</button>
+    ⚫ Balançar o celular
+    para pedir ajuda
 
-  <br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
-<!-- ESQUERDA -->
-<div class="leftUI">
+    <br><br>
 
-  <button class="btn policia" onclick="ligar('190')">🚔 Polícia (190)</button>
-  <button class="btn samu" onclick="ligar('192')">🚑 SAMU (192)</button>
-  <button class="btn mulher" onclick="ligar('180')">☎️ Mulher (180)</button>
-  <button class="btn zap" onclick="whatsapp180()">💬 WhatsApp 180</button>
+    DESATIVADO
 
-  <br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
-  
+  </div>
+
+</section>
+
+<section class="section fade">
+
+  <div class="label">
+    Conteúdo protegido
+  </div>
+
+  <button class="btn1" onclick="iniciarBiometria()">
+    🔐 Acessar área protegida
+  </button>
+
+</section>
+
+<section class="section fade">
+
+  <div class="label">
+    Ajuda rápida
+  </div>
+
+  <button class="btn policia" onclick="ligar('190')">
+    🚔 Polícia (190)
+  </button>
+
+  <button class="btn samu" onclick="ligar('192')">
+    🚑 SAMU (192)
+  </button>
+
+  <button class="btn mulher" onclick="ligar('180')">
+    ☎️ Central da Mulher (180)
+  </button>
+
+  <button class="btn zap" onclick="whatsapp180()">
+    💬 WhatsApp 180
+  </button>
+
+</section>
+
+<section class="section fade">
+
+  <div class="label">
+    Localização
+  </div>
+
   <button onclick="enviarLocalizacao()" class="local">
     📍 Enviar localização
   </button>
 
-  <br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br>
-  
-  <button class="btn"
-style="background:#8a2be2;"
-onclick="selecionarContato()">
+</section>
 
-👤 Adicionar contato
+<section class="section fade">
 
-</button>
+  <div class="label">
+    Contatos de confiança
+  </div>
 
-<button class="btn"
-style="background:#dc143c;"
-onclick="enviarSOSContatos()">
+  <button
+    class="btn"
+    style="background:#8a2be2;"
+    onclick="selecionarContato()">
 
-🚨 SOS contatos
+    👤 Adicionar contato
 
-</button>
+  </button>
 
-  <br><br>  <br><br>  <br><br>
+  <button
+    class="btn"
+    style="background:#dc143c;"
+    onclick="enviarSOSContatos()">
 
+    🚨 SOS contatos
+
+  </button>
+
+</section>
 
 </div>
-</div>
 
-<!-- DIREITA -->
+<!-- TOGGLE -->
 
-
-<!-- 🔻 TOGGLE -->
 <div class="toggle" id="puxador">
+
   <div class="alavanca" id="puxar">
 
-    <svg class="icon1" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path clip-rule="evenodd" d="m12 3.75c-4.55635 0-8.25 3.69365-8.25 8.25 0 4.5563 3.69365 8.25 8.25 8.25 4.5563 0 8.25-3.6937 8.25-8.25 0-4.55635-3.6937-8.25-8.25-8.25zm-9.75 8.25c0-5.38478 4.36522-9.75 9.75-9.75 5.3848 0 9.75 4.36522 9.75 9.75 0 5.3848-4.3652 9.75-9.75 9.75-5.38478 0-9.75-4.3652-9.75-9.75zm9.75-4.25c.4142 0 .75.33579.75.75v3.5c0 .4142-.3358.75-.75.75s-.75-.3358-.75-.75v-3.5c0-.41421.3358-.75.75-.75zm0 6.25c-.5523 0-1 .4477-1 1s.4477 1 1 1h.01c.5523 0 1-.4477 1-1s-.4477-1-1-1z" fill="#ff0000" fill-rule="evenodd"></path></g></svg>
+  <svg class="icon1" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path clip-rule="evenodd" d="m12 3.75c-4.55635 0-8.25 3.69365-8.25 8.25 0 4.5563 3.69365 8.25 8.25 8.25 4.5563 0 8.25-3.6937 8.25-8.25 0-4.55635-3.6937-8.25-8.25-8.25zm-9.75 8.25c0-5.38478 4.36522-9.75 9.75-9.75 5.3848 0 9.75 4.36522 9.75 9.75 0 5.3848-4.3652 9.75-9.75 9.75-5.38478 0-9.75-4.3652-9.75-9.75zm9.75-4.25c.4142 0 .75.33579.75.75v3.5c0 .4142-.3358.75-.75.75s-.75-.3358-.75-.75v-3.5c0-.41421.3358-.75.75-.75zm0 6.25c-.5523 0-1 .4477-1 1s.4477 1 1 1h.01c.5523 0 1-.4477 1-1s-.4477-1-1-1z" fill="#ff0000" fill-rule="evenodd"></path></g></svg>
+
 
 <svg class="icon2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M13 3H8.2C7.0799 3 6.51984 3 6.09202 3.21799C5.71569 3.40973 5.40973 3.71569 5.21799 4.09202C5 4.51984 5 5.0799 5 6.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.0799 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V9M13 3L19 9M13 3V7.4C13 7.96005 13 8.24008 13.109 8.45399C13.2049 8.64215 13.3578 8.79513 13.546 8.89101C13.7599 9 14.0399 9 14.6 9H19M8.12695 21C8.571 19.2748 10.1371 18 12.0009 18C13.8648 18 15.4309 19.2748 15.8749 21M13 14C13 14.5523 12.5523 15 12 15C11.4477 15 11 14.5523 11 14C11 13.4477 11.4477 13 12 13C12.5523 13 13 13.4477 13 14Z" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 
   </div>
+
 </div>
 
 <script>
 
-const toggle = document.getElementById("puxador");
-const alavanca = document.getElementById("puxar");
+const toggle =
+document.getElementById("puxador");
 
-const icon1 = document.querySelector(".icon1");
-const icon2 = document.querySelector(".icon2");
+const alavanca =
+document.getElementById("puxar");
 
-const panic = document.querySelector(".panic");
+const icon1 =
+document.querySelector(".icon1");
 
-// ================= TOGGLE =================
+const icon2 =
+document.querySelector(".icon2");
+
+const panic =
+document.querySelector(".panic");
 
 let ligado = false;
 
-toggle.addEventListener("click", function () {
+/* TOGGLE */
+
+toggle.addEventListener("click", function(){
+
+  navigator.vibrate?.(30);
 
   ligado = !ligado;
 
-  alavanca.style.transform = ligado
-    ? "translateX(100%)"
-    : "translateX(0%)";
+  alavanca.style.transform =
+  ligado
+  ? "translateX(100%)"
+  : "translateX(0%)";
 
-  // 🔥 troca ícones
-  icon1.style.display = ligado
-    ? "none"
-    : "block";
+  icon1.style.display =
+  ligado ? "none" : "block";
 
-  icon2.style.display = ligado
-    ? "block"
-    : "none";
+  icon2.style.display =
+  ligado ? "block" : "none";
 
-  document.body.style.opacity = "0.85";
+  document.body.style.opacity =
+  ".85";
 
-  setTimeout(() => {
+  setTimeout(()=>{
 
-    if (ligado) {
+    if(ligado){
 
-      window.location.href = "info.html";
+      window.location.href =
+      "info.html";
 
     } else {
 
-      window.location.href = "index1.html";
+      window.location.href =
+      "index1.html";
     }
 
-  }, 220);
+  },220);
+
 });
 
-// 🔥 estado inicial
-icon1.style.display = "block";
-icon2.style.display = "none";
+/* SOS */
 
-// ================= SOS =================
+panic.addEventListener(
+"click",
+ativarSOS
+);
 
-panic.addEventListener("click", ativarSOS);
+function ativarSOS(){
 
-function ativarSOS() {
+  navigator.vibrate?.(300);
 
-  // vibração
-  if (navigator.vibrate) {
-    navigator.vibrate(300);
-  }
+  panic.style.transform =
+  "scale(.96)";
 
-  // efeito visual
-  panic.style.transform = "scale(0.95)";
+  setTimeout(()=>{
 
-  setTimeout(() => {
-    panic.style.transform = "scale(1)";
-  }, 120);
+    panic.style.transform =
+    "scale(1)";
 
-  // ANDROID NATIVO
-  if (window.Android && Android.ligarDireto) {
+  },120);
 
-    try {
+  if(
+    window.Android &&
+    Android.ligarDireto
+  ){
+
+    try{
 
       Android.ligarDireto("180");
 
       return;
 
-    } catch (e) {
+    }catch(e){
 
       console.log(e);
     }
   }
 
-  // fallback apenas ligação normal
-  try {
+  try{
 
-    window.location.href = "tel:180";
+    window.location.href =
+    "tel:180";
 
-  } catch (e) {
+  }catch(e){
 
-    alert("Não foi possível iniciar ligação");
+    alert(
+      "Não foi possível iniciar ligação"
+    );
   }
 }
 
-// ================= FUNÇÕES =================
+/* FUNÇÕES */
 
-function ligar(numero) {
-
-  window.location.href = "tel:" + numero;
-}
-
-function whatsapp180() {
+function ligar(numero){
 
   window.location.href =
-    "https://wa.me/556196100180";
+  "tel:" + numero;
 }
 
-function enviarLocalizacao() {
+function whatsapp180(){
 
-  if (!navigator.geolocation) {
+  window.location.href =
+  "https://wa.me/556196100180";
+}
 
-    alert("Geolocalização não suportada");
+function enviarLocalizacao(){
+
+  if(!navigator.geolocation){
+
+    alert(
+      "Geolocalização não suportada"
+    );
 
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
+  navigator.geolocation
+  .getCurrentPosition(
 
-    function (pos) {
+    function(pos){
 
       const link =
-        `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+      `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
 
       window.location.href =
-        "https://wa.me/556196100180?text=" +
-        encodeURIComponent(
-          "🚨 SOCORRO! Estou aqui: " + link
-        );
+      "https://wa.me/556196100180?text=" +
+      encodeURIComponent(
+        "🚨 SOCORRO! Estou aqui: " + link
+      );
     },
 
-    function () {
+    function(){
 
-      alert("Não foi possível obter localização");
+      alert(
+        "Não foi possível obter localização"
+      );
     }
   );
 }
 
-// ================= BIOMETRIA =================
+/* BIOMETRIA */
 
-function iniciarBiometria() {
+function iniciarBiometria(){
 
-  if (
+  if(
     window.Android &&
     Android.iniciarBiometriaMusica
-  ) {
+  ){
 
-    try {
+    try{
 
       Android.iniciarBiometriaMusica();
 
-    } catch(e) {
+    }catch(e){
 
       window.location.href =
       "file:///android_asset/user1/botao.html";
     }
 
-  } else {
+  }else{
 
     window.location.href =
     "file:///android_asset/user1/botao.html";
   }
 }
 
-// ================= FADE IN =================
+/* CONTATOS */
 
-const elementos = document.querySelectorAll(
-  ".panic, .btn1, .btn, .local, #protecao, .palma"
-);
+function selecionarContato(){
 
-elementos.forEach((el, index) => {
-
-  el.style.opacity = "0";
-
-  if (!el.classList.contains("panic")) {
-    el.style.transform = "translateY(12px)";
-  }
-
-  setTimeout(() => {
-
-    el.style.transition =
-      "opacity 0.35s ease, transform 0.35s ease";
-
-    el.style.opacity = "1";
-
-    if (!el.classList.contains("panic")) {
-      el.style.transform = "translateY(0)";
-    }
-
-  }, index * 90);
-
-});
-
-// ================= CONTATOS =================
-
-function selecionarContato() {
-
-  if (
+  if(
     window.Android &&
     Android.abrirContatos
-  ) {
+  ){
 
     Android.abrirContatos();
   }
 }
 
-function enviarSOSContatos() {
+function enviarSOSContatos(){
 
-  if (
+  if(
     window.Android &&
     Android.enviarSOS
-  ) {
+  ){
 
     Android.enviarSOS();
   }
 }
 
-function contatoSalvo(nome, numero) {
+/* PROTEÇÃO */
 
-  alert(
-    "Contato salvo:\n\n" +
-    nome + "\n" + numero
-  );
-}
-
-// ================= PROTEÇÃO =================
-
-const protecao = document.getElementById("protecao");
+const protecao =
+document.getElementById(
+"protecao"
+);
 
 let ativa = false;
 
 protecao.onclick = function(){
 
-    ativa = !ativa;
+  ativa = !ativa;
 
-    if(ativa){
+  if(ativa){
 
-        protecao.classList.remove("desativado");
-        protecao.classList.add("ativo");
+    protecao.classList
+    .remove("desativado");
 
-        protecao.innerHTML =
-`🟣 Balançar o celular para pedir ajuda
-<br><br>
-ATIVADO`;
+    protecao.classList
+    .add("ativo");
 
-        if(
-          window.Android &&
-          Android.ativarProtecao
-        ){
-            Android.ativarProtecao();
-        }
+    protecao.innerHTML =
 
-    } else {
+    `🟣 Balançar o celular
+    para pedir ajuda
 
-        protecao.classList.remove("ativo");
-        protecao.classList.add("desativado");
+    <br><br>
 
-        protecao.innerHTML =
-`⚫ Balançar o celular para pedir ajuda
-<br><br>
-DESATIVADO`;
+    ATIVADO`;
 
-        if(
-          window.Android &&
-          Android.desativarProtecao
-        ){
-            Android.desativarProtecao();
-        }
+    if(
+      window.Android &&
+      Android.ativarProtecao
+    ){
+
+      Android.ativarProtecao();
     }
+
+  } else {
+
+    protecao.classList
+    .remove("ativo");
+
+    protecao.classList
+    .add("desativado");
+
+    protecao.innerHTML =
+
+    `⚫ Balançar o celular
+    para pedir ajuda
+
+    <br><br>
+
+    DESATIVADO`;
+
+    if(
+      window.Android &&
+      Android.desativarProtecao
+    ){
+
+      Android.desativarProtecao();
+    }
+  }
 }
+
+/* PALMAS */
 
 const ativar =
 document.getElementById(
@@ -869,21 +1038,22 @@ document.getElementById(
 "desativarPalmas"
 );
 
-ativar.onclick = () => {
+ativar.onclick = ()=>{
 
-    Android.ativarPalmas();
+  Android.ativarPalmas();
 
-    ativar.innerText =
-    "Proteção Ativada";
+  ativar.innerText =
+  "Proteção ativada";
 };
 
-desativar.onclick = () => {
+desativar.onclick = ()=>{
 
-    Android.desativarPalmas();
+  Android.desativarPalmas();
 
-    ativar.innerText =
-    "Ativar Proteção";
+  ativar.innerText =
+  "Ativar proteção";
 };
+
 </script>
 
 </body>
