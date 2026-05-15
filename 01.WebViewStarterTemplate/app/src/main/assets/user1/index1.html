@@ -481,36 +481,6 @@ body{
   backdrop-filter:blur(14px);
 }
 
-.toggle::before{
-
-  content:"";
-
-  position:absolute;
-
-  inset:0;
-
-  background:
-  radial-gradient(
-    circle at center,
-    rgba(168,85,247,.35),
-    transparent 70%
-  );
-
-  animation:
-  waveMove 3s linear infinite;
-}
-
-@keyframes waveMove{
-
-  0%{
-    transform:translateX(-20%);
-  }
-
-  100%{
-    transform:translateX(20%);
-  }
-}
-
 .alavanca{
 
   width:50%;
