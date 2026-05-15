@@ -1,5 +1,7 @@
 package com.mulheres
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.media.MediaPlayer
 import android.os.Build
 import android.Manifest
