@@ -2,17 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- INTERNET -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- BIOMETRIA -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
-    <!-- DETECTAR APP ABERTO (AppLock) -->
+    <!-- DETECTAR USO DE APLICATIVOS (UsageStats) -->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- OVERLAY (opcional para futuras melhorias de AppLock) -->
+    <!-- OVERLAY (necessário para AppLock real futuro) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- FOREGROUND SERVICE (AppLock profissional futuro) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +31,7 @@
         android:theme="@style/Theme.androidWebViewOfflineApplication"
         tools:targetApi="31">
 
-        <!-- MAIN -->
+        <!-- MAIN ACTIVITY -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -38,7 +44,7 @@
 
         </activity>
 
-        <!-- LOCK SCREEN (TRANSPARENTE) -->
+        <!-- LOCK SCREEN TRANSPARENTE -->
         <activity
             android:name=".LockScreenActivity"
             android:exported="false"
