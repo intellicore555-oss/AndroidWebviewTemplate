@@ -1,7 +1,5 @@
 package com.example.androidWebViewOfflineApplication
 
-import android.app.ActivityManager
-import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -34,43 +32,34 @@ class LockScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // NÃO define layout → mantém transparente
+
         handler.post(checkRunnable)
     }
 
     private fun checkForegroundApp() {
-
         val usageStatsManager =
             getSystemService(Context.USAGE_STATS_SERVICE)
-                    as UsageStatsManager
+                    as android.app.usage.UsageStatsManager
 
         val time = System.currentTimeMillis()
 
         val stats = usageStatsManager.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY,
+            android.app.usage.UsageStatsManager.INTERVAL_DAILY,
             time - 1000 * 10,
             time
         )
 
-        if (stats.isNullOrEmpty()) {
-            return
-        }
+        if (stats.isNullOrEmpty()) return
 
-        val recentApp = stats.maxByOrNull {
-            it.lastTimeUsed
-        }
-
+        val recentApp = stats.maxByOrNull { it.lastTimeUsed }
         val packageName = recentApp?.packageName ?: return
 
-        // Ignora seu próprio app
-        if (packageName == myPackage) {
-            return
-        }
+        if (packageName == myPackage) return
 
-        // Qualquer app aberto
         if (!isShowingBiometric) {
 
             isShowingBiometric = true
-
             showBiometricPrompt()
         }
     }
@@ -88,7 +77,6 @@ class LockScreenActivity : ComponentActivity() {
                     result: BiometricPrompt.AuthenticationResult
                 ) {
                     super.onAuthenticationSucceeded(result)
-
                     isShowingBiometric = false
                 }
 
@@ -97,7 +85,6 @@ class LockScreenActivity : ComponentActivity() {
                     errString: CharSequence
                 ) {
                     super.onAuthenticationError(errorCode, errString)
-
                     isShowingBiometric = false
                 }
 
@@ -133,7 +120,6 @@ class LockScreenActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         handler.removeCallbacks(checkRunnable)
     }
 }
