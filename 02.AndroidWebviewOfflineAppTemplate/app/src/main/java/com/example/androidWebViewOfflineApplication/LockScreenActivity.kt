@@ -1,6 +1,7 @@
 package com.example.androidWebViewOfflineApplication
 
 import android.app.ActivityManager
+import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,10 +15,8 @@ class LockScreenActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    // Evita abrir biometria várias vezes
     private var isShowingBiometric = false
 
-    // Seu próprio app
     private val myPackage by lazy {
         packageName
     }
@@ -28,7 +27,7 @@ class LockScreenActivity : ComponentActivity() {
 
             checkForegroundApp()
 
-            handler.postDelayed(this, 800)
+            handler.postDelayed(this, 1000)
         }
     }
 
@@ -40,31 +39,39 @@ class LockScreenActivity : ComponentActivity() {
 
     private fun checkForegroundApp() {
 
-        val activityManager =
-            getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val usageStatsManager =
+            getSystemService(Context.USAGE_STATS_SERVICE)
+                    as UsageStatsManager
 
-        val runningTasks = activityManager.getRunningTasks(1)
+        val time = System.currentTimeMillis()
 
-        if (runningTasks.isNotEmpty()) {
+        val stats = usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            time - 1000 * 10,
+            time
+        )
 
-            val topActivity =
-                runningTasks[0].topActivity
+        if (stats.isNullOrEmpty()) {
+            return
+        }
 
-            val packageName =
-                topActivity?.packageName ?: return
+        val recentApp = stats.maxByOrNull {
+            it.lastTimeUsed
+        }
 
-            // Ignora seu app
-            if (packageName == myPackage) {
-                return
-            }
+        val packageName = recentApp?.packageName ?: return
 
-            // QUALQUER app aberto
-            if (!isShowingBiometric) {
+        // Ignora seu próprio app
+        if (packageName == myPackage) {
+            return
+        }
 
-                isShowingBiometric = true
+        // Qualquer app aberto
+        if (!isShowingBiometric) {
 
-                showBiometricPrompt()
-            }
+            isShowingBiometric = true
+
+            showBiometricPrompt()
         }
     }
 
@@ -118,9 +125,7 @@ class LockScreenActivity : ComponentActivity() {
                 LockScreenActivity::class.java
             )
 
-            intent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             context.startActivity(intent)
         }
