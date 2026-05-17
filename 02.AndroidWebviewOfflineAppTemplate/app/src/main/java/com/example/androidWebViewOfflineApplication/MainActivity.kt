@@ -1,7 +1,14 @@
 package com.example.androidWebViewOfflineApplication
 
 import android.annotation.SuppressLint
+import android.app.AppOpsManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Process
+import android.provider.Settings
 import android.widget.Toast
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -20,7 +27,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Executa sua tela AppLock
+        // Solicita permissões necessárias
+        requestPermissionsIfNeeded()
+
+        // Executa AppLock
         LockScreenActivity.startLock(this)
 
         webView = WebView(this).apply {
@@ -38,6 +48,55 @@ class MainActivity : ComponentActivity() {
 
         // Chama biometria
         checkBiometricAndAuthenticate()
+    }
+
+    private fun requestPermissionsIfNeeded() {
+
+        // Overlay
+        if (!Settings.canDrawOverlays(this)) {
+
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:$packageName")
+            )
+
+            startActivity(intent)
+        }
+
+        // Usage Access
+        if (!hasUsageStatsPermission()) {
+
+            val intent = Intent(
+                Settings.ACTION_USAGE_ACCESS_SETTINGS
+            )
+
+            startActivity(intent)
+        }
+    }
+
+    private fun hasUsageStatsPermission(): Boolean {
+
+        val appOps =
+            getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            appOps.unsafeCheckOpNoThrow(
+                "android:get_usage_stats",
+                Process.myUid(),
+                packageName
+            )
+
+        } else {
+
+            appOps.checkOpNoThrow(
+                "android:get_usage_stats",
+                Process.myUid(),
+                packageName
+            )
+        }
+
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 
     private fun checkBiometricAndAuthenticate() {
@@ -78,7 +137,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     super.onAuthenticationSucceeded(result)
 
-                    // Carrega o index.html após autenticação
+                    // Carrega HTML após biometria
                     webView.loadUrl(applicationUrl)
                 }
 
