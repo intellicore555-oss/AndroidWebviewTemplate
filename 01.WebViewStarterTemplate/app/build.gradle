@@ -1,152 +1,167 @@
+
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+
+id 'com.android.application'
+
+id 'org.jetbrains.kotlin.android'
+
 }
+
 
 android {
 
-    namespace 'com.mulheres'
 
-    compileSdk 34
+namespace 'com.mulheres'  
 
-    defaultConfig {
+compileSdk 34  
 
-        applicationId "com.mulheres"
+defaultConfig {  
 
-        minSdk 27
-        targetSdk 34
+    applicationId "com.mulheres"  
 
-        versionCode 1
-        versionName "1.0"
+    minSdk 27  
+    targetSdk 34  
 
-        multiDexEnabled true
+    versionCode 1  
+    versionName "1.0"  
 
-        vectorDrawables {
-            useSupportLibrary true
-        }
-    }
+    multiDexEnabled true  
 
-    buildTypes {
+    vectorDrawables {  
+        useSupportLibrary true  
+    }  
+}  
 
-        debug {
+buildTypes {  
 
-            minifyEnabled false
-            debuggable true
-        }
+    debug {  
 
-        release {
+        minifyEnabled false  
+        debuggable true  
+    }  
 
-            minifyEnabled false
-            shrinkResources false
+    release {  
 
-            proguardFiles(
-                getDefaultProguardFile(
-                    'proguard-android-optimize.txt'
-                ),
-                'proguard-rules.pro'
-            )
-        }
-    }
+        minifyEnabled false  
+        shrinkResources false  
 
-    compileOptions {
+        proguardFiles(  
+            getDefaultProguardFile(  
+                'proguard-android-optimize.txt'  
+            ),  
+            'proguard-rules.pro'  
+        )  
+    }  
+}  
 
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
+compileOptions {  
 
-    kotlinOptions {
+    sourceCompatibility JavaVersion.VERSION_17  
+    targetCompatibility JavaVersion.VERSION_17  
+}  
 
-        jvmTarget = '17'
-    }
+kotlinOptions {  
 
-    buildFeatures {
+    jvmTarget = '17'  
+}  
 
-        buildConfig true
-        viewBinding true
-    }
+buildFeatures {  
 
-    packaging {
+    buildConfig true  
+    viewBinding true  
+}  
 
-        resources {
+packaging {  
 
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
+    resources {  
 
-    lint {
+        excludes += '/META-INF/{AL2.0,LGPL2.1}'  
+    }  
+}  
 
-        abortOnError false
-        checkReleaseBuilds false
-    }
+lint {  
+
+    abortOnError false  
+    checkReleaseBuilds false  
+}  
+
+
+
 }
+
 
 dependencies {
 
-    // Kotlin Android
-    implementation 'androidx.core:core-ktx:1.13.1'
 
-    // AppCompat
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+// Kotlin Android  
+implementation 'androidx.core:core-ktx:1.13.1'  
 
-    // Material Design
-    implementation 'com.google.android.material:material:1.12.0'
+// AppCompat  
+implementation 'androidx.appcompat:appcompat:1.7.0'  
 
-    // ConstraintLayout
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+// Material Design  
+implementation 'com.google.android.material:material:1.12.0'  
 
-    // WebView moderna
-    implementation 'androidx.webkit:webkit:1.11.0'
+// ConstraintLayout  
+implementation 'androidx.constraintlayout:constraintlayout:2.1.4'  
 
-    // Biometric Prompt (Face ID / Fingerprint / PIN)
-    implementation 'androidx.biometric:biometric:1.4.0-alpha02'
+// WebView moderna  
+implementation 'androidx.webkit:webkit:1.11.0'  
 
-    // Activity KTX
-    implementation 'androidx.activity:activity-ktx:1.9.0'
+// Biometria / PIN / impressão digital  
+implementation 'androidx.biometric:biometric:1.1.0'  
 
-    // Fragment KTX
-    implementation 'androidx.fragment:fragment-ktx:1.8.0'
+// Activity KTX  
+implementation 'androidx.activity:activity-ktx:1.9.0'  
 
-    // Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.3'
+// Fragment KTX  
+implementation 'androidx.fragment:fragment-ktx:1.8.0'  
 
-    // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+// Lifecycle  
+implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.3'  
 
-    // GPS / localização
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
+// Coroutines  
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'  
 
-    // Swipe Refresh
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+// GPS / localização  
+implementation 'com.google.android.gms:play-services-location:21.3.0'  
 
-    // Splash Screen Android 12+
-    implementation 'androidx.core:core-splashscreen:1.0.1'
+// Swipe Refresh  
+implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'  
 
-    // Browser
-    implementation 'androidx.browser:browser:1.8.0'
+// Splash Screen Android 12+  
+implementation 'androidx.core:core-splashscreen:1.0.1'  
 
-    // Segurança
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+// Browser  
+implementation 'androidx.browser:browser:1.8.0'  
 
-    // JSON
-    implementation 'org.json:json:20240303'
+// Segurança  
+implementation 'androidx.security:security-crypto:1.1.0-alpha06'  
 
-    // Multidex
-    implementation 'androidx.multidex:multidex:2.0.1'
+// JSON  
+implementation 'org.json:json:20240303'  
 
-    // Firebase BOM
-    implementation platform(
-        'com.google.firebase:firebase-bom:33.1.2'
-    )
+// Multidex  
+implementation 'androidx.multidex:multidex:2.0.1'  
 
-    // Firebase Analytics
-    implementation 'com.google.firebase:firebase-analytics'
+// Firebase BOM  
+implementation platform(  
+    'com.google.firebase:firebase-bom:33.1.2'  
+)  
 
-    // Firebase Crashlytics
-    implementation 'com.google.firebase:firebase-crashlytics'
+// Firebase Analytics  
+implementation 'com.google.firebase:firebase-analytics'  
 
-    // Firebase Performance
-    implementation 'com.google.firebase:firebase-perf'
+// Firebase Crashlytics  
+implementation 'com.google.firebase:firebase-crashlytics'  
 
-    // Firebase Messaging
-    implementation 'com.google.firebase:firebase-messaging'
+// Firebase Performance  
+implementation 'com.google.firebase:firebase-perf'  
+
+// Firebase Messaging  
+implementation 'com.google.firebase:firebase-messaging'  
+
+
+
 }
+
