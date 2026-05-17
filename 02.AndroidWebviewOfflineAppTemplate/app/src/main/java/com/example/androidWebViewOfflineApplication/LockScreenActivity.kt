@@ -1,16 +1,14 @@
 package com.example.androidWebViewOfflineApplication
 
-import android.content.Context
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 
-class LockScreenActivity : FragmentActivity() {
+class LockScreenActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         showBiometric()
     }
 
@@ -18,34 +16,27 @@ class LockScreenActivity : FragmentActivity() {
 
         val executor = ContextCompat.getMainExecutor(this)
 
-        val biometricPrompt = BiometricPrompt(
+        val prompt = BiometricPrompt(
             this,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
 
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult
-                ) {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    finish()
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     finish()
                 }
             }
         )
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        val info = BiometricPrompt.PromptInfo.Builder()
             .setTitle("App bloqueado")
-            .setSubtitle("Use biometria para desbloquear")
+            .setSubtitle("Autentique para continuar")
             .setNegativeButtonText("Cancelar")
             .build()
 
-        biometricPrompt.authenticate(promptInfo)
-    }
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(
-                android.content.Intent(context, LockScreenActivity::class.java)
-                    .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
+        prompt.authenticate(info)
     }
 }
