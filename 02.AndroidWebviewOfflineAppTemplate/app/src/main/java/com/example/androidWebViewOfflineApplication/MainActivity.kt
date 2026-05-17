@@ -9,15 +9,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
-import android.widget.Toast
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
+import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     private val applicationUrl = "file:///android_asset/index.html"
 
@@ -27,10 +27,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Solicita permissões necessárias
         requestPermissionsIfNeeded()
 
-        // Executa AppLock
         LockScreenActivity.startLock(this)
 
         webView = WebView(this).apply {
@@ -46,13 +44,11 @@ class MainActivity : ComponentActivity() {
 
         setContentView(webView)
 
-        // Chama biometria
         checkBiometricAndAuthenticate()
     }
 
     private fun requestPermissionsIfNeeded() {
 
-        // Overlay
         if (!Settings.canDrawOverlays(this)) {
 
             val intent = Intent(
@@ -63,7 +59,6 @@ class MainActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-        // Usage Access
         if (!hasUsageStatsPermission()) {
 
             val intent = Intent(
@@ -76,13 +71,12 @@ class MainActivity : ComponentActivity() {
 
     private fun hasUsageStatsPermission(): Boolean {
 
-        val appOps =
-            getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
 
         val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
             appOps.unsafeCheckOpNoThrow(
-                "android:get_usage_stats",
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
                 Process.myUid(),
                 packageName
             )
@@ -90,7 +84,7 @@ class MainActivity : ComponentActivity() {
         } else {
 
             appOps.checkOpNoThrow(
-                "android:get_usage_stats",
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
                 Process.myUid(),
                 packageName
             )
@@ -117,8 +111,11 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(
                     this,
                     "Biometria não disponível",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
+
+                // SEM biometria → abre o site direto
+                webView.loadUrl(applicationUrl)
             }
         }
     }
@@ -137,7 +134,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     super.onAuthenticationSucceeded(result)
 
-                    // Carrega HTML após biometria
                     webView.loadUrl(applicationUrl)
                 }
 
