@@ -5,11 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.activity.ComponentActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 
-class LockScreenActivity : ComponentActivity() {
+class LockScreenActivity : FragmentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -22,9 +22,7 @@ class LockScreenActivity : ComponentActivity() {
     private val checkRunnable = object : Runnable {
 
         override fun run() {
-
             checkForegroundApp()
-
             handler.postDelayed(this, 1000)
         }
     }
@@ -32,12 +30,12 @@ class LockScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // NÃO define layout → mantém transparente
-
+        // NÃO usa layout → fica invisível (tema transparente controla isso)
         handler.post(checkRunnable)
     }
 
     private fun checkForegroundApp() {
+
         val usageStatsManager =
             getSystemService(Context.USAGE_STATS_SERVICE)
                     as android.app.usage.UsageStatsManager
@@ -55,10 +53,11 @@ class LockScreenActivity : ComponentActivity() {
         val recentApp = stats.maxByOrNull { it.lastTimeUsed }
         val packageName = recentApp?.packageName ?: return
 
+        // ignora seu app
         if (packageName == myPackage) return
 
+        // bloqueia qualquer outro app
         if (!isShowingBiometric) {
-
             isShowingBiometric = true
             showBiometricPrompt()
         }
@@ -77,6 +76,7 @@ class LockScreenActivity : ComponentActivity() {
                     result: BiometricPrompt.AuthenticationResult
                 ) {
                     super.onAuthenticationSucceeded(result)
+
                     isShowingBiometric = false
                 }
 
@@ -85,6 +85,7 @@ class LockScreenActivity : ComponentActivity() {
                     errString: CharSequence
                 ) {
                     super.onAuthenticationError(errorCode, errString)
+
                     isShowingBiometric = false
                 }
 
@@ -110,9 +111,9 @@ class LockScreenActivity : ComponentActivity() {
             val intent = Intent(
                 context,
                 LockScreenActivity::class.java
-            )
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
 
             context.startActivity(intent)
         }
