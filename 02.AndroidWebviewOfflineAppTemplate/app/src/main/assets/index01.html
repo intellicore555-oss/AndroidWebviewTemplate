@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Fonte Quicksand -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
   <title>Conta Google</title>
@@ -16,29 +15,28 @@
       display:flex;
       justify-content:center;
       align-items:center;
-flex-direction: column;
-      height:100vh;
+      flex-direction: column;
+      min-height:100vh;
       margin:0;
+      color:white;
+      padding: 20px;
     }
 
     .card{
       background:#111;
       width:70%;
-      
-      border-radius:160px;
+      border-radius:400px;
       box-shadow:0 4px 20px rgba(255,255,255,0.08);
       border:1px solid #222;
-position: relative;
-height: auto;
-display: flex;
-justify-content: center;
-align-items: center;
-padding: 20px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      max-width: 500px;
     }
 
-    h2{
-      margin-top:0;
-      color:white;
+    h2, h1, p{
+      margin: 10px 0;
       text-align:center;
     }
 
@@ -46,15 +44,7 @@ padding: 20px;
       display:flex;
       align-items:center;
       gap:12px;
-      
       padding:12px;
-      border-radius:12px;
-      transition:0.3s;
-      cursor:pointer;
-    }
-
-    .conta:hover{
-      background:#1b1b1b;
     }
 
     .bola{
@@ -82,6 +72,7 @@ padding: 20px;
       color:white;
       font-size:15px;
       font-weight:600;
+      word-break: break-word;
     }
 
     .senha{
@@ -89,27 +80,53 @@ padding: 20px;
       font-size:13px;
       margin-top:2px;
     }
+
+    .links {
+      margin-top: 20px;
+      text-align: center;
+      max-width: 90%;
+      font-size: 14px;
+      color: #bbb;
+      line-height: 1.6;
+    }
   </style>
 </head>
+
 <body>
 
 <h2>Conta Google: Mulher Amparada</h2>
 
-  <div class="card">
+<div class="card">
+  <div class="conta">
+    <div class="bola">
+      <img src="user1.png" alt="Perfil">
+    </div>
 
-    <div class="conta">
-      <div class="bola">
-        <img src="user1.png" alt="Perfil">
+    <div class="textos">
+      <div class="email">
+        mulheramparada<br>@gmail.com
       </div>
-
-      <div class="textos">
-        <div class="email">mulheramparada
-<br>
-@gmail.com</div>
-        <div class="senha">299792458anjinho@</div>
-      </div>
+      <div class="senha">299792458anjinho@</div>
     </div>
   </div>
+</div>
+
+<h1>Github:</h1>
+
+<p> intellicore555-oss</p>
+
+<p>HhBgxwE7c9FM@fy</p>
+
+<div class="links">
+
+  <h1 style="color: white">Todos os lugares com o link do github mulher amparada:</h1><br><br>
+
+  dev.to • seu site que carrega o mulher amparada • reddit • medium • stack overflow •<br>
+  a escola doom pedro e o projeto dela • instagram • TikTok • Canva • comunidade do reddit •<br>
+  mãe (mariana) e charles • WhatsApp • Google Search Console • GitHub • repositório sobre-o-mulher-amparada •<br>
+  Uptodown • Cloudflare • Blogger
+
+</div>
 
 </body>
 </html>
