@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
+import android.view.View
+import android.view.WindowInsets
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -27,11 +30,16 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        hideSystemUI()
+
         requestPermissionsIfNeeded()
 
+        // ⚠️ IMPORTANTE: isso NÃO é AppLock real ainda (precisa de Foreground Service + Accessibility)
         LockScreenActivity.startLock(this)
 
         webView = WebView(this).apply {
+
+            setBackgroundColor(Color.BLACK)
 
             webViewClient = WebViewClient()
 
@@ -39,6 +47,8 @@ class MainActivity : FragmentActivity() {
                 javaScriptEnabled = true
                 allowFileAccess = true
                 domStorageEnabled = true
+                loadWithOverviewMode = true
+                useWideViewPort = true
             }
         }
 
@@ -47,25 +57,38 @@ class MainActivity : FragmentActivity() {
         checkBiometricAndAuthenticate()
     }
 
+    // 🔥 ESCONDE STATUS BAR + NAV BAR
+    private fun hideSystemUI() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+            window.insetsController?.hide(
+                WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars()
+            )
+
+        } else {
+
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
+    }
+
     private fun requestPermissionsIfNeeded() {
 
         if (!Settings.canDrawOverlays(this)) {
-
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                )
             )
-
-            startActivity(intent)
         }
 
         if (!hasUsageStatsPermission()) {
-
-            val intent = Intent(
-                Settings.ACTION_USAGE_ACCESS_SETTINGS
-            )
-
-            startActivity(intent)
+            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }
     }
 
@@ -114,7 +137,6 @@ class MainActivity : FragmentActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                // SEM biometria → abre o site direto
                 webView.loadUrl(applicationUrl)
             }
         }
