@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonte Quicksand -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  <title>Conta Google</title>
+
+  <style>
+    body{
+      font-family: 'Quicksand', sans-serif;
+      background:#000;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+flex-direction: column;
+      height:100vh;
+      margin:0;
+    }
+
+    .card{
+      background:#111;
+      width:70%;
+      
+      border-radius:160px;
+      box-shadow:0 4px 20px rgba(255,255,255,0.08);
+      border:1px solid #222;
+position: relative;
+height: auto;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+    }
+
+    h2{
+      margin-top:0;
+      color:white;
+      text-align:center;
+    }
+
+    .conta{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      
+      padding:12px;
+      border-radius:12px;
+      transition:0.3s;
+      cursor:pointer;
+    }
+
+    .conta:hover{
+      background:#1b1b1b;
+    }
+
+    .bola{
+      width:50px;
+      height:50px;
+      border-radius:50%;
+      overflow:hidden;
+      background:#222;
+      flex-shrink:0;
+      border:2px solid #333;
+    }
+
+    .bola img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .textos{
+      display:flex;
+      flex-direction:column;
+    }
+
+    .email{
+      color:white;
+      font-size:15px;
+      font-weight:600;
+    }
+
+    .senha{
+      color:#999;
+      font-size:13px;
+      margin-top:2px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Conta Google: Mulher Amparada</h2>
+
+  <div class="card">
+
+    <div class="conta">
+      <div class="bola">
+        <img src="user1.png" alt="Perfil">
+      </div>
+
+      <div class="textos">
+        <div class="email">mulheramparada
+<br>
+@gmail.com</div>
+        <div class="senha">299792458anjinho@</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
