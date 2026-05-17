@@ -34,8 +34,8 @@ class MainActivity : FragmentActivity() {
 
         requestPermissionsIfNeeded()
 
-        // ⚠️ IMPORTANTE: isso NÃO é AppLock real ainda (precisa de Foreground Service + Accessibility)
-        LockScreenActivity.startLock(this)
+        // 🔥 inicia AppLock service (IMPORTANTE)
+        startService(Intent(this, AppLockService::class.java))
 
         webView = WebView(this).apply {
 
@@ -45,8 +45,8 @@ class MainActivity : FragmentActivity() {
 
             settings.apply {
                 javaScriptEnabled = true
-                allowFileAccess = true
                 domStorageEnabled = true
+                allowFileAccess = true
                 loadWithOverviewMode = true
                 useWideViewPort = true
             }
@@ -57,7 +57,7 @@ class MainActivity : FragmentActivity() {
         checkBiometricAndAuthenticate()
     }
 
-    // 🔥 ESCONDE STATUS BAR + NAV BAR
+    // 🔥 FULLSCREEN (status + nav bar escondidos)
     private fun hideSystemUI() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -116,15 +116,14 @@ class MainActivity : FragmentActivity() {
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
+    // 🔥 BIOMETRIA
     private fun checkBiometricAndAuthenticate() {
 
         val biometricManager = BiometricManager.from(this)
 
-        when (
-            biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG
-            )
-        ) {
+        when (biometricManager.canAuthenticate(
+            BiometricManager.Authenticators.BIOMETRIC_STRONG
+        )) {
 
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 showBiometricPrompt()
@@ -133,11 +132,11 @@ class MainActivity : FragmentActivity() {
             else -> {
                 Toast.makeText(
                     this,
-                    "Biometria não disponível",
+                    "Sem biometria - carregando offline",
                     Toast.LENGTH_SHORT
                 ).show()
 
-                webView.loadUrl(applicationUrl)
+                loadOffline()
             }
         }
     }
@@ -165,33 +164,50 @@ class MainActivity : FragmentActivity() {
                 ) {
                     super.onAuthenticationError(errorCode, errString)
 
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Autenticação cancelada",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    finish()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Biometria inválida",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    loadOffline()
                 }
             }
         )
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Autenticação Biométrica")
-            .setSubtitle("Use sua digital para entrar")
+            .setTitle("Autenticação")
+            .setSubtitle("Use sua digital")
             .setNegativeButtonText("Cancelar")
             .build()
 
         biometricPrompt.authenticate(promptInfo)
+    }
+
+    // 🔥 OFFLINE MODE + FONT TTF
+    private fun loadOffline() {
+
+        webView.loadUrl(applicationUrl)
+
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+
+                // aplica fonte local assets/fonts/font.ttf
+                webView.evaluateJavascript(
+                    """
+                    var newStyle = document.createElement('style');
+                    newStyle.innerHTML = `
+                        @font-face {
+                            font-family: 'CustomFont';
+                            src: url('file:///android_asset/fonts/font.ttf');
+                        }
+                        body {
+                            font-family: 'CustomFont';
+                            background-color: black;
+                            color: white;
+                        }
+                    `;
+                    document.head.appendChild(newStyle);
+                    """.trimIndent(),
+                    null
+                )
+            }
+        }
     }
 }
