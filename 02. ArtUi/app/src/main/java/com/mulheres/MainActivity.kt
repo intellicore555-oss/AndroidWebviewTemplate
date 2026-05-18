@@ -116,27 +116,33 @@ class MainActivity : AppCompatActivity() {
     // DOWNLOAD
     // ==========================
     private val myDownloadListener =
-        DownloadListener { url, _, _, _, _ ->
+    DownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
 
-            try {
+        try {
 
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(url)
-                )
+            val request = android.app.DownloadManager.Request(Uri.parse(url))
 
-                startActivity(intent)
+            request.setMimeType(mimeType)
+            request.addRequestHeader("User-Agent", userAgent)
+            request.setDescription("Baixando arquivo...")
+            request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
+            request.allowScanningByMediaScanner()
+            request.setNotificationVisibility(
+                android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            )
 
-            } catch (e: Exception) {
+            request.setDestinationInExternalPublicDir(
+                android.os.Environment.DIRECTORY_DOWNLOADS,
+                URLUtil.guessFileName(url, contentDisposition, mimeType)
+            )
 
-                Toast.makeText(
-                    this,
-                    "Não foi possível baixar",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            val dm = getSystemService(DOWNLOAD_SERVICE) as android.app.DownloadManager
+            dm.enqueue(request)
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Erro ao baixar QR", Toast.LENGTH_SHORT).show()
         }
-
+    }
     // ==========================
     // ON CREATE
     // ==========================
