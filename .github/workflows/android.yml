@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK (Auto Fix Gradle Wrapper)
 
 on:
   push:
@@ -18,48 +18,60 @@ jobs:
       # ==========================
       # JAVA 17
       # ==========================
-      - name: Configurar Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
       # ==========================
-      # INSTALAR GRADLE (SEM WRAPPER)
+      # FIX GRADLE WRAPPER AUTOMATICAMENTE
       # ==========================
-      - name: Instalar Gradle
-        run: sudo apt-get update && sudo apt-get install -y gradle
+      - name: Rebuild Gradle Wrapper
+        run: |
+          cd "02. ArtUi"
+
+          echo "Downloading Gradle 8.2.1..."
+          curl -L https://services.gradle.org/distributions/gradle-8.2.1-bin.zip -o gradle.zip
+
+          echo "Unzipping..."
+          unzip -q gradle.zip
+
+          echo "Generating wrapper..."
+          gradle-8.2.1/bin/gradle wrapper --gradle-version 8.2.1 --distribution-type all
+
+          chmod +x gradlew
 
       # ==========================
-      # DEBUG BUILD
+      # BUILD DEBUG
       # ==========================
       - name: Build Debug APK
         run: |
           cd "02. ArtUi"
-          gradle assembleDebug
+          ./gradlew assembleDebug
 
       # ==========================
-      # UPLOAD DEBUG
-      # ==========================
-      - name: Upload APK Debug
-        uses: actions/upload-artifact@v4
-        with:
-          name: Mulher-Amparada-debug
-          path: 02. ArtUi/app/build/outputs/apk/debug/*.apk
-
-      # ==========================
-      # RELEASE BUILD
+      # BUILD RELEASE
       # ==========================
       - name: Build Release APK
         run: |
           cd "02. ArtUi"
-          gradle assembleRelease
+          ./gradlew assembleRelease
+
+      # ==========================
+      # UPLOAD DEBUG
+      # ==========================
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: 02. ArtUi/app/build/outputs/apk/debug/*.apk
 
       # ==========================
       # UPLOAD RELEASE
       # ==========================
-      - name: Upload APK Release
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Mulher-Amparada-release
+          name: release-apk
           path: 02. ArtUi/app/build/outputs/apk/release/*.apk
