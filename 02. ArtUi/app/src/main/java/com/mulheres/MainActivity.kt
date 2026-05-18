@@ -310,7 +310,7 @@ class MainActivity : AppCompatActivity() {
     fun carregarWebView() {
 
         webView.loadUrl(
-            "file:///android_asset/user/index.html"
+            "file:///android_asset/index.html"
         )
 
         webView.visibility = View.VISIBLE
