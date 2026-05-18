@@ -110,30 +110,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // ==========================
-// DOWNLOAD
-// ==========================
-private val myDownloadListener =
-    DownloadListener { url, _, _, _, _ ->
-
-        try {
-
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(url)
-            )
-
-            startActivity(intent)
-
-        } catch (e: Exception) {
-
-            Toast.makeText(
-                this,
-                "Não foi possível baixar",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
+        
 
     // ==========================
     // DOWNLOAD
