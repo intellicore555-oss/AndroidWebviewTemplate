@@ -22,27 +22,36 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
+      # ==========================
+      # GRADLE PERMISSION
+      # ==========================
       - name: Dar permissão ao gradlew
-        run: chmod +x 01.WebViewStarterTemplate/gradlew
+        run: chmod +x "02. ArtUi/gradlew"
 
+      # ==========================
+      # DEBUG BUILD
+      # ==========================
       - name: Build Debug APK
         run: |
-          cd 02. ArtUi
+          cd "02. ArtUi"
           ./gradlew assembleDebug
 
       - name: Upload APK Debug
         uses: actions/upload-artifact@v4
         with:
           name: Mulher-Amparada-debug
-          path: 01.WebViewStarterTemplate/app/build/outputs/apk/debug/*.apk
+          path: 02. ArtUi/app/build/outputs/apk/debug/*.apk
 
+      # ==========================
+      # RELEASE BUILD
+      # ==========================
       - name: Build Release APK
         run: |
-          cd 02. ArtUi
+          cd "02. ArtUi"
           ./gradlew assembleRelease
 
       - name: Upload APK Release
         uses: actions/upload-artifact@v4
         with:
           name: Mulher-Amparada-release
-          path: 01.WebViewStarterTemplate/app/build/outputs/apk/release/*.apk
+          path: 02. ArtUi/app/build/outputs/apk/release/*.apk
