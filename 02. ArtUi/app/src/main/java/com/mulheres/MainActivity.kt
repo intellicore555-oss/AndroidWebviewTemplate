@@ -26,110 +26,85 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private var destinoBiometria = 0
 
-    // ==========================
-    // MYCHROME
-    // ==========================
-    private val myChrome = object : WebChromeClient() {
+   // ==========================
+// MYCHROME
+// ==========================
+private val myChrome = object : WebChromeClient() {
 
-        private var customView: View? = null
-        private var customViewCallback: CustomViewCallback? = null
-        private var originalUiFlags: Int = 0
+    private var customView: View? = null
+    private var customViewCallback: CustomViewCallback? = null
+    private var originalUiFlags: Int = 0
 
-        override fun onGeolocationPermissionsShowPrompt(
-            origin: String?,
-            callback: GeolocationPermissions.Callback?
-        ) {
+    override fun onGeolocationPermissionsShowPrompt(
+        origin: String?,
+        callback: GeolocationPermissions.Callback?
+    ) {
 
-            callback?.invoke(
-                origin ?: "",
-                true,
-                false
-            )
-        }
-
-        override fun onShowCustomView(
-            view: View,
-            callback: CustomViewCallback
-        ) {
-
-            if (customView != null) {
-
-                callback.onCustomViewHidden()
-                return
-            }
-
-            val decor =
-                window.decorView as ViewGroup
-
-            originalUiFlags =
-                decor.systemUiVisibility
-
-            customView = view
-            customViewCallback = callback
-
-            decor.addView(
-                customView,
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            )
-
-            decor.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        }
-
-        override fun onHideCustomView() {
-
-            val decor =
-                window.decorView as ViewGroup
-
-            customView?.let {
-
-                decor.removeView(it)
-            }
-
-            customView = null
-
-            decor.systemUiVisibility =
-                originalUiFlags
-
-            customViewCallback
-                ?.onCustomViewHidden()
-
-            customViewCallback = null
-        }
+        callback?.invoke(
+            origin ?: "",
+            true,
+            false
+        )
     }
 
-    // ==========================
-    // DOWNLOAD
-    // ==========================
-    private val myDownloadListener =
-        DownloadListener { url, _, _, _, _ ->
+    override fun onShowCustomView(
+        view: View,
+        callback: CustomViewCallback
+    ) {
 
-            try {
+        if (customView != null) {
 
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(url)
-                )
-
-                startActivity(intent)
-
-            } catch (e: Exception) {
-
-                Toast.makeText(
-                    this,
-                    "Não foi possível baixar",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            callback.onCustomViewHidden()
+            return
         }
+
+        val decor =
+            window.decorView as ViewGroup
+
+        originalUiFlags =
+            decor.systemUiVisibility
+
+        customView = view
+        customViewCallback = callback
+
+        decor.addView(
+            customView,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
+
+        decor.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    }
+
+    override fun onHideCustomView() {
+
+        val decor =
+            window.decorView as ViewGroup
+
+        customView?.let {
+
+            decor.removeView(it)
+        }
+
+        customView = null
+
+        decor.systemUiVisibility =
+            originalUiFlags
+
+        customViewCallback
+            ?.onCustomViewHidden()
+
+        customViewCallback = null
+    }
+}
 
     // ==========================
     // ON CREATE
