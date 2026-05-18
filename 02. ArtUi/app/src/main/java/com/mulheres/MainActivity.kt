@@ -207,10 +207,7 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     private fun configurarWebView() {
 
-        webView.addJavascriptInterface(
-            WebAppInterface(this),
-            "Android"
-        )
+        webView.addJavascriptInterface(WebAppInterface(this), "Android")
 
         val s = webView.settings
 
