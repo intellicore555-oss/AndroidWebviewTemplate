@@ -1,5 +1,8 @@
 package com.mulheres
 
+import android.app.DownloadManager
+import android.webkit.URLUtil
+import android.media.MediaPlayer
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
