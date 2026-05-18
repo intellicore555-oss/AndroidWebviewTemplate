@@ -416,27 +416,49 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onPageFinished(
-                    view: WebView?,
-                    url: String?
-                ) {
+    view: WebView?,
+    url: String?
+) {
+    super.onPageFinished(view, url)
 
-                    super.onPageFinished(
-                        view,
-                        url
-                    )
+    esconderSistema()
 
-                    esconderSistema()
-
-                    view?.evaluateJavascript(
-                        """
-                        if(typeof mostrarConteudo === 'function'){
-                            mostrarConteudo();
-                        }
-                        """.trimIndent(),
-                        null
-                    )
+    // ==========================
+    // INJETAR FONTE (sempre)
+    // ==========================
+    val jsFonte = """
+        (function() {
+            var style = document.createElement('style');
+            style.innerHTML = `
+                @font-face {
+                    font-family: 'MinhaFonte';
+                    src: url('file:///android_asset/fonte.ttf');
                 }
+
+                * {
+                    font-family: 'MinhaFonte' !important;
+                }
+            `;
+            document.head.appendChild(style);
+        })();
+    """.trimIndent()
+
+    view?.evaluateJavascript(jsFonte, null)
+
+    // ==========================
+    // CHAMAR JS DA PÁGINA
+    // ==========================
+    view?.evaluateJavascript(
+        """
+        (function() {
+            if (typeof mostrarConteudo === 'function') {
+                mostrarConteudo();
             }
+        })();
+        """.trimIndent(),
+        null
+    )
+                }
     }
 
     // ==========================
