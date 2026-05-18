@@ -46,8 +46,7 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     private fun configurarWebView() {
 
-        webView.addJavascriptInterface(this, "Android")
-
+    webView.addJavascriptInterface(WebAppInterface(this), "Android")
         val s = webView.settings
         s.javaScriptEnabled = true
         s.domStorageEnabled = true
