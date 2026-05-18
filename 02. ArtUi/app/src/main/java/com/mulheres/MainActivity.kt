@@ -24,9 +24,13 @@ class MainActivity : AppCompatActivity() {
     private var destinoBiometria = 0
 
     // ==========================
-    // MYCHROME (SEPARADO)
+    // MYCHROME (FULLSCREEN + GEOLOCATION)
     // ==========================
     private val myChrome = object : WebChromeClient() {
+
+        private var customView: View? = null
+        private var customViewCallback: CustomViewCallback? = null
+        private var originalUiFlags: Int = 0
 
         override fun onGeolocationPermissionsShowPrompt(
             origin: String?,
@@ -34,6 +38,55 @@ class MainActivity : AppCompatActivity() {
         ) {
             callback?.invoke(origin, true, false)
         }
+
+        override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+
+            if (customView != null) {
+                callback.onCustomViewHidden()
+                return
+            }
+
+            val decor = window.decorView as FrameLayout
+            originalUiFlags = decor.systemUiVisibility
+
+            customView = view
+            customViewCallback = callback
+
+            decor.addView(
+                customView,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+            )
+
+            decor.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        }
+
+        override fun onHideCustomView() {
+
+            val decor = window.decorView as FrameLayout
+
+            decor.removeView(customView)
+            customView = null
+
+            decor.systemUiVisibility = originalUiFlags
+
+            customViewCallback?.onCustomViewHidden()
+            customViewCallback = null
+        }
+    }
+
+    // ==========================
+    // DOWNLOAD LISTENER
+    // ==========================
+    private val myDownloadListener = DownloadListener { url, _, _, _, _ ->
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 
     // ==========================
@@ -65,6 +118,8 @@ class MainActivity : AppCompatActivity() {
         s.javaScriptEnabled = true
         s.domStorageEnabled = true
         s.allowFileAccess = true
+        s.mediaPlaybackRequiresUserGesture = false
+        s.allowContentAccess = true
 
         webView.webViewClient = object : WebViewClient() {
 
@@ -95,32 +150,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webChromeClient = myChrome
+        webView.setDownloadListener(myDownloadListener)
     }
 
     // ==========================
     // CARREGAR WEBVIEW
     // ==========================
-     fun carregarWebView() {
+    fun carregarWebView() {
         webView.loadUrl("file:///android_asset/user/indes.html")
         webView.visibility = View.VISIBLE
     }
 
-     fun carregarWebView1() {
+    fun carregarWebView1() {
         webView.loadUrl("file:///android_asset/user1/index1.html")
         webView.visibility = View.VISIBLE
     }
 
-     fun carregarWebView2() {
+    fun carregarWebView2() {
         webView.loadUrl("file:///android_asset/user/indes.html")
         webView.visibility = View.VISIBLE
     }
 
-     fun carregarWebView3() {
+    fun carregarWebView3() {
         webView.loadUrl("file:///android_asset/index.html")
         webView.visibility = View.VISIBLE
     }
 
-     fun carregarWebView4() {
+    fun carregarWebView4() {
         webView.loadUrl("file:///android_asset/user1/botao.html")
         webView.visibility = View.VISIBLE
     }
@@ -169,11 +225,7 @@ class MainActivity : AppCompatActivity() {
             carregarWebView()
 
             if (!temPermissoes()) {
-                Toast.makeText(
-                    this,
-                    "Permissões não concedidas",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Permissões não concedidas", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -189,7 +241,7 @@ class MainActivity : AppCompatActivity() {
 
         val canAuth = biometricManager.canAuthenticate(
             BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            BiometricManager.Authenticators.DEVICE_CREDENTIAL
         )
 
         if (canAuth != BiometricManager.BIOMETRIC_SUCCESS) {
@@ -205,8 +257,6 @@ class MainActivity : AppCompatActivity() {
             object : BiometricPrompt.AuthenticationCallback() {
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-
                     when (destinoBiometria) {
                         1 -> carregarWebView1()
                         2 -> carregarWebView2()
@@ -216,7 +266,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
                     carregarWebView4()
                 }
             }
@@ -227,7 +276,7 @@ class MainActivity : AppCompatActivity() {
             .setDescription("Use biometria ou senha")
             .setAllowedAuthenticators(
                 BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
             )
             .build()
 
