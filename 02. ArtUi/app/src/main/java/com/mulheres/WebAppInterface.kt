@@ -1,6 +1,5 @@
 package com.mulheres
 
-import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import android.webkit.JavascriptInterface
