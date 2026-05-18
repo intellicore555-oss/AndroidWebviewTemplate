@@ -24,6 +24,19 @@ class MainActivity : AppCompatActivity() {
     private var destinoBiometria = 0
 
     // ==========================
+    // MYCHROME (SEPARADO)
+    // ==========================
+    private val myChrome = object : WebChromeClient() {
+
+        override fun onGeolocationPermissionsShowPrompt(
+            origin: String?,
+            callback: GeolocationPermissions.Callback?
+        ) {
+            callback?.invoke(origin, true, false)
+        }
+    }
+
+    // ==========================
     // ON CREATE
     // ==========================
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +59,8 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     private fun configurarWebView() {
 
-    webView.addJavascriptInterface(WebAppInterface(this), "Android")
+        webView.addJavascriptInterface(WebAppInterface(this), "Android")
+
         val s = webView.settings
         s.javaScriptEnabled = true
         s.domStorageEnabled = true
@@ -79,12 +93,13 @@ class MainActivity : AppCompatActivity() {
                 view?.evaluateJavascript("mostrarConteudo()", null)
             }
         }
+
+        webView.webChromeClient = myChrome
     }
 
     // ==========================
-    // CARREGAR WEBVIEW (TODOS)
+    // CARREGAR WEBVIEW
     // ==========================
-
     private fun carregarWebView() {
         webView.loadUrl("file:///android_asset/user1/index1.html")
         webView.visibility = View.VISIBLE
@@ -164,9 +179,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ==========================
-    // BIOMETRIA (BÁSICA)
+    // BIOMETRIA
     // ==========================
-    @JavascriptInterface
     fun iniciarBiometria(tipo: Int) {
 
         destinoBiometria = tipo
