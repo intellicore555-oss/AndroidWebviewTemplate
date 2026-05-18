@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Debug APK
         run: |
-          cd 01.WebViewStarterTemplate
+          cd 02. ArtUi
           ./gradlew assembleDebug
 
       - name: Upload APK Debug
@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Release APK
         run: |
-          cd 01.WebViewStarterTemplate
+          cd 02. ArtUi
           ./gradlew assembleRelease
 
       - name: Upload APK Release
