@@ -15,22 +15,27 @@ class WebAppInterface(
     // CARREGAR WEBVIEWS
     // ==========================
     @JavascriptInterface
-    fun carregarWebView() = activity.runOnUiThread { main().carregarWebView() }
+    fun carregarWebView() =
+        activity.runOnUiThread { main().carregarWebView() }
 
     @JavascriptInterface
-    fun carregarWebView1() = activity.runOnUiThread { main().carregarWebView1() }
+    fun carregarWebView1() =
+        activity.runOnUiThread { main().carregarWebView1() }
 
     @JavascriptInterface
-    fun carregarWebView2() = activity.runOnUiThread { main().carregarWebView2() }
+    fun carregarWebView2() =
+        activity.runOnUiThread { main().carregarWebView2() }
 
     @JavascriptInterface
-    fun carregarWebView3() = activity.runOnUiThread { main().carregarWebView3() }
+    fun carregarWebView3() =
+        activity.runOnUiThread { main().carregarWebView3() }
 
     @JavascriptInterface
-    fun carregarWebView4() = activity.runOnUiThread { main().carregarWebView4() }
+    fun carregarWebView4() =
+        activity.runOnUiThread { main().carregarWebView4() }
 
     // ==========================
-    // INICIAR BIOMETRIA (TODOS OS “INICIAR” APONTAM PRA MESMA FUNÇÃO)
+    // BIOMETRIA (CORRETO)
     // ==========================
     @JavascriptInterface
     fun iniciarBiometria(tipo: Int) =
