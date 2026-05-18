@@ -12,7 +12,7 @@
     <application
         android:label="ArtUi Remasterizada"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
