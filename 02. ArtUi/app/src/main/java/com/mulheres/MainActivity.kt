@@ -606,8 +606,8 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer.isLooping = false
         mediaPlayer.setVolume(1f, 1f)
 
-        mediaPlayer.setOnCompletionListener {
-            it.release()
+        mediaPlayer.setOnCompletionListener { mp ->
+    mp.release()
         }
 
         mediaPlayer.prepare()
