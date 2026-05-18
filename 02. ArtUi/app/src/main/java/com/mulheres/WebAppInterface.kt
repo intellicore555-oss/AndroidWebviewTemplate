@@ -2,14 +2,10 @@ package com.mulheres
 
 import android.webkit.JavascriptInterface
 
-class WebAppInterface(
-    private val activity: MainActivity
-) {
+class WebAppInterface(private val activity: MainActivity) {
 
     private fun ui(block: () -> Unit) {
-        activity.runOnUiThread {
-            block()
-        }
+        activity.runOnUiThread(block)
     }
 
     @JavascriptInterface
@@ -40,25 +36,5 @@ class WebAppInterface(
     @JavascriptInterface
     fun iniciarBiometria(tipo: Int) {
         ui { activity.iniciarBiometria(tipo) }
-    }
-
-    @JavascriptInterface
-    fun iniciarBiometriaAmor() {
-        ui { activity.iniciarBiometria(1) }
-    }
-
-    @JavascriptInterface
-    fun iniciarBiometriaMusica() {
-        ui { activity.iniciarBiometria(2) }
-    }
-
-    @JavascriptInterface
-    fun iniciarBiometriaPrincesa() {
-        ui { activity.iniciarBiometria(3) }
-    }
-
-    @JavascriptInterface
-    fun iniciarBiometriaPrincipe() {
-        ui { activity.iniciarBiometria(4) }
     }
 }
