@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     // CARREGAR WEBVIEW
     // ==========================
     private fun carregarWebView() {
-        webView.loadUrl("file:///android_asset/user1/index1.html")
+        webView.loadUrl("file:///android_asset/user/indes.html")
         webView.visibility = View.VISIBLE
     }
 
@@ -111,12 +111,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun carregarWebView2() {
-        webView.loadUrl("file:///android_asset/user1/index1.html")
+        webView.loadUrl("file:///android_asset/user/indes.html")
         webView.visibility = View.VISIBLE
     }
 
     private fun carregarWebView3() {
-        webView.loadUrl("file:///android_asset/user1/index1.html")
+        webView.loadUrl("file:///android_asset/index.html")
         webView.visibility = View.VISIBLE
     }
 
