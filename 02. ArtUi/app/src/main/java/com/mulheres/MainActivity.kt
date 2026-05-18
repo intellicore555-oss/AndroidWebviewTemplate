@@ -1,8 +1,8 @@
 package com.mulheres
 
-import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -18,15 +18,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        const val PERMISSION_CODE = 100
-    }
 
     private lateinit var webView: WebView
     private var destinoBiometria = 0
@@ -44,7 +39,12 @@ class MainActivity : AppCompatActivity() {
             origin: String?,
             callback: GeolocationPermissions.Callback?
         ) {
-            callback?.invoke(origin ?: "", true, false)
+
+            callback?.invoke(
+                origin ?: "",
+                true,
+                false
+            )
         }
 
         override fun onShowCustomView(
@@ -53,13 +53,16 @@ class MainActivity : AppCompatActivity() {
         ) {
 
             if (customView != null) {
+
                 callback.onCustomViewHidden()
                 return
             }
 
-            val decor = window.decorView as ViewGroup
+            val decor =
+                window.decorView as ViewGroup
 
-            originalUiFlags = decor.systemUiVisibility
+            originalUiFlags =
+                decor.systemUiVisibility
 
             customView = view
             customViewCallback = callback
@@ -73,28 +76,32 @@ class MainActivity : AppCompatActivity() {
             )
 
             decor.systemUiVisibility =
-                
-    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-    View.SYSTEM_UI_FLAG_FULLSCREEN or
-    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
 
         override fun onHideCustomView() {
 
-            val decor = window.decorView as ViewGroup
+            val decor =
+                window.decorView as ViewGroup
 
             customView?.let {
+
                 decor.removeView(it)
             }
 
             customView = null
 
-            decor.systemUiVisibility = originalUiFlags
+            decor.systemUiVisibility =
+                originalUiFlags
 
-            customViewCallback?.onCustomViewHidden()
+            customViewCallback
+                ?.onCustomViewHidden()
+
             customViewCallback = null
         }
     }
@@ -129,46 +136,39 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     override fun onCreate(savedInstanceState: Bundle?) {
 
-    super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
 
-    window.decorView.setBackgroundColor(
-        android.graphics.Color.BLACK
-    )
+        window.decorView.setBackgroundColor(
+            Color.BLACK
+        )
 
-    window.statusBarColor =
-        android.graphics.Color.BLACK
+        window.statusBarColor =
+            Color.BLACK
 
-    window.navigationBarColor =
-        android.graphics.Color.BLACK
+        window.navigationBarColor =
+            Color.BLACK
 
-    window.decorView.systemUiVisibility =
-        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-        View.SYSTEM_UI_FLAG_FULLSCREEN or
-        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
-    supportActionBar?.hide()
+        supportActionBar?.hide()
 
-    setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
-    webView = findViewById(R.id.webview)
+        webView = findViewById(R.id.webview)
 
-    webView.setBackgroundColor(
-        android.graphics.Color.BLACK
-    )
+        webView.setBackgroundColor(
+            Color.BLACK
+        )
 
-    configurarWebView()
-
-    if (!temPermissoes()) {
-
-        pedirPermissoes()
-
-    } else {
+        configurarWebView()
 
         carregarWebView()
-    }
     }
 
     // ==========================
@@ -197,96 +197,49 @@ class MainActivity : AppCompatActivity() {
 
         s.mediaPlaybackRequiresUserGesture = false
 
-        s.cacheMode = WebSettings.LOAD_DEFAULT
+        s.cacheMode =
+            WebSettings.LOAD_DEFAULT
 
         s.mixedContentMode =
             WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
         s.setSupportZoom(false)
 
-        webView.isVerticalScrollBarEnabled = false
-        webView.isHorizontalScrollBarEnabled = false
+        webView.isVerticalScrollBarEnabled =
+            false
 
-        // ==========================
-        // CLIENT
-        // ==========================
-        webView.webViewClient = object : WebViewClient() {
+        webView.isHorizontalScrollBarEnabled =
+            false
 
-            override fun shouldOverrideUrlLoading(
-                view: WebView?,
-                request: WebResourceRequest?
-            ): Boolean {
+        webView.webViewClient =
+            object : WebViewClient() {
 
-                val url =
-                    request?.url.toString()
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?
+                ): Boolean {
 
-                // ==========================
-                // TEL
-                // ==========================
-                if (url.startsWith("tel:")) {
+                    val url =
+                        request?.url.toString()
 
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_DIAL,
-                            Uri.parse(url)
-                        )
-                    )
+                    // TEL
+                    if (url.startsWith("tel:")) {
 
-                    return true
-                }
-
-                // ==========================
-                // WHATSAPP
-                // ==========================
-                if (
-                    url.startsWith("https://wa.me") ||
-                    url.startsWith("https://api.whatsapp.com")
-                ) {
-
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(url)
-                        )
-                    )
-
-                    return true
-                }
-
-                // ==========================
-                // INTENT
-                // ==========================
-                if (url.startsWith("intent://")) {
-
-                    try {
-
-                        val intent = Intent.parseUri(
-                            url,
-                            Intent.URI_INTENT_SCHEME
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_DIAL,
+                                Uri.parse(url)
+                            )
                         )
 
-                        startActivity(intent)
-
-                    } catch (e: Exception) {
-
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Intent não suportada",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        return true
                     }
 
-                    return true
-                }
-
-                // ==========================
-                // MARKET
-                // ==========================
-                if (
-                    url.startsWith("market://")
-                ) {
-
-                    try {
+                    // WHATSAPP
+                    if (
+                        url.startsWith("https://wa.me") ||
+                        url.startsWith("https://api.whatsapp.com")
+                    ) {
 
                         startActivity(
                             Intent(
@@ -295,36 +248,82 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
 
-                    } catch (e: ActivityNotFoundException) {
-
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Play Store não encontrada",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        return true
                     }
 
-                    return true
+                    // INTENT
+                    if (url.startsWith("intent://")) {
+
+                        try {
+
+                            val intent =
+                                Intent.parseUri(
+                                    url,
+                                    Intent.URI_INTENT_SCHEME
+                                )
+
+                            startActivity(intent)
+
+                        } catch (e: Exception) {
+
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Intent não suportada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        return true
+                    }
+
+                    // PLAY STORE
+                    if (url.startsWith("market://")) {
+
+                        try {
+
+                            startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(url)
+                                )
+                            )
+
+                        } catch (
+                            e: ActivityNotFoundException
+                        ) {
+
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Play Store não encontrada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        return true
+                    }
+
+                    return false
                 }
 
-                return false
+                override fun onPageFinished(
+                    view: WebView?,
+                    url: String?
+                ) {
+
+                    super.onPageFinished(
+                        view,
+                        url
+                    )
+
+                    view?.evaluateJavascript(
+                        "mostrarConteudo()",
+                        null
+                    )
+                }
             }
 
-            override fun onPageFinished(
-                view: WebView?,
-                url: String?
-            ) {
-
-                super.onPageFinished(view, url)
-
-                view?.evaluateJavascript(
-                    "mostrarConteudo()",
-                    null
-                )
-            }
-        }
-
-        webView.webChromeClient = myChrome
+        webView.webChromeClient =
+            myChrome
 
         webView.setDownloadListener(
             myDownloadListener
@@ -340,7 +339,8 @@ class MainActivity : AppCompatActivity() {
             "file:///android_asset/index.html"
         )
 
-        webView.visibility = View.VISIBLE
+        webView.visibility =
+            View.VISIBLE
     }
 
     fun carregarWebView1() {
@@ -349,7 +349,8 @@ class MainActivity : AppCompatActivity() {
             "file:///android_asset/user1/index1.html"
         )
 
-        webView.visibility = View.VISIBLE
+        webView.visibility =
+            View.VISIBLE
     }
 
     fun carregarWebView2() {
@@ -358,7 +359,8 @@ class MainActivity : AppCompatActivity() {
             "file:///android_asset/user/index.html"
         )
 
-        webView.visibility = View.VISIBLE
+        webView.visibility =
+            View.VISIBLE
     }
 
     fun carregarWebView3() {
@@ -367,7 +369,8 @@ class MainActivity : AppCompatActivity() {
             "file:///android_asset/index.html"
         )
 
-        webView.visibility = View.VISIBLE
+        webView.visibility =
+            View.VISIBLE
     }
 
     fun carregarWebView4() {
@@ -376,7 +379,8 @@ class MainActivity : AppCompatActivity() {
             "file:///android_asset/user/indes.html"
         )
 
-        webView.visibility = View.VISIBLE
+        webView.visibility =
+            View.VISIBLE
     }
 
     // ==========================
@@ -386,67 +390,12 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
 
         if (webView.canGoBack()) {
+
             webView.goBack()
+
         } else {
+
             finish()
-        }
-    }
-
-    // ==========================
-    // PERMISSÕES
-    // ==========================
-    private fun temPermissoes(): Boolean {
-
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == 0 &&
-
-        ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CALL_PHONE
-        ) == 0
-    }
-
-    private fun pedirPermissoes() {
-
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.CALL_PHONE
-            ),
-            PERMISSION_CODE
-        )
-    }
-
-    // ==========================
-    // RESULTADO PERMISSÕES
-    // ==========================
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-
-        super.onRequestPermissionsResult(
-            requestCode,
-            permissions,
-            grantResults
-        )
-
-        if (requestCode == PERMISSION_CODE) {
-
-            carregarWebView()
-
-            if (!temPermissoes()) {
-
-                Toast.makeText(
-                    this,
-                    "Permissões não concedidas",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
     }
 
@@ -467,48 +416,52 @@ class MainActivity : AppCompatActivity() {
             )
 
         if (
-            canAuth != BiometricManager.BIOMETRIC_SUCCESS
+            canAuth !=
+            BiometricManager.BIOMETRIC_SUCCESS
         ) {
 
             carregarWebView4()
-
             return
         }
 
         val executor: Executor =
             ContextCompat.getMainExecutor(this)
 
-        val prompt = BiometricPrompt(
-            this,
-            executor,
-            object : BiometricPrompt.AuthenticationCallback() {
+        val prompt =
+            BiometricPrompt(
+                this,
+                executor,
+                object :
+                    BiometricPrompt.AuthenticationCallback() {
 
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult
-                ) {
+                    override fun onAuthenticationSucceeded(
+                        result: BiometricPrompt.AuthenticationResult
+                    ) {
 
-                    super.onAuthenticationSucceeded(result)
+                        super.onAuthenticationSucceeded(
+                            result
+                        )
 
-                    when (destinoBiometria) {
+                        when (destinoBiometria) {
 
-                        1 -> carregarWebView1()
+                            1 -> carregarWebView1()
 
-                        2 -> carregarWebView2()
+                            2 -> carregarWebView2()
 
-                        3 -> carregarWebView3()
+                            3 -> carregarWebView3()
 
-                        else -> carregarWebView4()
+                            else -> carregarWebView4()
+                        }
+                    }
+
+                    override fun onAuthenticationFailed() {
+
+                        super.onAuthenticationFailed()
+
+                        carregarWebView4()
                     }
                 }
-
-                override fun onAuthenticationFailed() {
-
-                    super.onAuthenticationFailed()
-
-                    carregarWebView4()
-                }
-            }
-        )
+            )
 
         val info =
             BiometricPrompt.PromptInfo.Builder()
