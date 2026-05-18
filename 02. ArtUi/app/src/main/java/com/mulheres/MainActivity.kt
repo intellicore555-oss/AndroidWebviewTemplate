@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -24,118 +25,148 @@ import java.util.concurrent.Executor
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+
     private var destinoBiometria = 0
 
-   // ==========================
-// MYCHROME
-// ==========================
-private val myChrome = object : WebChromeClient() {
+    // ==========================
+    // MYCHROME
+    // ==========================
+    private val myChrome =
+        object : WebChromeClient() {
 
-    private var customView: View? = null
-    private var customViewCallback: CustomViewCallback? = null
-    private var originalUiFlags: Int = 0
+            private var customView: View? = null
 
-    override fun onGeolocationPermissionsShowPrompt(
-        origin: String?,
-        callback: GeolocationPermissions.Callback?
-    ) {
+            private var customViewCallback:
+                CustomViewCallback? = null
 
-        callback?.invoke(
-            origin ?: "",
-            true,
-            false
-        )
-    }
+            private var originalUiFlags = 0
 
-    override fun onShowCustomView(
-        view: View,
-        callback: CustomViewCallback
-    ) {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: GeolocationPermissions.Callback?
+            ) {
 
-        if (customView != null) {
+                callback?.invoke(
+                    origin ?: "",
+                    true,
+                    false
+                )
+            }
 
-            callback.onCustomViewHidden()
-            return
+            override fun onShowCustomView(
+                view: View,
+                callback: CustomViewCallback
+            ) {
+
+                if (customView != null) {
+
+                    callback.onCustomViewHidden()
+                    return
+                }
+
+                val decor =
+                    window.decorView as ViewGroup
+
+                originalUiFlags =
+                    decor.systemUiVisibility
+
+                customView = view
+
+                customViewCallback =
+                    callback
+
+                decor.addView(
+                    customView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+
+                esconderSistema()
+            }
+
+            override fun onHideCustomView() {
+
+                val decor =
+                    window.decorView as ViewGroup
+
+                customView?.let {
+
+                    decor.removeView(it)
+                }
+
+                customView = null
+
+                decor.systemUiVisibility =
+                    originalUiFlags
+
+                customViewCallback
+                    ?.onCustomViewHidden()
+
+                customViewCallback = null
+
+                esconderSistema()
+            }
         }
 
-        val decor =
-            window.decorView as ViewGroup
+    // ==========================
+    // DOWNLOAD
+    // ==========================
+    private val myDownloadListener =
+        DownloadListener { url, _, _, _, _ ->
 
-        originalUiFlags =
-            decor.systemUiVisibility
+            try {
 
-        customView = view
-        customViewCallback = callback
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url)
+                )
 
-        decor.addView(
-            customView,
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        )
+                startActivity(intent)
 
-        decor.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-            View.SYSTEM_UI_FLAG_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-    }
+            } catch (e: Exception) {
 
-    override fun onHideCustomView() {
-
-        val decor =
-            window.decorView as ViewGroup
-
-        customView?.let {
-
-            decor.removeView(it)
+                Toast.makeText(
+                    this,
+                    "Não foi possível baixar",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
-
-        customView = null
-
-        decor.systemUiVisibility =
-            originalUiFlags
-
-        customViewCallback
-            ?.onCustomViewHidden()
-
-        customViewCallback = null
-    }
-}
 
     // ==========================
     // ON CREATE
     // ==========================
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
 
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.hide()
 
         window.decorView.setBackgroundColor(
             Color.BLACK
         )
 
-        window.statusBarColor =
-            Color.BLACK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-        window.navigationBarColor =
-            Color.BLACK
+            window.statusBarColor =
+                Color.BLACK
 
-        window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-            View.SYSTEM_UI_FLAG_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            window.navigationBarColor =
+                Color.BLACK
+        }
 
-        supportActionBar?.hide()
+        esconderSistema()
 
-        setContentView(R.layout.activity_main)
+        setContentView(
+            R.layout.activity_main
+        )
 
-        webView = findViewById(R.id.webview)
+        webView =
+            findViewById(R.id.webview)
 
         webView.setBackgroundColor(
             Color.BLACK
@@ -144,6 +175,20 @@ private val myChrome = object : WebChromeClient() {
         configurarWebView()
 
         carregarWebView()
+    }
+
+    // ==========================
+    // ESCONDER SISTEMA
+    // ==========================
+    private fun esconderSistema() {
+
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     }
 
     // ==========================
@@ -158,34 +203,108 @@ private val myChrome = object : WebChromeClient() {
 
         val s = webView.settings
 
+        // ==========================
+        // JAVASCRIPT
+        // ==========================
         s.javaScriptEnabled = true
+
         s.domStorageEnabled = true
+
         s.databaseEnabled = true
 
+        // ==========================
+        // ARQUIVOS
+        // ==========================
         s.allowFileAccess = true
+
         s.allowContentAccess = true
 
+        s.allowFileAccessFromFileURLs = true
+
+        s.allowUniversalAccessFromFileURLs = true
+
+        // ==========================
+        // LAYOUT
+        // ==========================
         s.loadsImagesAutomatically = true
 
         s.useWideViewPort = true
+
         s.loadWithOverviewMode = true
 
-        s.mediaPlaybackRequiresUserGesture = false
+        s.layoutAlgorithm =
+            WebSettings.LayoutAlgorithm.NORMAL
 
+        // ==========================
+        // VIDEO
+        // ==========================
+        s.mediaPlaybackRequiresUserGesture =
+            false
+
+        // ==========================
+        // CACHE
+        // ==========================
         s.cacheMode =
             WebSettings.LOAD_DEFAULT
 
+        // ==========================
+        // MIXED CONTENT
+        // ==========================
         s.mixedContentMode =
             WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
+        // ==========================
+        // ZOOM
+        // ==========================
         s.setSupportZoom(false)
 
+        s.builtInZoomControls = false
+
+        s.displayZoomControls = false
+
+        // ==========================
+        // FONTE
+        // ==========================
+        s.standardFontFamily =
+            "Fonte"
+
+        s.fixedFontFamily =
+            "Fonte"
+
+        s.serifFontFamily =
+            "Fonte"
+
+        s.sansSerifFontFamily =
+            "Fonte"
+
+        // ==========================
+        // SCROLL
+        // ==========================
         webView.isVerticalScrollBarEnabled =
             false
 
         webView.isHorizontalScrollBarEnabled =
             false
 
+        webView.overScrollMode =
+            View.OVER_SCROLL_NEVER
+
+        // ==========================
+        // CHROME
+        // ==========================
+        webView.webChromeClient =
+            myChrome
+
+        // ==========================
+        // DOWNLOAD
+        // ==========================
+        webView.setDownloadListener(
+            myDownloadListener
+        )
+
+        // ==========================
+        // CLIENT
+        // ==========================
         webView.webViewClient =
             object : WebViewClient() {
 
@@ -197,8 +316,12 @@ private val myChrome = object : WebChromeClient() {
                     val url =
                         request?.url.toString()
 
+                    // ==========================
                     // TEL
-                    if (url.startsWith("tel:")) {
+                    // ==========================
+                    if (
+                        url.startsWith("tel:")
+                    ) {
 
                         startActivity(
                             Intent(
@@ -210,7 +333,9 @@ private val myChrome = object : WebChromeClient() {
                         return true
                     }
 
+                    // ==========================
                     // WHATSAPP
+                    // ==========================
                     if (
                         url.startsWith("https://wa.me") ||
                         url.startsWith("https://api.whatsapp.com")
@@ -226,8 +351,12 @@ private val myChrome = object : WebChromeClient() {
                         return true
                     }
 
+                    // ==========================
                     // INTENT
-                    if (url.startsWith("intent://")) {
+                    // ==========================
+                    if (
+                        url.startsWith("intent://")
+                    ) {
 
                         try {
 
@@ -251,8 +380,12 @@ private val myChrome = object : WebChromeClient() {
                         return true
                     }
 
+                    // ==========================
                     // PLAY STORE
-                    if (url.startsWith("market://")) {
+                    // ==========================
+                    if (
+                        url.startsWith("market://")
+                    ) {
 
                         try {
 
@@ -290,19 +423,18 @@ private val myChrome = object : WebChromeClient() {
                         url
                     )
 
+                    esconderSistema()
+
                     view?.evaluateJavascript(
-                        "mostrarConteudo()",
+                        """
+                        if(typeof mostrarConteudo === 'function'){
+                            mostrarConteudo();
+                        }
+                        """.trimIndent(),
                         null
                     )
                 }
             }
-
-        webView.webChromeClient =
-            myChrome
-
-        webView.setDownloadListener(
-            myDownloadListener
-        )
     }
 
     // ==========================
@@ -375,9 +507,21 @@ private val myChrome = object : WebChromeClient() {
     }
 
     // ==========================
+    // RESUME
+    // ==========================
+    override fun onResume() {
+
+        super.onResume()
+
+        esconderSistema()
+    }
+
+    // ==========================
     // BIOMETRIA
     // ==========================
-    fun iniciarBiometria(tipo: Int) {
+    fun iniciarBiometria(
+        tipo: Int
+    ) {
 
         destinoBiometria = tipo
 
@@ -410,7 +554,8 @@ private val myChrome = object : WebChromeClient() {
                     BiometricPrompt.AuthenticationCallback() {
 
                     override fun onAuthenticationSucceeded(
-                        result: BiometricPrompt.AuthenticationResult
+                        result:
+                        BiometricPrompt.AuthenticationResult
                     ) {
 
                         super.onAuthenticationSucceeded(
@@ -440,7 +585,9 @@ private val myChrome = object : WebChromeClient() {
 
         val info =
             BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Desbloquear")
+                .setTitle(
+                    "Desbloquear"
+                )
                 .setDescription(
                     "Use biometria ou senha"
                 )
