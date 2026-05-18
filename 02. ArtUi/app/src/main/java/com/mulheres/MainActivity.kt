@@ -1,12 +1,19 @@
 package com.mulheres
 
-import android.widget.FrameLayout
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.webkit.*
+import android.view.ViewGroup
+import android.webkit.DownloadListener
+import android.webkit.GeolocationPermissions
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
@@ -25,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var destinoBiometria = 0
 
     // ==========================
-    // MYCHROME (FULLSCREEN + GEOLOCATION)
+    // MYCHROME
     // ==========================
     private val myChrome = object : WebChromeClient() {
 
@@ -37,17 +44,21 @@ class MainActivity : AppCompatActivity() {
             origin: String?,
             callback: GeolocationPermissions.Callback?
         ) {
-            callback?.invoke(origin, true, false)
+            callback?.invoke(origin ?: "", true, false)
         }
 
-        override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+        override fun onShowCustomView(
+            view: View,
+            callback: CustomViewCallback
+        ) {
 
             if (customView != null) {
                 callback.onCustomViewHidden()
                 return
             }
 
-            val decor = window.decorView as FrameLayout
+            val decor = window.decorView as ViewGroup
+
             originalUiFlags = decor.systemUiVisibility
 
             customView = view
@@ -55,9 +66,9 @@ class MainActivity : AppCompatActivity() {
 
             decor.addView(
                 customView,
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
                 )
             )
 
@@ -69,9 +80,12 @@ class MainActivity : AppCompatActivity() {
 
         override fun onHideCustomView() {
 
-            val decor = window.decorView as FrameLayout
+            val decor = window.decorView as ViewGroup
 
-            decor.removeView(customView)
+            customView?.let {
+                decor.removeView(it)
+            }
+
             customView = null
 
             decor.systemUiVisibility = originalUiFlags
@@ -82,19 +96,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ==========================
-    // DOWNLOAD LISTENER
+    // DOWNLOAD
     // ==========================
-    private val myDownloadListener = DownloadListener { url, _, _, _, _ ->
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        startActivity(intent)
-    }
+    private val myDownloadListener =
+        DownloadListener { url, _, _, _, _ ->
+
+            try {
+
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url)
+                )
+
+                startActivity(intent)
+
+            } catch (e: Exception) {
+
+                Toast.makeText(
+                    this,
+                    "Não foi possível baixar",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
     // ==========================
     // ON CREATE
     // ==========================
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         webView = findViewById(R.id.webview)
@@ -113,15 +145,40 @@ class MainActivity : AppCompatActivity() {
     // ==========================
     private fun configurarWebView() {
 
-        webView.addJavascriptInterface(WebAppInterface(this), "Android")
+        webView.addJavascriptInterface(
+            WebAppInterface(this),
+            "Android"
+        )
 
         val s = webView.settings
+
         s.javaScriptEnabled = true
         s.domStorageEnabled = true
+        s.databaseEnabled = true
+
         s.allowFileAccess = true
-        s.mediaPlaybackRequiresUserGesture = false
         s.allowContentAccess = true
 
+        s.loadsImagesAutomatically = true
+
+        s.useWideViewPort = true
+        s.loadWithOverviewMode = true
+
+        s.mediaPlaybackRequiresUserGesture = false
+
+        s.cacheMode = WebSettings.LOAD_DEFAULT
+
+        s.mixedContentMode =
+            WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+
+        s.setSupportZoom(false)
+
+        webView.isVerticalScrollBarEnabled = false
+        webView.isHorizontalScrollBarEnabled = false
+
+        // ==========================
+        // CLIENT
+        // ==========================
         webView.webViewClient = object : WebViewClient() {
 
             override fun shouldOverrideUrlLoading(
@@ -129,75 +186,191 @@ class MainActivity : AppCompatActivity() {
                 request: WebResourceRequest?
             ): Boolean {
 
-                val url = request?.url.toString()
+                val url =
+                    request?.url.toString()
 
+                // ==========================
+                // TEL
+                // ==========================
                 if (url.startsWith("tel:")) {
-                    startActivity(Intent(Intent.ACTION_DIAL, Uri.parse(url)))
+
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_DIAL,
+                            Uri.parse(url)
+                        )
+                    )
+
                     return true
                 }
 
-                if (url.startsWith("https://wa.me")) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                // ==========================
+                // WHATSAPP
+                // ==========================
+                if (
+                    url.startsWith("https://wa.me") ||
+                    url.startsWith("https://api.whatsapp.com")
+                ) {
+
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(url)
+                        )
+                    )
+
+                    return true
+                }
+
+                // ==========================
+                // INTENT
+                // ==========================
+                if (url.startsWith("intent://")) {
+
+                    try {
+
+                        val intent = Intent.parseUri(
+                            url,
+                            Intent.URI_INTENT_SCHEME
+                        )
+
+                        startActivity(intent)
+
+                    } catch (e: Exception) {
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Intent não suportada",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    return true
+                }
+
+                // ==========================
+                // MARKET
+                // ==========================
+                if (
+                    url.startsWith("market://")
+                ) {
+
+                    try {
+
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(url)
+                            )
+                        )
+
+                    } catch (e: ActivityNotFoundException) {
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Play Store não encontrada",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
                     return true
                 }
 
                 return false
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
+            override fun onPageFinished(
+                view: WebView?,
+                url: String?
+            ) {
+
                 super.onPageFinished(view, url)
-                view?.evaluateJavascript("mostrarConteudo()", null)
+
+                view?.evaluateJavascript(
+                    "mostrarConteudo()",
+                    null
+                )
             }
         }
 
         webView.webChromeClient = myChrome
-        webView.setDownloadListener(myDownloadListener)
+
+        webView.setDownloadListener(
+            myDownloadListener
+        )
     }
 
     // ==========================
-    // CARREGAR WEBVIEW
+    // WEBVIEWS
     // ==========================
     fun carregarWebView() {
-        webView.loadUrl("file:///android_asset/user/indes.html")
+
+        webView.loadUrl(
+            "file:///android_asset/user/index.html"
+        )
+
         webView.visibility = View.VISIBLE
     }
 
     fun carregarWebView1() {
-        webView.loadUrl("file:///android_asset/user1/index1.html")
+
+        webView.loadUrl(
+            "file:///android_asset/user1/index1.html"
+        )
+
         webView.visibility = View.VISIBLE
     }
 
     fun carregarWebView2() {
-        webView.loadUrl("file:///android_asset/user/indes.html")
+
+        webView.loadUrl(
+            "file:///android_asset/user/index.html"
+        )
+
         webView.visibility = View.VISIBLE
     }
 
     fun carregarWebView3() {
-        webView.loadUrl("file:///android_asset/index.html")
+
+        webView.loadUrl(
+            "file:///android_asset/index.html"
+        )
+
         webView.visibility = View.VISIBLE
     }
 
     fun carregarWebView4() {
-        webView.loadUrl("file:///android_asset/user1/botao.html")
+
+        webView.loadUrl(
+            "file:///android_asset/user1/botao.html"
+        )
+
         webView.visibility = View.VISIBLE
     }
 
     // ==========================
     // BACK
     // ==========================
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (webView.canGoBack()) webView.goBack()
-        else finish()
+
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            finish()
+        }
     }
 
     // ==========================
     // PERMISSÕES
     // ==========================
     private fun temPermissoes(): Boolean {
+
         return ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == 0 &&
+
         ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.CALL_PHONE
@@ -205,6 +378,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pedirPermissoes() {
+
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
@@ -215,18 +389,32 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    // ==========================
+    // RESULTADO PERMISSÕES
+    // ==========================
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults
+        )
 
         if (requestCode == PERMISSION_CODE) {
+
             carregarWebView()
 
             if (!temPermissoes()) {
-                Toast.makeText(this, "Permissões não concedidas", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(
+                    this,
+                    "Permissões não concedidas",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -238,48 +426,70 @@ class MainActivity : AppCompatActivity() {
 
         destinoBiometria = tipo
 
-        val biometricManager = BiometricManager.from(this)
+        val biometricManager =
+            BiometricManager.from(this)
 
-        val canAuth = biometricManager.canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_WEAK or
-            BiometricManager.Authenticators.DEVICE_CREDENTIAL
-        )
+        val canAuth =
+            biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
 
-        if (canAuth != BiometricManager.BIOMETRIC_SUCCESS) {
+        if (
+            canAuth != BiometricManager.BIOMETRIC_SUCCESS
+        ) {
+
             carregarWebView4()
+
             return
         }
 
-        val executor: Executor = ContextCompat.getMainExecutor(this)
+        val executor: Executor =
+            ContextCompat.getMainExecutor(this)
 
         val prompt = BiometricPrompt(
             this,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
 
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                override fun onAuthenticationSucceeded(
+                    result: BiometricPrompt.AuthenticationResult
+                ) {
+
+                    super.onAuthenticationSucceeded(result)
+
                     when (destinoBiometria) {
+
                         1 -> carregarWebView1()
+
                         2 -> carregarWebView2()
+
                         3 -> carregarWebView3()
+
                         else -> carregarWebView4()
                     }
                 }
 
                 override fun onAuthenticationFailed() {
+
+                    super.onAuthenticationFailed()
+
                     carregarWebView4()
                 }
             }
         )
 
-        val info = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Desbloquear")
-            .setDescription("Use biometria ou senha")
-            .setAllowedAuthenticators(
-                BiometricManager.Authenticators.BIOMETRIC_WEAK or
-                BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            )
-            .build()
+        val info =
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Desbloquear")
+                .setDescription(
+                    "Use biometria ou senha"
+                )
+                .setAllowedAuthenticators(
+                    BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                )
+                .build()
 
         prompt.authenticate(info)
     }
