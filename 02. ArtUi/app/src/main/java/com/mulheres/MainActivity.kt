@@ -556,24 +556,46 @@ class MainActivity : AppCompatActivity() {
                     BiometricPrompt.AuthenticationCallback() {
 
                     override fun onAuthenticationSucceeded(
-                        result:
-                        BiometricPrompt.AuthenticationResult
-                    ) {
+    result: BiometricPrompt.AuthenticationResult
+) {
 
-                        super.onAuthenticationSucceeded(
-                            result
-                        )
+    super.onAuthenticationSucceeded(result)
 
-                        when (destinoBiometria) {
+    try {
 
-                            1 -> carregarWebView1()
+        val afd = assets.openFd("unlock.mp3")
 
-                            2 -> carregarWebView2()
+        val mediaPlayer = MediaPlayer()
 
-                            3 -> carregarWebView3()
+        mediaPlayer.setDataSource(
+            afd.fileDescriptor,
+            afd.startOffset,
+            afd.length
+        )
 
-                            else -> carregarWebView4()
-                        }
+        afd.close()
+
+        mediaPlayer.isLooping = false
+        mediaPlayer.setVolume(1f, 1f)
+
+        mediaPlayer.setOnCompletionListener {
+            it.release()
+        }
+
+        mediaPlayer.prepare()
+        mediaPlayer.start()
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    when (destinoBiometria) {
+
+        1 -> carregarWebView1()
+        2 -> carregarWebView2()
+        3 -> carregarWebView3()
+        else -> carregarWebView4()
+    }
                     }
 
                     override fun onAuthenticationFailed() {
