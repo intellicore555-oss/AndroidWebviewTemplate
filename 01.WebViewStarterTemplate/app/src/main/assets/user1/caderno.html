@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+.fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+* {
+    font-family: 'Quicksand', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+    animation: fadeUp 0.6s ease forwards;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+/* TOPO */
+.topo {
+    width: 92%;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    border: 1px solid #222;
+    border-radius: 40px;
+
+    background: #0a0a0a;
+}
+
+/* TOOLBAR */
+.toolbar {
+    width: 92%;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 18px;
+
+    border: 1px solid #222;
+    border-radius: 40px;
+
+    background: #0a0a0a;
+}
+
+/* TOOL */
+.tool {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+    background: #1e1e1e;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+.tool:active {
+    transform: scale(0.92);
+}
+
+/* BOOK */
+.book {
+    position: relative;
+    width: 90%;
+    height: calc(100vh - 150px);
+
+    perspective: 1200px;
+    transform-style: preserve-3d;
+
+    margin-top: 10px;
+
+    border-radius: 20px;
+overflow: visible;
+
+    background: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* PAGE */
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    transform-style: preserve-3d;
+    transform-origin: left;
+
+    transition: transform 0.6s ease;
+border-radius: 20px;
+}
+
+/* SIDES */
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    backface-visibility: hidden;
+
+    padding: 20px;
+border-radius: 20px;
+}
+
+/* FRONT / BACK */
+.front {
+    background: #ffb6c1;
+}
+
+.back {
+    background: #ff69b4;
+    transform: rotateY(180deg);
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    outline: none;
+    resize: none;
+
+    background: transparent;
+    color: #fff;
+
+    font-size: 18px;
+}
+
+/* VIRADA */
+.page.virada {
+    transform: rotateY(-180deg);
+}
+
+/* BOTÃO */
+.limpar {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+
+    background: #111;
+    border: 1px solid #333;
+
+    padding: 10px 14px;
+    border-radius: 100px;
+
+    color: #fff;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.limpar:active {
+    transform: scale(0.95);
+}
+
+.voltar {
+    color: pink;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+    <div>⬅</div>
+    <div class="voltar">Clique em mim para voltar!</div>
+    <div>⋮</div>
+</div>
+
+<div class="toolbar">
+    <div class="tool">⌨️</div>
+    <div class="tool">✏️</div>
+    <div class="tool">🖍️</div>
+    <div class="tool">🧽</div>
+</div>
+
+<div class="book" id="book">
+</div>
+
+<button class="limpar" onclick="limparTudo()">🗑</button>
+
+<script>
+let dados = JSON.parse(localStorage.getItem("diario")) || [];
+let paginas = [];
+let atual = 0;
+
+const book = document.getElementById("book");
+
+/* SALVAR */
+function salvar() {
+    localStorage.setItem("diario", JSON.stringify(dados));
+}
+
+/* CRIAR PAGINA */
+function criarPagina(index) {
+    let page = document.createElement("div");
+    page.className = "page";
+    page.style.zIndex = 100 - index;
+
+    let front = document.createElement("div");
+    front.className = "face front";
+
+    let back = document.createElement("div");
+    back.className = "face back";
+
+    let textarea = document.createElement("textarea");
+    textarea.value = dados[index] || "";
+
+    textarea.oninput = () => {
+        dados[index] = textarea.value;
+        salvar();
+
+        if (textarea.value.length > 220 && index === atual) {
+            virarProxima();
+        }
+    };
+
+    front.appendChild(textarea);
+    page.appendChild(front);
+    page.appendChild(back);
+    book.appendChild(page);
+
+    paginas[index] = page;
+
+    setTimeout(() => textarea.focus(), 50);
+}
+
+/* INICIAR */
+criarPagina(0);
+
+/* VIRAR PRA FRENTE */
+function virarProxima() {
+    let pagina = paginas[atual];
+    if (!pagina) return;
+
+    pagina.classList.add("virada");
+
+    atual++;
+
+    if (!paginas[atual]) {
+        criarPagina(atual);
+    }
+}
+
+/* VOLTAR */
+function voltarPagina() {
+    if (atual === 0) return;
+
+    atual--;
+
+    let pagina = paginas[atual];
+    pagina.classList.remove("virada");
+}
+
+/* LIMPAR */
+function limparTudo() {
+    if (!confirm("Apagar tudo?")) return;
+
+    localStorage.removeItem("diario");
+    location.reload();
+}
+
+/* ===== ARRASTAR ===== */
+
+let startX = 0;
+let movendo = false;
+
+book.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    movendo = true;
+});
+
+book.addEventListener("touchmove", (e) => {
+    if (!movendo) return;
+
+    let atualX = e.touches[0].clientX;
+    let diff = atualX - startX;
+
+    let pagina = paginas[atual];
+    if (pagina) {
+        let rot = Math.max(Math.min(diff / 2, 0), -180);
+        pagina.style.transform = `rotateY(${rot}deg)`;
+    }
+});
+
+book.addEventListener("touchend", (e) => {
+    movendo = false;
+
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    let pagina = paginas[atual];
+    if (pagina) pagina.style.transform = "";
+
+    if (diff < -60) {
+        virarProxima();
+    } else if (diff > 60) {
+        voltarPagina();
+    }
+});
+
+document.querySelector(".voltar").onclick = function() {
+    window.location.href = "botao.html";
+};
+</script>
+
+</body>
+</html>

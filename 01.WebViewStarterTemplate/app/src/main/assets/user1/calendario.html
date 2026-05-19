@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ciclo</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* topo */
+.topo {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: rgba(255,255,255,0.03);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.titulo {
+    color: pink;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* card */
+.card {
+    background: #ff8fab;
+    margin: 12px;
+    padding: 16px;
+    border-radius: 20px;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+
+/* container dos botões */
+.container {
+    position: relative;
+    height: auto;
+bottom: -80vh;
+}
+
+/* botões */
+.botao {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#ff4d6d,#ff758f);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    border: none;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.apagar {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: red;
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 5;
+}
+
+/* gráficos */
+#telaGraficos {
+    display: none;
+    padding: 10px;
+}
+
+canvas {
+    width: 100% !important;
+    max-width: 100%;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+/* espaço final */
+#g6 {
+    margin-bottom: 100px;
+}
+
+/* botão voltar */
+#volta {
+    position: sticky;
+    top: 40px;
+    left: 15px;
+
+    width: 90px;
+    height: 42px;
+
+    border-radius: 999px;
+
+    background: linear-gradient(135deg, #333, #555);
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 16px;
+
+    border: none;
+    cursor: pointer;
+
+    box-shadow: 0 0 12px rgba(255,255,255,0.2);
+    z-index: 999;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+<div class="topo">
+    <div>☰</div>
+    <div class="titulo" onclick="voltarHome()">Clique em mim para voltar!</div>
+    <div>🔍</div>
+</div>
+
+<div id="lista"></div>
+
+<div id="telaGraficos">
+   
+<button id="volta" onclick="voltarLista()">Voltar</button>
+
+
+    <canvas id="g1"></canvas>
+    <canvas id="g2"></canvas>
+    <canvas id="g3"></canvas>
+    <canvas id="g4"></canvas>
+    <canvas id="g5"></canvas>
+    <canvas id="g6"></canvas>
+</div>
+
+<div class="container">
+
+<div class="botao" onclick="abrirRegistro()">+</div>
+<button class="apagar" onclick="apagarTudo()">🗑</button>
+</div>
+</div>
+
+<script>
+
+let charts = [];
+
+function getDados() {
+    return JSON.parse(localStorage.getItem("ciclo")) || [];
+}
+
+function salvarDados(d) {
+    localStorage.setItem("ciclo", JSON.stringify(d));
+}
+
+/* =========================
+   20 PERGUNTAS
+========================= */
+function abrirRegistro() {
+    const data = prompt("Data (YYYY-MM-DD)");
+    if (!data) return;
+
+    const registro = {
+        data,
+        dor: Number(prompt("Dor (0-10)")),
+        humorTexto: prompt("Humor (feliz, triste, desconfortavel)"),
+
+        agua: confirm("Bebeu água?"),
+        cafe: confirm("Tomou café?"),
+        chocolate: confirm("Comeu chocolate?"),
+
+        cansaco: confirm("Cansaço?"),
+        irritacao: confirm("Irritação?"),
+        ansiedade: confirm("Ansiedade?"),
+        colica: confirm("Cólica?"),
+        dorCabeca: confirm("Dor de cabeça?"),
+        inchaco: confirm("Inchaço?"),
+        acne: confirm("Acne?"),
+        sonoRuim: confirm("Sono ruim?"),
+        apetite: confirm("Apetite alterado?"),
+        exercicio: confirm("Fez exercício?"),
+        libido: confirm("Libido alterada?"),
+        concentracao: confirm("Concentração ruim?"),
+        estresse: confirm("Estresse?"),
+        tristeza: confirm("Tristeza?"),
+        felicidade: confirm("Felicidade?"),
+        sensibilidade: confirm("Sensibilidade emocional?"),
+        nausea: confirm("Náusea?"),
+        tontura: confirm("Tontura?"),
+        energiaBaixa: confirm("Energia baixa?")
+    };
+
+    const dados = getDados();
+    dados.push(registro);
+    salvarDados(dados);
+    renderizar();
+}
+
+/* =========================
+   DELETE
+========================= */
+function apagarTudo() {
+    if (!confirm("Apagar tudo?")) return;
+    localStorage.removeItem("ciclo");
+    renderizar();
+}
+
+/* =========================
+   LISTA
+========================= */
+function renderizar() {
+    const container = document.getElementById("lista");
+    const dados = getDados();
+
+    container.innerHTML = "";
+
+    if (dados.length === 0) {
+        container.innerHTML = "<p style='opacity:0.6;text-align:center'>Nenhum registro</p>";
+        return;
+    }
+
+    dados.forEach((d) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        let emoji = "😐";
+        if (d.humorTexto === "feliz") emoji = "😊";
+        if (d.humorTexto === "triste") emoji = "😢";
+        if (d.humorTexto === "desconfortavel") emoji = "😣";
+
+        card.innerHTML = `
+            <div style="font-size:28px">${emoji}</div>
+            <div>
+                <div>${d.data}</div>
+                <div>Dor: ${d.dor}</div>
+            </div>
+        `;
+
+        card.onclick = () => abrirGraficos(d);
+
+        container.appendChild(card);
+    });
+}
+
+/* =========================
+   GRÁFICOS
+========================= */
+function destruir() {
+    charts.forEach(c => c.destroy());
+    charts = [];
+}
+
+function abrirGraficos(d) {
+    document.getElementById("lista").style.display = "none";
+    document.getElementById("telaGraficos").style.display = "block";
+
+    destruir();
+
+    charts.push(new Chart(g1, {
+        type: "bar",
+        data: { labels: ["Dor"], datasets: [{ data: [d.dor] }] }
+    }));
+
+    charts.push(new Chart(g2, {
+        type: "pie",
+        data: {
+            labels: ["Água", "Café", "Chocolate"],
+            datasets: [{
+                data: [d.agua, d.cafe, d.chocolate].map(v => v ? 1 : 0)
+            }]
+        }
+    }));
+
+    charts.push(new Chart(g3, {
+        type: "radar",
+        data: {
+            labels: ["Cansaço","Ansiedade","Estresse","Tristeza"],
+            datasets: [{
+                data: [d.cansaco, d.ansiedade, d.estresse, d.tristeza].map(v => v ? 1 : 0)
+            }]
+        }
+    }));
+
+    charts.push(new Chart(g4, {
+        type: "polarArea",
+        data: {
+            labels: ["Cólica","Dor cabeça","Inchaço"],
+            datasets: [{
+                data: [d.colica, d.dorCabeca, d.inchaco].map(v => v ? 1 : 0)
+            }]
+        }
+    }));
+
+    charts.push(new Chart(g5, {
+        type: "doughnut",
+        data: {
+            labels: ["Exercício","Sono ruim","Energia baixa"],
+            datasets: [{
+                data: [d.exercicio, d.sonoRuim, d.energiaBaixa].map(v => v ? 1 : 0)
+            }]
+        }
+    }));
+
+    charts.push(new Chart(g6, {
+        type: "line",
+        data: {
+            labels: ["Libido","Concentração","Sensibilidade"],
+            datasets: [{
+                data: [d.libido, d.concentracao, d.sensibilidade].map(v => v ? 1 : 0)
+            }]
+        }
+    }));
+}
+
+/* ========================= */
+function voltarLista() {
+    document.getElementById("lista").style.display = "block";
+    document.getElementById("telaGraficos").style.display = "none";
+}
+
+function voltarHome() {
+    window.location.href = "botao.html";
+}
+
+renderizar();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const app = document.getElementById("app");
+
+  app.style.opacity = "0";
+  app.style.transform = "translateY(20px)";
+  app.style.transition = "opacity 600ms ease, transform 600ms ease";
+
+  requestAnimationFrame(() => {
+    app.style.opacity = "1";
+    app.style.transform = "translateY(0)";
+  });
+});
+</script>
+
+</body>
+</html>
