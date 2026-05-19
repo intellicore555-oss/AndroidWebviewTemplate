@@ -340,83 +340,79 @@ fun desativarPalmas() {
     }
 
     // ==========================
-    // WEBVIEW
-    // ==========================
+// WEBVIEW
+// ==========================
 
-    private fun configurarWebView() {
+private fun configurarWebView() {
 
-        webView.addJavascriptInterface(
-            WebAppInterface(this),
-            "Android"
-        )
+    webView.addJavascriptInterface(
+        WebAppInterface(this),
+        "Android"
+    )
 
-        val settings = webView.settings
+    val settings = webView.settings
 
-        settings.javaScriptEnabled = true
-       
-settings.mediaPlaybackRequiresUserGesture = false
+    settings.javaScriptEnabled = true
+    settings.mediaPlaybackRequiresUserGesture = false
+    settings.domStorageEnabled = true
+    settings.setGeolocationEnabled(true)
 
- settings.domStorageEnabled = true
-        settings.setGeolocationEnabled(true)
+    settings.allowFileAccess = true
+    settings.allowContentAccess = true
+    settings.javaScriptCanOpenWindowsAutomatically = true
+    settings.allowFileAccessFromFileURLs = true
+    settings.allowUniversalAccessFromFileURLs = true
 
-        settings.allowFileAccess = true
-        settings.allowContentAccess = true
-settings.javaScriptCanOpenWindowsAutomatically = true
-        settings.allowFileAccessFromFileURLs = true
-        settings.allowUniversalAccessFromFileURLs = true
+    webView.webChromeClient = object : WebChromeClient() {
 
-override fun onPermissionRequest(request: PermissionRequest) {
-    runOnUiThread {
-        val resources = request.resources
+        override fun onGeolocationPermissionsShowPrompt(
+            origin: String?,
+            callback: GeolocationPermissions.Callback?
+        ) {
+            callback?.invoke(origin, true, false)
+        }
 
-        if (resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)) {
-            request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
-        } else {
-            request.deny()
+        override fun onPermissionRequest(request: PermissionRequest) {
+            runOnUiThread {
+                val resources = request.resources
+
+                if (resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)) {
+                    request.grant(
+                        arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
+                    )
+                } else {
+                    request.deny()
+                }
+            }
         }
     }
-}
 
-    override fun onGeolocationPermissionsShowPrompt(
-        origin: String?,
-        callback: GeolocationPermissions.Callback?
-    ) {
-        callback?.invoke(origin, true, false)
-    }
-}
-    
-                webView.webViewClient =
-    object : WebViewClient() {
+    webView.webViewClient = object : WebViewClient() {
 
         override fun shouldOverrideUrlLoading(
             view: WebView?,
             request: WebResourceRequest?
         ): Boolean {
 
-            val url =
-                request?.url.toString()
+            val url = request?.url.toString()
 
             if (url.startsWith("tel:")) {
-
                 startActivity(
                     Intent(
                         Intent.ACTION_DIAL,
                         Uri.parse(url)
                     )
                 )
-
                 return true
             }
 
             if (url.startsWith("https://wa.me")) {
-
                 startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse(url)
                     )
                 )
-
                 return true
             }
 
@@ -428,18 +424,14 @@ override fun onPermissionRequest(request: PermissionRequest) {
             url: String?
         ) {
 
-            super.onPageFinished(
-                view,
-                url
-            )
+            super.onPageFinished(view, url)
 
             if (semInternet()) {
 
                 val js = """
                     (function() {
 
-                        var style =
-                            document.createElement('style');
+                        var style = document.createElement('style');
 
                         style.innerHTML = `
                             @font-face {
@@ -457,10 +449,7 @@ override fun onPermissionRequest(request: PermissionRequest) {
                     })();
                 """.trimIndent()
 
-                view?.evaluateJavascript(
-                    js,
-                    null
-                )
+                view?.evaluateJavascript(js, null)
             }
 
             view?.evaluateJavascript(
@@ -469,10 +458,7 @@ override fun onPermissionRequest(request: PermissionRequest) {
             )
         }
     }
-} 
-    // ==========================
-    // CARREGAR WEBVIEW
-    // ==========================
+}
 
     private fun carregarWebView() {
 
