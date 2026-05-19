@@ -352,7 +352,10 @@ fun desativarPalmas() {
         val settings = webView.settings
 
         settings.javaScriptEnabled = true
-        settings.domStorageEnabled = true
+       
+settings.mediaPlaybackRequiresUserGesture = false
+
+ settings.domStorageEnabled = true
         settings.setGeolocationEnabled(true)
 
         settings.allowFileAccess = true
