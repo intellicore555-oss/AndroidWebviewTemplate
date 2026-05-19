@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 body{
     margin:0;
     font-family:'Quicksand',sans-serif;
@@ -15,32 +16,50 @@ body{
     color:#fff;
 }
 
-/* voltar */
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateX(-50%) translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateX(-50%) translateY(0);
+    }
+}
+
+/* BOTÃO VOLTAR (estável) */
 #voltar{
     position:absolute;
     top:15px;
     left:50%;
-    transform: translateX(-50%);
+    transform:translateX(-50%);
     padding:10px 16px;
     border-radius:999px;
-    font-size: 20px;
+    font-size:18px;
     color:pink;
     text-decoration:none;
-    
     font-weight:700;
     z-index:10;
-    white-space: nowrap;
+    white-space:nowrap;
+    
+    transition:0.2s;
+    animation:fadeUp 0.6s ease-out forwards;
 }
 
-/* fade */
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(20px);
+#voltar:hover{
+    background:rgba(255,255,255,0.12);
+    transform:translateX(-50%) scale(1.05);
+}
+
+/* FADE SEM TRANSFORM (resolve o bug) */
+@keyframes fadeIn{
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to{
-        opacity:1;
-        transform:translateY(0);
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -48,9 +67,10 @@ body{
     max-width:900px;
     margin:90px auto;
     padding:20px;
-    animation:fade 0.8s ease-out;
+    animation:fadeIn 0.6s ease-out forwards;
 }
 
+/* TOPBAR */
 .topbar{
     display:flex;
     justify-content:space-between;
@@ -65,30 +85,41 @@ button{
     padding:8px 12px;
     border-radius:10px;
     cursor:pointer;
+    transition:0.2s;
 }
 
+button:hover{
+    background:#1a1a1a;
+}
+
+/* TÍTULO */
 h1{
     font-size:20px;
     margin:0;
+    text-align:center;
+    flex:1;
 }
 
-/* dias */
+/* GRID */
 .grid{
     display:grid;
-    grid-template-columns:repeat(1, 1fr);
+    grid-template-columns:1fr;
     gap:10px;
 }
 
+/* DIA */
 .day{
     background:#0b0b0b;
     border:1px solid #1f1f1f;
     border-radius:14px;
     padding:14px;
     transition:0.2s;
+    cursor:pointer;
 }
 
 .day:hover{
     background:#151515;
+    transform:scale(1.01);
 }
 
 .date{
@@ -101,6 +132,7 @@ h1{
     font-size:13px;
     color:#aaa;
 }
+
 </style>
 </head>
 
@@ -120,25 +152,23 @@ h1{
 </div>
 
 <script>
+
 let current = new Date();
 
-/* pega eventos do localStorage */
 function getEvents(){
     return JSON.parse(localStorage.getItem("events") || "{}");
 }
 
-/* salva eventos */
 function saveEvents(data){
     localStorage.setItem("events", JSON.stringify(data));
 }
 
-/* chave da data */
 function key(date){
     return date.toISOString().split('T')[0];
 }
 
 function formatDate(date){
-    return new Intl.DateTimeFormat('pt-BR', {
+    return new Intl.DateTimeFormat('pt-BR',{
         weekday:'short',
         day:'numeric',
         month:'long',
@@ -158,9 +188,10 @@ function render(){
     const lastDay = new Date(year, month + 1, 0);
 
     document.getElementById("title").innerText =
-        current.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
+        current.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
 
-    for(let d = 1; d <= lastDay.getDate(); d++){
+    for(let d=1; d<=lastDay.getDate(); d++){
+
         const date = new Date(year, month, d);
         const k = key(date);
 
@@ -179,19 +210,16 @@ function render(){
         div.appendChild(eventText);
 
         div.onclick = () => {
+
             const atual = events[k];
 
             if(atual){
-                const op = confirm(
-                    dateText.innerText + "\n\nEvento: " + atual + "\n\nDeseja apagar?"
-                );
-
+                const op = confirm(`${dateText.innerText}\n\nEvento: ${atual}\n\nApagar?`);
                 if(op){
                     delete events[k];
                     saveEvents(events);
                     render();
                 }
-
             } else {
                 const novo = prompt("Criar evento para:\n" + dateText.innerText);
 
@@ -213,6 +241,7 @@ function changeMonth(step){
 }
 
 render();
+
 </script>
 
 </body>
