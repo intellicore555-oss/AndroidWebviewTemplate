@@ -9,6 +9,13 @@ class WebAppInterface(
     private val activity: Activity
 ) {
 
+@JavascriptInterface
+fun abrirGravador() {
+    val intent = Intent(activity, GravarActivity::class.java)
+    activity.startActivity(intent)
+}
+
+
     @JavascriptInterface
     fun enviarSOS() {
 
@@ -22,12 +29,6 @@ fun abrirContatos() {
         (activity as MainActivity)
             .abrirContatos()
     }
-}
-
-@JavascriptInterface
-public void abrirGravador() {
-    Intent intent = new Intent(activity, GravarActivity.class);
-    activity.startActivity(intent);
 }
 
     @JavascriptInterface
