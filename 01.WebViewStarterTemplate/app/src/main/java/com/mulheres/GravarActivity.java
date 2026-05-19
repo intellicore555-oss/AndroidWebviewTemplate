@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -23,16 +22,12 @@ import java.io.IOException;
 public class GravarActivity extends AppCompatActivity {
 
     private Button btnRecord;
-    private TextView timer;
     private LinearLayout list;
 
     private MediaRecorder recorder;
     private boolean recording = false;
 
     private String currentFile;
-
-    private Handler handler = new Handler();
-    private int seconds = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +38,6 @@ public class GravarActivity extends AppCompatActivity {
         setFullscreen();
 
         btnRecord = findViewById(R.id.btnRecord);
-        timer = findViewById(R.id.timer);
         list = findViewById(R.id.list);
 
         ActivityCompat.requestPermissions(
@@ -59,7 +53,7 @@ public class GravarActivity extends AppCompatActivity {
     }
 
     // ==========================
-    // FULLSCREEN REAL
+    // FULLSCREEN
     // ==========================
     private void setFullscreen() {
 
@@ -103,9 +97,6 @@ public class GravarActivity extends AppCompatActivity {
             recording = true;
             btnRecord.setText("■");
 
-            seconds = 0;
-            handler.post(timerRunnable);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,8 +112,6 @@ public class GravarActivity extends AppCompatActivity {
             recording = false;
             btnRecord.setText("●");
 
-            handler.removeCallbacks(timerRunnable);
-
             addToList(currentFile);
 
         } catch (Exception e) {
@@ -131,25 +120,7 @@ public class GravarActivity extends AppCompatActivity {
     }
 
     // ==========================
-    // TIMER
-    // ==========================
-    private final Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-
-            seconds++;
-
-            int m = seconds / 60;
-            int s = seconds % 60;
-
-            timer.setText(String.format("%02d:%02d", m, s));
-
-            handler.postDelayed(this, 1000);
-        }
-    };
-
-    // ==========================
-    // LISTA COM BORDA + DELETE
+    // LISTA
     // ==========================
     private void addToList(String path) {
 
@@ -211,7 +182,7 @@ public class GravarActivity extends AppCompatActivity {
     }
 
     // ==========================
-    // ANIMAÇÕES
+    // ANIMAÇÃO
     // ==========================
     private void fadeIn(View v) {
         AlphaAnimation anim = new AlphaAnimation(0f, 1f);
