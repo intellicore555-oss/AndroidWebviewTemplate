@@ -102,7 +102,19 @@ h2{
   margin-bottom:10px;
 }
 
-/* subtitulo */
+/* titulo */
+.title{
+  color:dimgray;
+
+  font-size:30px;
+
+  line-height:1.5;
+
+  margin-bottom:10px;
+  margin-top: 10px;
+    font-weight: 700px;
+}
+
 .subtitle{
   color:#8d8d8d;
 
@@ -240,23 +252,39 @@ h2{
     </div>
 
     <div class="buttons">
+    
+    <div class="title">
+      Funções na mesma tela:
+    </div>
 
       <button class="btn" onclick="ir('calendario.html')">
-
+    
         <div class="left">
           <div class="emoji">📅</div>
-          <span>Agenda</span>
+          <span>Calendário menstrual com registro manual</span>
         </div>
 
         <div class="arrow">›</div>
 
       </button>
 
+<button class="btn" onclick="ir('calendar.html')">
+    
+        <div class="left">
+          <div class="emoji">🗓</div>
+          <span>Calendário de eventos</span>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </button>
+
+
       <button class="btn" onclick="ir('caderno.html')">
 
         <div class="left">
           <div class="emoji">📒</div>
-          <span>Anotações</span>
+          <span>Diário e anotações</span>
         </div>
 
         <div class="arrow">›</div>
@@ -267,7 +295,7 @@ h2{
 
         <div class="left">
           <div class="emoji">🏃</div>
-          <span>Rotina</span>
+          <span>Rotina gamificada</span>
         </div>
 
         <div class="arrow">›</div>
@@ -307,6 +335,10 @@ h2{
 
         </button>
 
+<div class="title">
+      Funções em telas separadas:
+    </div>
+    
 <button class="btn" onclick="Android.abrirGravador()">
 
         <div class="left">
