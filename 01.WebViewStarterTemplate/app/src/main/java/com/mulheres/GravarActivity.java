@@ -22,6 +22,7 @@ public class GravarActivity extends AppCompatActivity {
     private Button btnRecord;
     private TextView timer;
     private LinearLayout list;
+    private View wave;
 
     private MediaRecorder recorder;
     private boolean recording = false;
@@ -39,6 +40,7 @@ public class GravarActivity extends AppCompatActivity {
         btnRecord = findViewById(R.id.btnRecord);
         timer = findViewById(R.id.timer);
         list = findViewById(R.id.list);
+        wave = findViewById(R.id.wave);
 
         ActivityCompat.requestPermissions(
                 this,
@@ -50,7 +52,13 @@ public class GravarActivity extends AppCompatActivity {
             if (!recording) startRecord();
             else stopRecord();
         });
+
+        animateWave();
     }
+
+    // ==========================
+    // GRAVAÇÃO
+    // ==========================
 
     private void startRecord() {
 
@@ -72,6 +80,8 @@ public class GravarActivity extends AppCompatActivity {
 
             seconds = 0;
             handler.post(timerRunnable);
+
+            pulse(btnRecord);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,9 +107,14 @@ public class GravarActivity extends AppCompatActivity {
         }
     }
 
+    // ==========================
+    // TIMER
+    // ==========================
+
     private final Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
+
             seconds++;
 
             int m = seconds / 60;
@@ -111,13 +126,19 @@ public class GravarActivity extends AppCompatActivity {
         }
     };
 
+    // ==========================
+    // LISTA
+    // ==========================
+
     private void addToList(String path) {
 
         TextView item = new TextView(this);
+
         item.setText("🎧 Gravação");
         item.setTextColor(0xFFFFFFFF);
-        item.setPadding(20, 20, 20, 20);
-        item.setBackgroundColor(0x22FFFFFF);
+        item.setTextSize(16f);
+        item.setPadding(28, 28, 28, 28);
+        item.setBackgroundColor(0x15FFFFFF);
 
         item.setOnClickListener(v -> {
             MediaPlayer mp = new MediaPlayer();
@@ -137,7 +158,8 @@ public class GravarActivity extends AppCompatActivity {
                     .withEndAction(() -> {
                         list.removeView(item);
                         new File(path).delete();
-                    });
+                    })
+                    .start();
             return true;
         });
 
@@ -145,9 +167,44 @@ public class GravarActivity extends AppCompatActivity {
         list.addView(item);
     }
 
+    // ==========================
+    // ANIMAÇÕES
+    // ==========================
+
     private void fadeIn(View v) {
         AlphaAnimation anim = new AlphaAnimation(0f, 1f);
-        anim.setDuration(400);
+        anim.setDuration(350);
         v.startAnimation(anim);
+    }
+
+    private void pulse(View v) {
+        v.animate()
+                .scaleX(1.12f)
+                .scaleY(1.12f)
+                .setDuration(300)
+                .withEndAction(() -> v.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(300)
+                        .start())
+                .start();
+    }
+
+    // ==========================
+    // WAVE ANIMADO SIMPLES
+    // ==========================
+
+    private void animateWave() {
+
+        wave.animate()
+                .alpha(0.5f)
+                .setDuration(600)
+                .withEndAction(() -> wave.animate()
+                        .alpha(1f)
+                        .setDuration(600)
+                        .start())
+                .start();
+
+        handler.postDelayed(this::animateWave, 800);
     }
 }
