@@ -360,7 +360,7 @@ settings.mediaPlaybackRequiresUserGesture = false
 
         settings.allowFileAccess = true
         settings.allowContentAccess = true
-
+settings.javaScriptCanOpenWindowsAutomatically = true
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
