@@ -361,22 +361,21 @@ fun desativarPalmas() {
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
-        webView.webChromeClient =
-            object : WebChromeClient() {
+        webView.webChromeClient = object : WebChromeClient() {
 
-                override fun onGeolocationPermissionsShowPrompt(
-                    origin: String?,
-                    callback: GeolocationPermissions.Callback?
-                ) {
+    override fun onPermissionRequest(request: PermissionRequest) {
+        runOnUiThread {
+            request.grant(request.resources)
+        }
+    }
 
-                    callback?.invoke(
-                        origin,
-                        true,
-                        false
-                    )
-                }
-            }
-
+    override fun onGeolocationPermissionsShowPrompt(
+        origin: String?,
+        callback: GeolocationPermissions.Callback?
+    ) {
+        callback?.invoke(origin, true, false)
+    }
+}
         
     
     
