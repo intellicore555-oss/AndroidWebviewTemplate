@@ -70,3 +70,336 @@ button.recording {
 }
 
 @keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* TIMER */
+#timer {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* LISTA */
+.list {
+  margin-top: 18px;
+}
+
+/* ITEM */
+.item {
+  background: rgba(255,255,255,0.05);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+/* animação delete */
+.item.removing {
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
+}
+
+/* título */
+.item-title {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+/* audio */
+audio {
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 10px;
+}
+
+/* 🔥 DELETE PROFISSIONAL */
+.delete {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  border: none;
+  background: rgba(255, 77, 77, 0.12);
+  color: #ff4d4d;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+/* aparece no hover */
+.item:hover .delete {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* mobile touch */
+.item:active .delete {
+  opacity: 1;
+  transform: scale(1);
+  background: rgba(255, 77, 77, 0.25);
+}
+
+.voltar {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: fit-content;
+    margin: 0 auto 10px auto;
+
+    color: pink;
+    font-weight: 700;
+    font-size: 20px;
+
+    padding: 6px 14px;
+    border-radius: 999px;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    white-space: nowrap;
+}
+</style>
+</head>
+
+<body>
+
+<div class="voltar">Clique em mim 
+<br>
+para voltar!</div>
+
+<br><br>
+
+<div class="container">
+
+  <div class="card">
+
+    <canvas id="wave"></canvas>
+
+    <button id="recBtn">●</button>
+
+    <div id="timer">00:00</div>
+
+  </div>
+
+  <div class="list" id="list"></div>
+
+</div>
+
+<script>
+let mediaRecorder;
+let audioCtx;
+let analyser;
+let source;
+let streamGlobal;
+let chunks = [];
+let recording = false;
+let startTime;
+let interval;
+
+let db;
+
+/* ================= DB ================= */
+const request = indexedDB.open("recDB", 1);
+
+request.onupgradeneeded = e => {
+  const db = e.target.result;
+  db.createObjectStore("audios", { keyPath: "id", autoIncrement: true });
+};
+
+request.onsuccess = e => {
+  db = e.target.result;
+  loadAudios();
+};
+
+/* ================= SAVE ================= */
+function saveAudio(blob) {
+  const tx = db.transaction("audios", "readwrite");
+  tx.objectStore("audios").add({ blob, date: Date.now() });
+  tx.oncomplete = loadAudios;
+}
+
+/* ================= DELETE ================= */
+function deleteAudio(id) {
+  const tx = db.transaction("audios", "readwrite");
+  tx.objectStore("audios").delete(Number(id));
+  tx.oncomplete = loadAudios;
+}
+
+/* ================= LIST ================= */
+function loadAudios() {
+  if (!db) return;
+
+  const tx = db.transaction("audios", "readonly");
+  const req = tx.objectStore("audios").getAll();
+
+  req.onsuccess = () => {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    const items = req.result || [];
+
+    items.reverse().forEach(item => {
+      const url = URL.createObjectURL(item.blob);
+
+      const div = document.createElement("div");
+      div.className = "item";
+
+      const title = document.createElement("div");
+      title.className = "item-title";
+      title.textContent = "Gravação";
+
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.src = url;
+
+      const del = document.createElement("button");
+      del.className = "delete";
+      del.textContent = "🗑";
+
+      del.onclick = () => {
+        div.classList.add("removing");
+
+        setTimeout(() => {
+          deleteAudio(item.id);
+        }, 200);
+      };
+
+      div.appendChild(del);
+      div.appendChild(title);
+      div.appendChild(audio);
+
+      list.appendChild(div);
+    });
+  };
+}
+
+/* ================= WAVE ================= */
+const canvas = document.getElementById("wave");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 320;
+canvas.height = 80;
+
+function drawWave() {
+  if (!analyser) return;
+
+  const bufferLength = analyser.fftSize;
+  const dataArray = new Uint8Array(bufferLength);
+
+  analyser.getByteTimeDomainData(dataArray);
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#ff2d55";
+
+  ctx.beginPath();
+
+  let slice = canvas.width / bufferLength;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    let v = dataArray[i] / 128.0;
+    let y = v * canvas.height / 2;
+
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+
+    x += slice;
+  }
+
+  ctx.stroke();
+
+  requestAnimationFrame(drawWave);
+}
+
+/* ================= TIMER ================= */
+function formatTime(s) {
+  const m = String(Math.floor(s / 60)).padStart(2,'0');
+  const sec = String(s % 60).padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+/* ================= REC ================= */
+const btn = document.getElementById("recBtn");
+const timer = document.getElementById("timer");
+
+btn.onclick = async () => {
+
+  if (!recording) {
+
+    streamGlobal = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+
+    source = audioCtx.createMediaStreamSource(streamGlobal);
+    source.connect(analyser);
+
+    mediaRecorder = new MediaRecorder(streamGlobal, {
+      mimeType: "audio/webm;codecs=opus"
+    });
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: "audio/webm" });
+      chunks = [];
+      saveAudio(blob);
+    };
+
+    mediaRecorder.start();
+    recording = true;
+
+    btn.classList.add("recording");
+
+    drawWave();
+
+    startTime = Date.now();
+    interval = setInterval(() => {
+      const sec = Math.floor((Date.now() - startTime) / 1000);
+      timer.textContent = formatTime(sec);
+    }, 1000);
+
+  } else {
+
+    mediaRecorder.stop();
+    recording = false;
+
+    btn.classList.remove("recording");
+
+    if (streamGlobal) {
+      streamGlobal.getTracks().forEach(t => t.stop());
+    }
+
+    clearInterval(interval);
+  }
+};
+
+document.querySelector(".voltar").onclick = function() {
+    window.location.href = "botao.html";
+};
+</script>
+
+</body>
+</html>
