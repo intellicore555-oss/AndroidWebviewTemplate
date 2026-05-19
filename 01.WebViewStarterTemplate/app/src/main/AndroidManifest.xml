@@ -44,7 +44,9 @@
     android:exported="false"
     android:foregroundServiceType="microphone"/>
 
-<activity android:name=".GravarActivity" />
+<activity
+    android:name=".GravarActivity"
+    android:exported="false" />
         
         <!-- MAIN -->
         <activity
