@@ -367,20 +367,21 @@ settings.mediaPlaybackRequiresUserGesture = false
         webView.webChromeClient = object : WebChromeClient() {
 
     override fun onPermissionRequest(request: PermissionRequest) {
+
         runOnUiThread {
-            request.grant(request.resources)
+
+            val resources = request.resources
+
+            val allowAudio = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
+
+            if (allowAudio) {
+                request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
+            } else {
+                request.deny()
+            }
         }
     }
-
-    override fun onGeolocationPermissionsShowPrompt(
-        origin: String?,
-        callback: GeolocationPermissions.Callback?
-    ) {
-        callback?.invoke(origin, true, false)
-    }
 }
-        
-    
     
                 webView.webViewClient =
     object : WebViewClient() {
