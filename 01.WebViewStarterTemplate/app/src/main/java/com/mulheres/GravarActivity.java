@@ -3,9 +3,12 @@ package com.mulheres;
 import android.Manifest;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,7 +25,6 @@ public class GravarActivity extends AppCompatActivity {
     private Button btnRecord;
     private TextView timer;
     private LinearLayout list;
-    private View wave;
 
     private MediaRecorder recorder;
     private boolean recording = false;
@@ -35,12 +37,14 @@ public class GravarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_gravar);
+
+        setFullscreen();
 
         btnRecord = findViewById(R.id.btnRecord);
         timer = findViewById(R.id.timer);
         list = findViewById(R.id.list);
-        wave = findViewById(R.id.wave);
 
         ActivityCompat.requestPermissions(
                 this,
@@ -52,14 +56,35 @@ public class GravarActivity extends AppCompatActivity {
             if (!recording) startRecord();
             else stopRecord();
         });
+    }
 
-        animateWave();
+    // ==========================
+    // FULLSCREEN REAL
+    // ==========================
+    private void setFullscreen() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+            WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+                controller.setSystemBarsBehavior(
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                );
+            }
+
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+        }
     }
 
     // ==========================
     // GRAVAÇÃO
     // ==========================
-
     private void startRecord() {
 
         try {
@@ -80,8 +105,6 @@ public class GravarActivity extends AppCompatActivity {
 
             seconds = 0;
             handler.post(timerRunnable);
-
-            pulse(btnRecord);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,7 +133,6 @@ public class GravarActivity extends AppCompatActivity {
     // ==========================
     // TIMER
     // ==========================
-
     private final Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -127,20 +149,41 @@ public class GravarActivity extends AppCompatActivity {
     };
 
     // ==========================
-    // LISTA
+    // LISTA COM BORDA + DELETE
     // ==========================
-
     private void addToList(String path) {
 
-        TextView item = new TextView(this);
+        File file = new File(path);
+        if (!file.exists()) return;
 
-        item.setText("🎧 Gravação");
-        item.setTextColor(0xFFFFFFFF);
-        item.setTextSize(16f);
-        item.setPadding(28, 28, 28, 28);
-        item.setBackgroundColor(0x15FFFFFF);
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        container.setPadding(28, 28, 28, 28);
+        container.setBackgroundResource(R.drawable.bg_record_item);
 
-        item.setOnClickListener(v -> {
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+        params.setMargins(0, 0, 0, 20);
+        container.setLayoutParams(params);
+
+        TextView text = new TextView(this);
+        text.setText("🎧 Gravação");
+        text.setTextColor(0xFFFFFFFF);
+        text.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+
+        Button delete = new Button(this);
+        delete.setText("🗑");
+        delete.setBackgroundColor(0x00000000);
+        delete.setTextColor(0xFFFF4D4D);
+
+        container.addView(text);
+        container.addView(delete);
+
+        text.setOnClickListener(v -> {
             MediaPlayer mp = new MediaPlayer();
             try {
                 mp.setDataSource(path);
@@ -151,60 +194,28 @@ public class GravarActivity extends AppCompatActivity {
             }
         });
 
-        item.setOnLongClickListener(v -> {
-            item.animate()
+        delete.setOnClickListener(v -> {
+            container.animate()
                     .alpha(0f)
+                    .translationX(80f)
                     .setDuration(200)
                     .withEndAction(() -> {
-                        list.removeView(item);
-                        new File(path).delete();
+                        list.removeView(container);
+                        file.delete();
                     })
                     .start();
-            return true;
         });
 
-        fadeIn(item);
-        list.addView(item);
+        fadeIn(container);
+        list.addView(container);
     }
 
     // ==========================
     // ANIMAÇÕES
     // ==========================
-
     private void fadeIn(View v) {
         AlphaAnimation anim = new AlphaAnimation(0f, 1f);
-        anim.setDuration(350);
+        anim.setDuration(300);
         v.startAnimation(anim);
-    }
-
-    private void pulse(View v) {
-        v.animate()
-                .scaleX(1.12f)
-                .scaleY(1.12f)
-                .setDuration(300)
-                .withEndAction(() -> v.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(300)
-                        .start())
-                .start();
-    }
-
-    // ==========================
-    // WAVE ANIMADO SIMPLES
-    // ==========================
-
-    private void animateWave() {
-
-        wave.animate()
-                .alpha(0.5f)
-                .setDuration(600)
-                .withEndAction(() -> wave.animate()
-                        .alpha(1f)
-                        .setDuration(600)
-                        .start())
-                .start();
-
-        handler.postDelayed(this::animateWave, 800);
     }
 }
