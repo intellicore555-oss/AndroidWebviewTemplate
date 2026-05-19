@@ -24,6 +24,12 @@ fun abrirContatos() {
     }
 }
 
+@JavascriptInterface
+public void abrirGravador() {
+    Intent intent = new Intent(activity, GravarActivity.class);
+    activity.startActivity(intent);
+}
+
     @JavascriptInterface
     fun iniciarBiometria() {
 
