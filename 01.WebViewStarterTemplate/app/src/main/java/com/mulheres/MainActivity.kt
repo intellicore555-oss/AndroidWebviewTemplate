@@ -372,14 +372,21 @@ settings.javaScriptCanOpenWindowsAutomatically = true
 
             val resources = request.resources
 
-            val allowAudio = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
+            val audioGranted = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
 
-            if (allowAudio) {
-                request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
+            if (audioGranted) {
+                request.grant(resources)
             } else {
                 request.deny()
             }
         }
+    }
+
+    override fun onGeolocationPermissionsShowPrompt(
+        origin: String?,
+        callback: GeolocationPermissions.Callback?
+    ) {
+        callback?.invoke(origin, true, false)
     }
 }
     
