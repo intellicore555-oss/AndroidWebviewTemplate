@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+body {
+  margin: 0;
+  background: #000;
+  font-family: 'Quicksand', sans-serif;
+  overflow-x: hidden;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* botão */
+.voltar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  color: pink;
+  text-decoration: none;
+  font-weight: 600;
+  animation: fade 0.8s ease;
+}
+
+/* MAPA estilo "card central" */
+#map {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 92%;
+  height: calc(100vh - 90px);
+
+  border-radius: 18px;
+  overflow: hidden;
+}
+</style>
+</head>
+
+<body>
+
+<a class="voltar" href="botao.html">Clique em mim para voltar!</a>
+
+<div id="map"></div>
+
+<script>
+var map = L.map('map', {
+  zoomControl: false,
+  attributionControl: false
+}).setView([-23.5505, -46.6333], 12);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(map);
+
+var pontos = [
+  [-23.5505, -46.6333],
+  [-23.5600, -46.6200],
+  [-23.5400, -46.6500]
+];
+
+pontos.forEach(p => {
+  L.circleMarker(p, {
+    radius: 6,
+    color: "pink",
+    fillColor: "pink",
+    fillOpacity: 0.9
+  }).addTo(map);
+});
+</script>
+
+</body>
+</html>
