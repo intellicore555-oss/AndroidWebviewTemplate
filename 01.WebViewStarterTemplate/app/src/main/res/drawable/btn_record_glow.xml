@@ -1,0 +1,23 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressionado -->
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#ff2d55"
+                android:endColor="#b3002d"
+                android:angle="90"/>
+        </shape>
+    </item>
+
+    <!-- normal -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#1c1c1c"
+                android:endColor="#0d0d0d"
+                android:angle="90"/>
+        </shape>
+    </item>
+
+</selector>
