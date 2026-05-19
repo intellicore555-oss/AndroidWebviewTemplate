@@ -365,13 +365,11 @@ settings.javaScriptCanOpenWindowsAutomatically = true
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
-        override fun onPermissionRequest(request: PermissionRequest) {
+override fun onPermissionRequest(request: PermissionRequest) {
     runOnUiThread {
         val resources = request.resources
 
-        val allowAudio = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
-
-        if (allowAudio) {
+        if (resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)) {
             request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
         } else {
             request.deny()
