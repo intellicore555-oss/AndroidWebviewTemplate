@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Planner RTX Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--accent:#ffffff;
+--accent-soft: rgba(255,255,255,0.1);
+}
+
+/* BASE */
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:'Quicksand',sans-serif;
+background:#000; /* SEMPRE PRETO */
+color:#fff;
+overflow-x:hidden;
+}
+
+/* MENU */
+#menuToggle{
+position:fixed;
+top:25px;
+left:25px;
+z-index:4000;
+cursor:pointer;
+}
+
+#menuToggle div{
+width:28px;
+height:3px;
+background:var(--accent);
+margin:6px 0;
+border-radius:5px;
+box-shadow:0 0 12px var(--accent);
+}
+
+/* SIDEBAR */
+#sideMenu{
+position:fixed;
+left:-280px;
+top:0;
+width:280px;
+height:100vh;
+background:rgba(15,15,15,0.85);
+backdrop-filter: blur(22px);
+padding:20px;
+transition:0.35s ease;
+border-right:1px solid rgba(255,255,255,0.08);
+z-index:3000;
+}
+
+#sideMenu.open{left:0;}
+
+.menuItem{
+padding:12px;
+margin:10px 0;
+border-radius:12px;
+background:rgba(255,255,255,0.04);
+cursor:pointer;
+transition:0.2s;
+}
+
+.menuItem:hover{
+background:var(--accent-soft);
+transform:translateX(5px);
+}
+
+/* OVERLAY */
+#overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+z-index:2500;
+}
+
+#overlay.show{
+opacity:1;
+pointer-events:auto;
+}
+
+/* CENTER */
+.container{
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+}
+
+.card{
+width:450px;
+background:rgba(255,255,255,0.05);
+backdrop-filter: blur(25px);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:22px;
+box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+h1{text-align:center}
+
+/* INPUTS */
+input,select{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:14px;
+background:rgba(0,0,0,0.6);
+color:#fff;
+outline:none;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+/* BUTTON */
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:14px;
+background:var(--accent);
+color:#000;
+font-weight:600;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+/* TASKS */
+.task{
+margin-top:12px;
+padding:14px;
+border-radius:14px;
+background:rgba(255,255,255,0.04);
+display:flex;
+justify-content:space-between;
+align-items:center;
+border:1px solid rgba(255,255,255,0.06);
+transition:0.2s;
+}
+
+.task:hover{
+transform:scale(1.01);
+background:rgba(255,255,255,0.07);
+}
+
+.task.done{
+opacity:0.4;
+text-decoration:line-through;
+}
+
+.cat{
+font-size:11px;
+opacity:0.6;
+}
+
+.actions button{
+width:auto;
+padding:6px 10px;
+margin-left:5px;
+border-radius:10px;
+font-size:12px;
+}
+
+/* PRIORIDADES */
+.high{border-left:4px solid #ff4d4d;}
+.medium{border-left:4px solid #ffd24d;}
+.low{border-left:4px solid #4dff88;}
+
+/* TIMER */
+.timer{
+text-align:center;
+font-size:40px;
+margin:15px 0;
+color:var(--accent);
+text-shadow:0 0 15px var(--accent);
+}
+
+/* TEMA PICKER */
+.themeBox{
+margin-top:20px;
+padding:12px;
+background:rgba(255,255,255,0.04);
+border-radius:12px;
+}
+
+.themeBox input{
+margin-top:10px;
+width:100%;
+height:45px;
+padding:5px;
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.08);
+background:rgba(0,0,0,0.6);
+cursor:pointer;
+}
+
+input[type="color"]{
+width:100%;
+height:45px;
+padding:0;
+border:none;
+border-radius:14px;
+overflow:hidden;
+cursor:pointer;
+background:transparent;
+}
+
+/* Chrome / Edge / Safari */
+input[type="color"]::-webkit-color-swatch-wrapper{
+padding:0;
+border-radius:14px;
+}
+
+input[type="color"]::-webkit-color-swatch{
+border:none;
+border-radius:14px;
+}
+
+/* Firefox */
+input[type="color"]::-moz-color-swatch{
+border:none;
+border-radius:14px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<div id="menuToggle" onclick="toggleMenu()">
+<div></div><div></div><div></div>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDEBAR -->
+<div id="sideMenu">
+
+<div class="menuItem" onclick="filterCat('Todos')">Todas</div>
+<div class="menuItem" onclick="filterCat('Estudos')">Estudos</div>
+<div class="menuItem" onclick="filterCat('Trabalho')">Trabalho</div>
+<div class="menuItem" onclick="filterCat('Pessoal')">Pessoal</div>
+<div class="menuItem" onclick="filterCat('Saúde')">Saúde</div>
+
+<div class="themeBox">
+<h4>Cor do sistema</h4>
+<input type="color" id="colorPicker" onchange="changeTheme(this.value)">
+</div>
+
+</div>
+
+<!-- APP -->
+<div class="container">
+<div class="card">
+
+<h1>Meu Planner/Tarefas</h1>
+
+<input id="taskInput" placeholder="Nova tarefa"/>
+
+<select id="category">
+<option>Estudos</option>
+<option>Trabalho</option>
+<option>Pessoal</option>
+<option>Saúde</option>
+</select>
+
+<select id="priority">
+<option value="low">Baixa</option>
+<option value="medium">Média</option>
+<option value="high">Alta</option>
+</select>
+
+<button onclick="addTask()">Adicionar</button>
+
+<div id="list"></div>
+
+<hr style="margin:15px 0;border:1px solid rgba(255,255,255,0.08)"/>
+
+<h3 style="text-align:center;">Pomodoro</h3>
+<div class="timer" id="timer">25:00</div>
+
+<button onclick="startPomodoro()">Iniciar</button>
+<button onclick="resetPomodoro()">Reset</button>
+
+</div>
+</div>
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let currentFilter = "Todos";
+
+/* THEME LOAD */
+let savedColor = localStorage.getItem("accent");
+if(savedColor){
+document.documentElement.style.setProperty("--accent", savedColor);
+document.documentElement.style.setProperty("--accent-soft", savedColor+"22");
+document.getElementById("colorPicker").value = savedColor;
+}
+
+function changeTheme(color){
+document.documentElement.style.setProperty("--accent", color);
+document.documentElement.style.setProperty("--accent-soft", color+"22");
+localStorage.setItem("accent", color);
+}
+
+/* TASKS */
+function save(){
+localStorage.setItem("tasks", JSON.stringify(tasks));
+render();
+}
+
+function addTask(){
+const text = taskInput.value;
+if(!text) return;
+
+tasks.push({
+text,
+cat:category.value,
+priority:priority.value,
+done:false
+});
+
+taskInput.value="";
+save();
+}
+
+taskInput.addEventListener("keypress",(e)=>{
+if(e.key==="Enter") addTask();
+});
+
+function toggle(i){
+tasks[i].done=!tasks[i].done;
+save();
+}
+
+function del(i){
+tasks.splice(i,1);
+save();
+}
+
+function filterCat(cat){
+currentFilter=cat;
+toggleMenu();
+render();
+}
+
+function render(){
+const list=document.getElementById("list");
+list.innerHTML="";
+
+tasks.forEach((t,i)=>{
+if(currentFilter!=="Todos" && t.cat!==currentFilter) return;
+
+list.innerHTML+=`
+<div class="task ${t.priority} ${t.done?'done':''}">
+<div>
+<b>${t.text}</b><br>
+<span class="cat">${t.cat} • ${t.priority}</span>
+</div>
+
+<div class="actions">
+<button onclick="toggle(${i})">✔</button>
+<button onclick="del(${i})">✖</button>
+</div>
+</div>
+`;
+});
+}
+
+render();
+
+/* MENU */
+function toggleMenu(){
+document.getElementById("sideMenu").classList.toggle("open");
+document.getElementById("overlay").classList.toggle("show");
+}
+
+/* POMODORO */
+let time=1500;
+let interval;
+
+function update(){
+let m=Math.floor(time/60);
+let s=time%60;
+timer.innerText=`${m}:${s<10?'0':''}${s}`;
+}
+
+function startPomodoro(){
+if(interval)return;
+
+interval=setInterval(()=>{
+time--;
+update();
+if(time<=0){
+clearInterval(interval);
+interval=null;
+alert("Foco finalizado");
+time=1500;
+update();
+}
+},1000);
+}
+
+function resetPomodoro(){
+clearInterval(interval);
+interval=null;
+time=1500;
+update();
+}
+
+update();
+
+</script>
+
+</body>
+</html>
