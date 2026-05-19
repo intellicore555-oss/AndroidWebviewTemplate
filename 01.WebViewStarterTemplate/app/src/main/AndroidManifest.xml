@@ -43,6 +43,8 @@
     android:name=".PalmaService"
     android:exported="false"
     android:foregroundServiceType="microphone"/>
+
+<activity android:name=".GravarActivity" />
         
         <!-- MAIN -->
         <activity
