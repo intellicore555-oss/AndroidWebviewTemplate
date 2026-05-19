@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#000"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/timer"
+        android:text="00:00"
+        android:textColor="#fff"
+        android:textSize="22sp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/btnRecord"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:text="●"
+        android:textSize="30sp"
+        android:textColor="#fff"
+        android:background="#1c1c1c"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:id="@+id/list"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
