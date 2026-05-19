@@ -364,23 +364,19 @@ settings.javaScriptCanOpenWindowsAutomatically = true
         settings.allowFileAccessFromFileURLs = true
         settings.allowUniversalAccessFromFileURLs = true
 
-        webView.webChromeClient = object : WebChromeClient() {
+        override fun onPermissionRequest(request: PermissionRequest) {
+    runOnUiThread {
+        val resources = request.resources
 
-    override fun onPermissionRequest(request: PermissionRequest) {
+        val allowAudio = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
 
-        runOnUiThread {
-
-            val resources = request.resources
-
-            val audioGranted = resources.contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)
-
-            if (audioGranted) {
-                request.grant(resources)
-            } else {
-                request.deny()
-            }
+        if (allowAudio) {
+            request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
+        } else {
+            request.deny()
         }
     }
+}
 
     override fun onGeolocationPermissionsShowPrompt(
         origin: String?,
